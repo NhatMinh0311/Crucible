@@ -110,6 +110,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `ATTEMPT_LIMIT` | 409 | M3 | Hết số lượt làm bài của bài tập |
 | `ASSIGNMENT_CLOSED` | 409 | M3 | Bài tập đã quá hạn |
 | `EXAM_NOT_OPEN` | 409 | M3 | Kỳ thi chưa mở hoặc đã đóng |
+| `EXAM_ENTRY_CLOSED` | 409 | M3 | Đã qua hạn chót được vào thi |
 
 Lỗi `QUOTA_EXHAUSTED`, `SESSION_LIMIT`, `CAPACITY_UNAVAILABLE` của M1 được M2, M3 chuyển tiếp nguyên mã tới giao diện.
 

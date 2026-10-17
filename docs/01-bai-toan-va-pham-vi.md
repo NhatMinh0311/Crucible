@@ -54,7 +54,8 @@ mờ giữa module và hạn mức theo tài khoản hạn mức (ADR-0013).
 | Tác nhân | Vai trò | Mô tả |
 |---|---|---|
 | Học viên | `STUDENT` | Làm bài luyện tập và bài thi trong lớp đã ghi danh |
-| Giảng viên | `INSTRUCTOR` | Soạn bài lab, quản lý lớp và lộ trình, tổ chức và giám sát kỳ thi |
+| Giảng viên | `INSTRUCTOR` | Soạn bài lab; với lớp được phân công là giảng viên phụ trách: quản lý lớp và lộ trình, tổ chức và giám sát kỳ thi, chấm phúc khảo, lập biên bản gian lận |
+| Trợ giảng | Vai trò trong lớp | Người dùng được giảng viên phụ trách thêm vào lớp với vai trò trợ giảng: giám sát kỳ thi, xem bản ghi, đề xuất biên bản gian lận; không sửa điểm, không sửa cấu hình bài tập và kỳ thi |
 | Quản trị nền tảng | `ADMIN` | Quản lý tài khoản, hạn mức tài nguyên, giám sát cụm |
 | Người vận hành của đơn vị | Ngoài hệ thống | Cài đặt, nâng cấp, sao lưu, giám sát bản cài đặt trên hạ tầng của đơn vị theo tài liệu phát hành |
 | Hệ thống chấm bài lab | Nội bộ | Chạy lời giải mẫu để kiểm thử bài lab trước khi xuất bản |
@@ -129,17 +130,17 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | C09 | Gợi ý theo bước, trừ điểm theo tỉ lệ khai báo; kỳ thi có thể tắt gợi ý |
 | C16 | Chế độ phản hồi khi kiểm tra theo ngữ cảnh: `FULL` (hiện đạt hay chưa đạt), `RECORDED_ONLY` (chỉ báo đã ghi nhận), `DISABLED` (không cho kiểm tra) |
 | C10 | Chấm cuối khi nộp bài: chạy lại toàn bộ lệnh kiểm tra trên trạng thái môi trường lúc nộp |
-| C11 | Thư viện bài lab: tìm kiếm, nhân bản bài lab của giảng viên khác |
+| C11 | Thư viện bài lab: tác giả đặt bài lab ở chế độ riêng tư hoặc chia sẻ trong bản cài đặt; giảng viên khác giao được bài chia sẻ hoặc nhân bản thành bài của mình để sửa; chỉ tác giả sửa được bài gốc |
 | C12 (MR) | Bài lab có bước phụ thuộc: bước sau chỉ mở khi bước trước đạt |
 
 ### 5.3. M3 — Lớp học, lộ trình và thi
 
 | Mã | Chức năng |
 |---|---|
-| L01 | Lớp học: tạo lớp, ghi danh bằng mã lớp, danh sách học viên |
+| L01 | Lớp học: tạo lớp; nhập danh sách sinh viên từ tệp CSV (mã số sinh viên, họ tên, email trường); sinh viên đăng nhập lần đầu bằng email trùng được gắn vào lớp; thêm giảng viên phụ trách và trợ giảng |
 | L02 | Lộ trình: chuỗi bài lab có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm |
-| L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa |
-| L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), khung giờ, thời lượng, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
+| L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do |
+| L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên, hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
 | L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
 | L06 | Bù giờ khi phiên thi bị gián đoạn do sự cố hạ tầng, có giới hạn và ghi nhật ký |
 | L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal |
@@ -154,7 +155,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 
 | Mã | Chức năng | Phụ trách |
 |---|---|---|
-| P01 | Đăng nhập qua nhà cung cấp định danh (OIDC); vai trò `STUDENT`, `INSTRUCTOR`, `ADMIN` | Nền tảng (trưởng nhóm) |
+| P01 | Đăng nhập qua Keycloak; liên kết nhà cung cấp định danh của trường (ví dụ Microsoft Entra ID của tài khoản email trường) khi đơn vị cấu hình, tài khoản cục bộ khi không có; vai trò `STUDENT`, `INSTRUCTOR`, `ADMIN` | Nền tảng (trưởng nhóm) |
 | P02 | Khung giao diện chung: điều hướng, đăng nhập, thông báo | Nền tảng |
 | P03 | Phát hành phiên bản: image, Helm chart tổng, ghi chú phát hành; hướng dẫn cài đặt và nâng cấp cho người vận hành | Nền tảng |
 
@@ -199,13 +200,14 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 
 ### 7.2. M2
 
-**US-C1 (C01–C05, C13)** — Là giảng viên, tôi muốn soạn bài lab và chắc chắn bài lab giải được trước khi giao.
+**US-C1 (C01–C05, C11, C13)** — Là giảng viên, tôi muốn soạn bài lab và chắc chắn bài lab giải được trước khi giao.
 - AC-C1.1: Đặc tả không hợp lệ theo lược đồ bị từ chối kèm vị trí lỗi; trên form, lỗi hiển thị tại trường tương ứng.
 - AC-C1.2: Phiên bản chỉ được xuất bản khi lời giải mẫu đạt toàn bộ bước với 5 seed khác nhau và môi trường mới dựng không đạt bước nào (trừ bước khai báo `expectInitially: pass`).
 - AC-C1.3: Phiên bản đã xuất bản không sửa được; sửa bài lab tạo phiên bản nháp mới.
 - AC-C1.4: Lượt làm bài đang dùng phiên bản cũ tiếp tục với phiên bản cũ sau khi phiên bản mới được xuất bản.
 - AC-C1.5: Sửa trên form rồi chuyển sang tab YAML và ngược lại không làm mất hoặc thay đổi nội dung ngoài phần đã sửa.
 - AC-C1.6: Phiên chạy thử của giảng viên dùng biến thể theo seed được chọn và không tạo lượt làm bài.
+- AC-C1.7: Bài lab riêng tư không hiển thị với giảng viên khác; nhân bản tạo bài lab mới thuộc người nhân bản, ghi nguồn gốc.
 
 **US-C2 (C06–C10, C14–C16)** — Là học viên, tôi muốn biết bước nào đã làm đúng và nhận điểm công bằng.
 - AC-C2.1: Một lượt làm bài luôn dùng cùng một biến thể, kể cả khi tiếp tục bằng phiên mới; lượt làm bài mới của cùng bài luyện tập nhận biến thể mới; học viên khác nhau trong cùng kỳ thi nhận biến thể khác nhau khi miền tham số cho phép.
@@ -221,21 +223,24 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 ### 7.3. M3
 
 **US-L1 (L01–L03)** — Là giảng viên, tôi muốn tổ chức lớp học theo lộ trình.
-- AC-L1.1: Học viên chỉ bắt đầu được bài lab khi đã ghi danh lớp và đã đạt ngưỡng điểm của các bài tiên quyết (403 `PREREQUISITE_NOT_MET`).
-- AC-L1.2: Bài tập quá hạn không tạo được lượt làm bài mới; lượt đang làm được nộp tự động tại thời điểm hết hạn.
+- AC-L1.1: Học viên chỉ bắt đầu được bài lab khi thuộc lớp và đã đạt ngưỡng điểm của các bài tiên quyết (403 `PREREQUISITE_NOT_MET`).
+- AC-L1.2: Bài tập quá hạn (đã tính gia hạn riêng) không tạo được lượt làm bài mới (409 `ASSIGNMENT_CLOSED`), trừ khi cho nhận muộn và còn trong hạn muộn tối đa; lượt đang làm được nộp tự động tại thời điểm hết hạn cuối cùng.
 - AC-L1.3: Số lượt làm bài không vượt quá số lượt tối đa của bài tập, kể cả khi có yêu cầu đồng thời.
+- AC-L1.4: Điểm bài tập bằng điểm cao nhất trong các lượt đã chấm, sau khi trừ điểm nộp muộn của từng lượt.
+- AC-L1.5: Nhập danh sách CSV báo lỗi theo từng dòng (thiếu cột, email sai định dạng, trùng mã số); sinh viên có email trong danh sách đăng nhập lần đầu được gắn vào lớp, không cần thao tác thêm.
 
 **US-L2 (L04–L07)** — Là giảng viên, tôi muốn tổ chức kỳ thi đồng loạt cho cả lớp.
 - AC-L2.1: Lên lịch kỳ thi tạo yêu cầu đặt trước tài nguyên tương ứng số học viên; cụm không đủ sức chứa cho khung giờ đó thì kỳ thi không được lên lịch (409 `CAPACITY_UNAVAILABLE`).
 - AC-L2.2: 30 học viên bắt đầu trong cùng một phút đều được cấp phiên, p95 thời gian cấp ≤ 10 giây.
 - AC-L2.3: Khi hết giờ, mọi lượt làm bài của kỳ thi được nộp tự động và chấm cuối; phiên được thu hồi.
 - AC-L2.4: Phiên thi bị `LOST` được bù đúng thời gian gián đoạn, tối đa 15 phút cho mỗi học viên mỗi kỳ thi; mỗi lần bù được ghi nhật ký.
-- AC-L2.5: Chỉ giảng viên phụ trách lớp xem được trực tiếp terminal và bản ghi của học viên trong kỳ thi.
+- AC-L2.5: Chỉ giảng viên phụ trách và trợ giảng của lớp xem được trực tiếp terminal và bản ghi của học viên trong kỳ thi.
+- AC-L2.7: Sinh viên bắt đầu sau hạn chót được vào thi bị từ chối (409 `EXAM_ENTRY_CLOSED`); mọi sinh viên được nộp tự động tại giờ kết thúc chung cộng thời gian bù giờ của riêng mình.
 - AC-L2.6: Màn hình giám sát hiển thị tiến độ từng học viên theo kết quả chấm ngầm gần nhất, kể cả khi học viên không được xem kết quả kiểm tra.
 
 **US-L3 (L09–L11, L13)** — Là giảng viên, tôi muốn phát hiện dấu hiệu gian lận và xử lý khiếu nại.
 - AC-L3.1: Học viên nhập giá trị tham số thuộc biến thể của học viên khác trong cùng kỳ thi tạo tín hiệu `VARIANT_LEAK`.
-- AC-L3.2: Tín hiệu gian lận không tự động thay đổi điểm; chỉ giảng viên phụ trách lớp lập biên bản, có kết luận và lý do.
+- AC-L3.2: Tín hiệu gian lận không tự động thay đổi điểm; trợ giảng đề xuất, giảng viên phụ trách lập biên bản có kết luận và lý do.
 - AC-L3.4: Kết luận `VOIDED` đặt điểm lượt làm bài về 0 qua điều chỉnh điểm của M2 (lưu điểm cũ); học viên nhận thông báo kèm lý do và gửi được yêu cầu phúc khảo.
 - AC-L3.3: Điều chỉnh điểm khi phúc khảo lưu điểm cũ, điểm mới, người điều chỉnh và lý do.
 

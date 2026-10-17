@@ -15,6 +15,9 @@ Ba dịch vụ của ba module cần cùng một cơ chế xác thực người 
 - Giao diện đăng nhập bằng Authorization Code + PKCE; dịch vụ kiểm tra JWT bằng JWKS, kiểm tra `aud` và `iss`.
 - Mỗi dịch vụ có một client với client credentials; quyền gọi dịch vụ khác biểu diễn bằng scope (CR-DOC-03 mục 3.2).
 - Phân quyền theo đối tượng (giảng viên của lớp nào, học viên nào là chủ lượt làm bài) do module sở hữu đối tượng quyết định.
+- Đơn vị có nhà cung cấp định danh (ví dụ Microsoft Entra ID cho email trường) được liên kết vào Keycloak bằng identity
+  brokering OIDC; tài khoản được gắn với sinh viên trong lớp theo email. Đơn vị không có thì dùng tài khoản cục bộ của Keycloak.
+- Vai trò trong lớp (giảng viên phụ trách, trợ giảng) do M3 quản lý, không lưu trong Keycloak.
 - Cấu hình realm quản lý dạng mã bằng keycloak-config-cli.
 
 ## Phương án đã cân nhắc
