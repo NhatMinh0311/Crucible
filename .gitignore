@@ -1,0 +1,15 @@
+.env
+*.log
+node_modules/
+dist/
+build/
+target/
+.gradle/
+bin/
+*.tfstate
+*.tfstate.*
+.terraform/
+kubeconfig*
+.idea/
+.vscode/
+__pycache__/
