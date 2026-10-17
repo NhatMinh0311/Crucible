@@ -28,10 +28,11 @@ Hệ thống phải giải quyết đồng thời ba bài toán:
 Đối tượng chính là các học phần thực hành tại trường đại học: Hệ điều hành Linux, Mạng máy tính, Quản trị hệ thống.
 Một lớp có từ 30 đến 60 sinh viên; giảng viên giao bài thực hành trong kỳ và tổ chức thi thực hành.
 
-Nhu cầu được giả định như sau và được kiểm chứng bằng phỏng vấn giảng viên và khảo sát sinh viên (kết quả tại phụ lục
-khảo sát của báo cáo):
+Tại trường chưa có nền tảng cho phép thực hành và thi quản trị hệ thống trên môi trường riêng có chấm tự động; hệ thống
+hiện có phục vụ chấm bài lập trình. Khảo sát các giải pháp tương tự và khoảng trống Crucible hướng tới tại CR-DOC-09.
+Các nhu cầu Crucible đáp ứng:
 
-| Mã | Giả định nhu cầu |
+| Mã | Nhu cầu |
 |---|---|
 | N1 | Giảng viên mất nhiều thời gian chấm bài thực hành bằng cách xem trực tiếp hoặc đọc ảnh chụp màn hình |
 | N2 | Bài thi thực hành chung một đề dễ bị chép kết quả giữa các sinh viên ngồi gần nhau |

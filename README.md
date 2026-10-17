@@ -30,6 +30,7 @@ Chi tiết tại CR-DOC-02.
 | [CR-DOC-06](docs/06-rui-ro-va-lo-trinh.md) | Rủi ro, thử nghiệm sớm, lộ trình, phân công, tiêu chí hoàn thành |
 | [CR-DOC-07](docs/07-quy-trinh-phat-trien.md) | Kho mã, quyền sở hữu, pull request, bảo vệ nhánh, CI |
 | [CR-DOC-08](docs/08-nhat-ky-su-dung-ai.md) | Nhật ký sử dụng công cụ AI |
+| [CR-DOC-09](docs/09-giai-phap-tuong-tu.md) | Khảo sát giải pháp tương tự, khoảng trống và định vị |
 | [`docs/adr/`](docs/adr/) | Hồ sơ quyết định kiến trúc ADR-0001 đến ADR-0013 |
 | [`docs/modules/`](docs/modules/) | Thiết kế bên trong từng module; mẫu tại `_mau.md` |
 
