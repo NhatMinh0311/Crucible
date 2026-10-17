@@ -84,7 +84,7 @@ flowchart LR
 | SCR-14 | Kết quả từng bước, bản ghi phiên, gửi phúc khảo | Sinh viên | M3 | UC06 |
 | SCR-20 | Trang chủ giảng viên: lớp, kỳ thi sắp tới, tín hiệu và phúc khảo chờ xử lý | Giảng viên, trợ giảng | M3 | |
 | SCR-21 | Quản lý lớp: danh sách, nhập CSV có xem trước lỗi, thành viên giảng dạy, hạn mức giờ máy của lớp kèm trần của giảng viên và phần đã chia | Giảng viên | M3 | UC11 |
-| SCR-22 | Lộ trình, bài tập, chính sách quá hạn, gia hạn riêng, tiến độ lớp | Giảng viên | M3 | UC12, UC13 |
+| SCR-22 | Lộ trình, bài tập, chính sách quá hạn, gia hạn riêng, tiến độ lớp; cảnh báo tải gần hạn nộp khi giao bài tập | Giảng viên | M3 | UC12, UC13 |
 | SCR-23 | Thư viện bài lab: của tôi, được chia sẻ; nhân bản | Giảng viên | M2 | UC10 |
 | SCR-24 | Soạn bài lab: form theo phần, tab YAML, xem trước với biến thể | Giảng viên | M2 | UC07 |
 | SCR-25 | Chạy thử (terminal, chạy từng lệnh kiểm tra, chạy lời giải), kết quả kiểm thử khi xuất bản kèm bộ nhớ cao nhất của từng seed so với giới hạn | Giảng viên | M2 | UC08, UC09 |

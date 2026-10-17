@@ -273,6 +273,27 @@ Luồng chính:
 |---|---|---|
 | 2a | Quá thời hạn hoặc đã gửi cho bài này | Từ chối (AC-L3.5) |
 
+### 3.9. UC13 — Giao bài tập
+
+Luồng chính:
+1. Giảng viên chọn lớp, bài lab, hạn nộp, số lượt tối đa, chính sách quá hạn.
+2. Hệ thống ước tính tải cao nhất gần hạn nộp và so với sức chứa (bảng dưới).
+3. Tải trong giới hạn: bài tập được lưu; sinh viên nhận thông báo.
+
+| Đại lượng | Cách tính |
+|---|---|
+| Khung giờ cao điểm | 3 giờ trước hạn nộp |
+| Số phiên ước tính chạy cùng lúc | `ceil(0,5 × số sinh viên × thời hạn phiên của bài lab / 180 phút)`, giả định một nửa lớp làm bài trong khung giờ cao điểm |
+| Số chỗ còn trống | Số chỗ còn của mức tài nguyên trong khung giờ cao điểm (`GET /v1/capacity`) trừ số phiên ước tính của các bài tập khác có khung giờ cao điểm chồng lấn |
+| Giới hạn của lớp | Số phiên đồng thời trong hạn mức của lớp |
+
+Tỉ lệ 0,5 và độ dài 3 giờ là tham số cấu hình của M3.
+
+| Mã | Điều kiện | Xử lý |
+|---|---|---|
+| 2a | Số phiên ước tính vượt số chỗ còn trống hoặc vượt giới hạn của lớp | Cảnh báo kèm số liệu và gợi ý (dời hạn nộp sang khung giờ ít bài tập khác, mở bài sớm hơn, nâng hạn mức của lớp); giảng viên xác nhận để lưu hoặc sửa (AC-L1.6) |
+| 2b | Đổi hạn nộp của bài tập đã giao | Ước tính lại như bước 2 |
+
 ## 4. Biểu đồ hoạt động
 
 ### 4.1. Học theo lộ trình và làm bài tập

@@ -153,7 +153,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 |---|---|
 | L01 | Lớp học: tạo lớp; nhập danh sách sinh viên từ tệp CSV (mã số sinh viên, họ tên, email trường); sinh viên đăng nhập lần đầu bằng email trùng được gắn vào lớp; thêm giảng viên phụ trách và trợ giảng |
 | L02 | Lộ trình: chuỗi bài lab luyện tập có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm; không giới hạn số lượt; không tính vào điểm học phần, giảng viên theo dõi tiến độ của lớp |
-| L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do |
+| L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do; khi giao hoặc đổi hạn nộp, hệ thống ước tính tải cao nhất gần hạn nộp và cảnh báo nếu vượt sức chứa (không chặn) |
 | L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên, hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
 | L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
 | L06 | Bù giờ khi phiên thi bị gián đoạn do sự cố hạ tầng, có giới hạn và ghi nhật ký |
@@ -249,6 +249,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-L1.3: Số lượt làm bài không vượt quá số lượt tối đa của bài tập, kể cả khi có yêu cầu đồng thời.
 - AC-L1.4: Điểm bài tập bằng điểm cao nhất trong các lượt đã chấm, sau khi trừ điểm nộp muộn của từng lượt.
 - AC-L1.5: Nhập danh sách CSV báo lỗi theo từng dòng (thiếu cột, email sai định dạng, trùng mã số); sinh viên có email trong danh sách đăng nhập lần đầu được gắn vào lớp, không cần thao tác thêm.
+- AC-L1.6: Khi giao bài tập hoặc đổi hạn nộp, nếu số phiên ước tính chạy cùng lúc trong 3 giờ trước hạn nộp vượt số chỗ còn trống của khung giờ đó hoặc vượt số phiên đồng thời của lớp, giảng viên nhận cảnh báo kèm số liệu; bài tập vẫn được lưu nếu giảng viên xác nhận.
 
 **US-L2 (L04–L07)** — Là giảng viên, tôi muốn tổ chức kỳ thi đồng loạt cho cả lớp.
 - AC-L2.1: Lên lịch kỳ thi tạo yêu cầu đặt trước tài nguyên tương ứng số học viên; cụm không đủ sức chứa cho khung giờ đó thì kỳ thi không được lên lịch (409 `CAPACITY_UNAVAILABLE`). Giảng viên được báo số chỗ cần, số chỗ còn và tối đa 3 khung giờ gần nhất cùng độ dài còn đủ chỗ trong khoảng 07:00–21:00.
