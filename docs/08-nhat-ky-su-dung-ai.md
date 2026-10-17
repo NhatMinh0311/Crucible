@@ -84,6 +84,23 @@ Quy định:
 | Giấy phép | AGPL-3.0 | Apache-2.0 |
 | Bù giờ khi sự cố hạ tầng | Tự động, tối đa 15 phút mỗi học viên | Không giới hạn; giảng viên quyết định |
 | Vai trò trong thiết kế giao diện | Thành viên đóng góp ở mức trải nghiệm người dùng, không trực tiếp thiết kế hình ảnh | |
+| Căn cứ nhu cầu | Hiện trạng tại trường và khảo sát dự án tương tự trên GitHub, không khảo sát người dùng | Phỏng vấn giảng viên, khảo sát sinh viên |
+| Phân vai giữa thành viên và công cụ | Công cụ triển khai (viết mã, soạn tài liệu); thành viên cố vấn, kiểm định giải pháp, nêu trường hợp còn mù mờ | |
+| Tài khoản và vào lớp | Đăng nhập bằng tài khoản trường; giảng viên nhập danh sách CSV | Tự đăng ký kèm mã lớp; cả hai |
+| Vào thi muộn | Kết thúc chung, có hạn chót được vào thi | Thời lượng riêng; giảng viên chọn |
+| Điểm bài tập nhiều lượt | Lượt cao nhất | Lượt cuối; giảng viên chọn |
+| Trợ giảng | Có vai trò trợ giảng: giám sát, xem bản ghi, đề xuất biên bản | Nhiều giảng viên ngang quyền; một giảng viên |
+| Bài tập quá hạn | Giảng viên chọn không nhận hoặc nhận muộn có trừ điểm; gia hạn riêng | Không nhận |
+| Thư viện bài lab | Riêng tư hoặc chia sẻ; người khác chỉ nhân bản | Đồng tác giả; công khai toàn bộ |
+| Quy trình AI viết mã | GitHub Spec Kit, `AGENTS.md`, skill `frontend-design` | Superpowers; chỉ `AGENTS.md` |
+| Sinh viên xem gì sau công bố điểm thi | Điểm từng bước và bản ghi của mình | Không bản ghi; chỉ điểm tổng |
+| Phúc khảo | Trong 7 ngày sau công bố, giảng viên phụ trách quyết định | Không giới hạn thời gian |
+| Lộ trình | Không tính điểm học phần | Tính như một đầu điểm |
+| Nộp bài thi sớm | Nộp là kết thúc | Được mở lại khi còn giờ |
+| Bố cục trang làm bài | Chia đôi hướng dẫn và terminal, kéo được | Terminal toàn màn hình; hai tab |
+| Kênh thông báo | Trong ứng dụng và email cho sự kiện quan trọng | Chỉ trong ứng dụng |
+| Thiết bị | Làm bài trên máy tính; trang khác dùng được trên điện thoại | Chỉ máy tính |
+| Trước giờ thi | Phòng chờ có kiểm tra kết nối | Phòng chờ đơn giản; không có phòng chờ |
 
 ### 3.3. Phần việc của công cụ
 
@@ -91,16 +108,18 @@ Quy định:
 |---|---|---|
 | Đề xuất | Tiêu chí chọn đề tài; đề tài cụ thể cho từng domain; đánh giá lại theo cách chia module; cách chia module theo nghiệp vụ cho nền tảng thực hành; đề bài có tham số và lỗi cài sẵn; phương án hạ tầng máy ảo; tên dự án | AI-ĐX |
 | Thiết kế kỹ thuật | Kiến trúc ba module và nền tảng; operator và tài nguyên tùy biến; cách ly bằng gVisor; Keycloak; RabbitMQ với outbox; terminal qua gateway; nhóm môi trường ấm và đặt trước; GitOps; hạ tầng máy ảo; sinh biến thể bằng HMAC; lệnh kiểm tra bằng bộ công cụ chỉ đọc; quan sát; phát hành | AI-ĐX |
-| Soạn thảo | CR-DOC-01 đến CR-DOC-08, ADR-0001 đến ADR-0013, tài liệu module M1 và mẫu tài liệu module, `README.md`, `CONTRIBUTING.md` | AI-TH |
+| Soạn thảo | CR-DOC-01 đến CR-DOC-12, ADR-0001 đến ADR-0013, tài liệu module M1 và mẫu tài liệu module, `README.md`, `CONTRIBUTING.md` | AI-TH |
 | Viết mã | Lược đồ và bộ kiểm tra đặc tả bài lab, hai bài lab mẫu, `runtime-api.yaml`, `content-api.yaml`, `events.asyncapi.yaml`, workflow CI, CODEOWNERS, mẫu pull request | AI-TH |
-| Kiểm chứng | Lint OpenAPI, kiểm tra AsyncAPI, kiểm tra đặc tả bài lab với tệp hợp lệ và tệp lỗi cố ý; chạy lệnh của CI trên máy | AI-TH |
+| Kiểm chứng | Lint OpenAPI, kiểm tra AsyncAPI, kiểm tra đặc tả bài lab với tệp hợp lệ và tệp lỗi cố ý; chạy lệnh của CI trên máy; render toàn bộ sơ đồ Mermaid và xem lại hình; kiểm tra tham chiếu chéo giữa tài liệu | AI-TH |
+| Khảo sát | Tra cứu dự án tương tự, giấy phép và mức hoạt động qua GitHub API; tra cứu framework và skill cho trợ lý AI | AI-TH |
 | Phát hiện lỗi thiết kế qua kiểm tra | Cấu trúc binding AMQP sai trong AsyncAPI; lệnh kiểm tra của bài mẫu gọi chương trình của môi trường, trái nguyên tắc toàn vẹn chấm điểm; sức chứa 2 node phiên không đủ cho kịch bản thi 30 học viên và không còn chỗ cấp lại khi mất node, tăng lên 3 node; lời giải mẫu không chạy được với `PATH` của bộ công cụ kiểm tra, tách chế độ `RESTORE` | AI-TH |
 
 ### 3.4. Sản phẩm
 
 | Sản phẩm | Soạn bởi | Yêu cầu và duyệt bởi |
 |---|---|---|
-| Tài liệu dự án (`docs/`, 8 tài liệu, 13 ADR, tài liệu module) | Công cụ | Thành viên |
+| Tài liệu dự án (`docs/`, 12 tài liệu, 13 ADR, tài liệu module) | Công cụ | Thành viên |
+| Quy ước cho trợ lý AI (`AGENTS.md`, `CLAUDE.md`) | Công cụ | Thành viên |
 | Hợp đồng (`contracts/`) | Công cụ | Thành viên |
 | Quy trình và CI (`.github/`, `CONTRIBUTING.md`) | Công cụ | Thành viên |
 
@@ -119,6 +138,9 @@ Quy định:
 | 9 | Tham gia quyết định | Đánh giá phần còn thiếu so với khung thực tế; hỏi đợt 1 (đối tượng, phản hồi khi thi, khôi phục, soạn bài) | Chọn phương án cho 4 câu hỏi |
 | 10 | Tiếp tục hỏi | Cập nhật tài liệu, hợp đồng theo đợt 1; hỏi đợt 2 (cấu trúc thi, biến thể, chấm ngầm, gian lận) | Chọn phương án cho 4 câu hỏi; hỏi mô hình cung cấp |
 | 11 | Mô hình cung cấp | So sánh tự cài, dịch vụ, kết hợp; cập nhật phát hành và cài đặt; hỏi đợt 3 (giấy phép, bù giờ, giao diện) | Chọn kết hợp, AGPL-3.0, bù giờ tối đa 15 phút; đóng góp giao diện ở mức trải nghiệm người dùng |
+| 12 | Công cụ AI thế hệ mới cho làm giao diện và viết mã có lập trình viên tham gia; bỏ khảo sát người dùng, thay bằng khảo sát dự án tương tự; phân vai; commit theo hạng mục | Tra cứu framework và skill; khảo sát dự án trên GitHub (CR-DOC-09); tách lịch sử thành commit theo hạng mục | Đạt |
+| 13 | Làm các mục còn thiếu, hỏi khi luồng nghiệp vụ chưa rõ | Hỏi đợt 4–6 (tài khoản, thi muộn, điểm bài tập, trợ giảng, quá hạn, thư viện, quy trình AI, công bố, phúc khảo, lộ trình, nộp sớm); ràng buộc dự án; `AGENTS.md`; CR-DOC-10, CR-DOC-11, CR-DOC-12 | Chọn phương án cho các câu hỏi |
+| 14 | Hỏi trải nghiệm người dùng của giao diện; hỏi khó khăn khi thành viên dùng Windows | Hỏi đợt 7 (bố cục trang làm bài, thông báo, thiết bị, phòng chờ); hướng dẫn phát triển trên Windows | Chọn phương án cho 4 câu hỏi |
 
 ### 3.6. Các lần điều chỉnh hướng
 
@@ -135,11 +157,11 @@ Quy định:
 | Hạng mục | Thành viên | Công cụ |
 |---|---|---|
 | Định hướng đề tài, đối tượng, mô hình cung cấp | 70% | 30% |
-| Quyết định nghiệp vụ | 50% | 50% |
+| Quyết định nghiệp vụ và trải nghiệm người dùng | 55% | 45% |
 | Quyết định kiến trúc và công nghệ | 20% | 80% |
 | Soạn tài liệu, hợp đồng, CI | 5% | 95% |
 | Phát hiện thiếu sót, điều chỉnh hướng | 60% | 40% |
-| **Tổng thể giai đoạn** | **khoảng 25–30%** | **khoảng 70–75%** |
+| **Tổng thể giai đoạn** | **khoảng 30%** | **khoảng 70%** |
 
 ## Lịch sử thay đổi
 

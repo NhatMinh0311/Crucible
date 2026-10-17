@@ -56,6 +56,24 @@ python3 contracts/lab-spec/validate.py contracts/lab-spec/examples/*.yaml   # k�
 
 Hướng dẫn dựng môi trường phát triển của từng module được bổ sung vào mục 5 khi mã nguồn module có mặt.
 
+### 1.5. Máy Windows
+
+Phát triển M2, M3 và giao diện trên Windows được hỗ trợ đầy đủ khi tuân theo các điểm sau:
+
+| Vấn đề | Cách làm |
+|---|---|
+| Script shell, Makefile, lệnh trong tài liệu dùng bash | Chạy trong WSL2 (Ubuntu 24.04); không dùng PowerShell hay Git Bash cho các lệnh của dự án |
+| Truy cập tệp giữa Windows và Linux chậm; container đọc mã nguồn trên ổ Windows rất chậm | Đặt kho mã trong hệ thống tệp của WSL2 (`~/src/crucible`), không đặt trong `/mnt/c/` |
+| IDE | VS Code với tiện ích WSL; hoặc IntelliJ IDEA mở dự án trong WSL (JDK và Gradle cài trong WSL) |
+| Docker | Docker Desktop bật tích hợp WSL2, hoặc Docker Engine cài trực tiếp trong WSL2; cần bật ảo hóa trong BIOS. Testcontainers dùng được với cả hai |
+| Bộ nhớ: Docker Desktop và WSL2 chạy trong máy ảo dùng chung bộ nhớ với Windows | Giới hạn bộ nhớ của WSL2 trong `%UserProfile%\.wslconfig` (ví dụ `memory=8GB` với máy 16 GB); chỉ chạy dịch vụ phụ thuộc mà module cần (mục 5) |
+| Xuống dòng CRLF làm hỏng script | `.gitattributes` đã cố định LF; nếu gặp lỗi `\r`, xem mục 4 |
+| Windows Defender làm chậm Gradle, `npm install` | Thêm thư mục dự án trong WSL2 và thư mục `~/.gradle` vào danh sách loại trừ |
+| Đường dẫn dài trong `node_modules` | Không gặp khi kho mã nằm trong WSL2 |
+
+Máy có 8 GB bộ nhớ chạy được một module kèm PostgreSQL và RabbitMQ; khi bộ nhớ không đủ chạy cả Keycloak, dùng hồ sơ
+phát triển rút gọn của module (máy chủ OIDC giả lập thay cho Keycloak) và kiểm thử tích hợp đầy đủ trên CI hoặc cụm chuẩn.
+
 ## 2. Thực hiện một thay đổi
 
 ### 2.1. Tạo nhánh từ `main` mới nhất
