@@ -142,7 +142,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | C14 | Khôi phục tiến độ khi tiếp tục: chạy lời giải mẫu của các bước đã đạt trên phiên mới trước khi giao cho học viên |
 | C15 | Chấm ngầm mỗi 2 phút các lượt làm bài thi đang diễn ra để ghi nhận tiến độ, phục vụ khôi phục và giám sát; kết quả không hiển thị cho học viên ngoài chế độ `FULL` |
 | C08 | Kiểm tra từng bước theo yêu cầu học viên; điểm thành phần |
-| C17 | Bước trả lời: học viên nhập câu trả lời cho câu hỏi về môi trường; so với đáp án theo biến thể, theo biểu thức chính quy hoặc theo trạng thái môi trường lúc trả lời; số lần trả lời tối đa do giảng viên đặt |
+| C17 | Bước trả lời: học viên nhập câu trả lời cho câu hỏi về môi trường; so với đáp án theo biến thể, theo biểu thức chính quy hoặc theo trạng thái môi trường lúc trả lời; trắc nghiệm một hoặc nhiều đáp án, đáp án có thể là các lỗi cài sẵn được chọn (chẩn đoán nguyên nhân); có thể bắt buộc trả lời trước khi kiểm tra các bước khác; số lần trả lời tối đa do giảng viên đặt |
 | C09 | Gợi ý theo bước, trừ điểm theo tỉ lệ khai báo; kỳ thi có thể tắt gợi ý |
 | C16 | Chế độ phản hồi khi kiểm tra theo ngữ cảnh: `FULL` (hiện đạt hay chưa đạt), `RECORDED_ONLY` (chỉ báo đã ghi nhận), `DISABLED` (không cho kiểm tra) |
 | C10 | Chấm cuối khi nộp bài: chạy lại toàn bộ lệnh kiểm tra trên trạng thái môi trường lúc nộp |
@@ -178,12 +178,22 @@ lab có thể kết hợp nhiều dạng.
 | Dạng | Học viên làm gì | Cơ chế | Phạm vi |
 |---|---|---|---|
 | Cấu hình theo yêu cầu | Dựng, cấu hình dịch vụ trên môi trường sạch theo đề | Tham số, bước kiểm tra | MVP |
-| Sửa hệ thống hỏng | Tìm nguyên nhân và khắc phục sự cố được cài sẵn | Lỗi cài sẵn chọn theo seed, bước kiểm tra | MVP |
+| Sửa hệ thống hỏng | Tìm nguyên nhân và khắc phục sự cố được cài sẵn; có thể phải chẩn đoán nguyên nhân trước khi sửa | Lỗi cài sẵn chọn theo seed, bước kiểm tra, bước chẩn đoán trắc nghiệm | MVP |
 | Bảo mật và gia cố | Sửa cấu hình, quyền, dịch vụ không an toàn | Lỗi cài sẵn hoặc setup, bước kiểm tra | MVP |
 | Điều tra và trả lời | Đọc nhật ký, trạng thái hệ thống để trả lời câu hỏi | Tham số, bước trả lời (C17) | MVP |
 | Mạng trong một máy | Cổng, địa chỉ lắng nghe, phân giải tên, tường lửa cục bộ | Như các dạng trên; tường lửa phụ thuộc kết quả thử nghiệm S4 | MVP |
 | Mạng nhiều máy | Dịch vụ giữa các máy: DNS, cơ sở dữ liệu từ xa, reverse proxy, tường lửa giữa máy | Môi trường nhiều máy (R14) | Mở rộng |
 | Viết script | Viết script đạt yêu cầu, hệ thống chạy script để chấm | Cần chế độ chấm chạy mã của học viên trong điều kiện kiểm soát, khác nguyên tắc tại ADR-0011 | Mở rộng |
+
+Các mẫu kịch bản dưới đây dùng cơ chế sẵn có, được khuyến nghị khi soạn bài và có trong bộ bài mẫu:
+
+| Mẫu kịch bản | Nội dung | Cách dựng |
+|---|---|---|
+| Sự cố tái phát | Sửa xong sự cố quay lại sau ít phút do một tác nhân (cron, tiến trình nền) ghi đè cấu hình; học viên phải tìm nguyên nhân gốc | `setup` khởi động tác nhân; bước kiểm tra xác nhận tác nhân đã bị gỡ và dịch vụ vẫn chạy |
+| Truy dấu xâm nhập | Máy bị cài cơ chế bám trụ (cron, dịch vụ, `.bashrc`, `authorized_keys`) với tên, vị trí theo tham số; học viên chỉ ra và gỡ bỏ | Lỗi cài sẵn chọn theo seed; bước trả lời; bước kiểm tra |
+| Chuỗi manh mối | Mỗi chặng cho manh mối tới chặng sau (tệp ẩn, chuỗi mã hóa, cổng lạ), kết thúc bằng một cờ riêng cho mỗi học viên | Tham số `pattern` làm cờ; bước trả lời |
+| Cứu dữ liệu | Khôi phục tệp đã xóa nhưng tiến trình còn mở, bản sao lưu sai quyền hoặc sai đường dẫn | `setup`; bước kiểm tra nội dung tệp có chuỗi đánh dấu theo tham số |
+| Tự động hóa chấm theo hệ quả | Học viên đặt lịch tác vụ (ví dụ sao lưu mỗi phút, giữ 3 bản); hệ thống không chạy script của học viên mà kiểm tra kết quả tác vụ để lại theo thời gian | Bước kiểm tra đọc kết quả: số bản, khoảng cách thời gian, nội dung |
 
 ### 5.5. Chức năng dùng chung
 
@@ -266,6 +276,8 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-C2.9: Trong ngữ cảnh `RECORDED_ONLY`, học viên chỉ nhận thông báo đã ghi nhận; trong ngữ cảnh `DISABLED`, nút kiểm tra không hiển thị và API từ chối (409 `CHECK_DISABLED`).
 - AC-C2.10: Ở chế độ `FULL`, bước trả lời nhận tối đa `maxTries` lần; hết lượt mà chưa đúng thì bước không đạt và API từ chối (409 `ANSWER_TRIES_EXHAUSTED`). Câu trả lời khác đáp án chỉ ở khoảng trắng đầu cuối hoặc hoa thường (khi không bật phân biệt) được chấp nhận.
 - AC-C2.11: Ở chế độ `RECORDED_ONLY`, `DISABLED`, học viên chỉ nhận thông báo đã ghi nhận câu trả lời; khi chấm cuối, bước trả lời được chấm theo câu trả lời cuối cùng.
+- AC-C2.12: Bước chẩn đoán lấy đáp án theo lỗi cài sẵn chấm đúng theo các lỗi đã chọn cho biến thể; với chọn nhiều, mỗi phương án đúng được điểm, mỗi phương án sai bị trừ tương ứng, điểm không âm; mặc định chỉ được trả lời một lần.
+- AC-C2.13: Khi bài lab có bước `answerFirst`, yêu cầu kiểm tra các bước khác trước khi bước đó được trả lời bị từ chối (409 `CHECK_LOCKED`); chấm cuối vẫn chấm mọi bước.
 
 ### 7.3. M3
 

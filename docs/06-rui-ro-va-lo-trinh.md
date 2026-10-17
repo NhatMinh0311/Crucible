@@ -37,7 +37,7 @@ theo quy trình bình thường.
 | S1 | gVisor chạy được trên node k3s trong máy ảo KVM; exec, attach, NetworkPolicy, giới hạn tài nguyên hoạt động với pod gVisor | 2 ngày | Pod `runtimeClassName: gvisor` chạy bash, exec và attach thành công; các kiểm thử I1–I7 tại CR-DOC-05 cho kết quả mong đợi |
 | S2 | Thời gian từ khi nhận pod ấm tới khi sẵn sàng (gắn nhãn, ghi tệp, chạy setup) | 2 ngày | Số đo p50, p95 trên 50 lần với bài `linux-user-nginx` |
 | S3 | Gateway Go chuyển tiếp WebSocket ↔ exec và ghi asciicast | 3 ngày | Gõ lệnh tương tác qua trình duyệt với xterm.js; độ trễ khứ hồi p95 đo được; bản ghi phát lại được |
-| S4 | Image nền và hai bài mẫu chạy đúng trong gVisor | 2 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công |
+| S4 | Image nền và bốn bài mẫu chạy đúng trong gVisor; các cơ chế mẫu kịch bản cần: `cron`, tiến trình nền tách khỏi phiên, `/proc/<PID>/fd`, `netstat -ltnp` hiện PID, iptables | 3 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công; ghi rõ cơ chế nào không dùng được |
 | S5 | Toàn bộ thành phần nền tảng vừa bộ nhớ của `cr-server` | 1 ngày | Số đo bộ nhớ thực tế của từng thành phần sau khi cài |
 | S6 | Docker Engine chạy bên trong pod gVisor | 1 ngày | Kết luận khả thi hay không |
 

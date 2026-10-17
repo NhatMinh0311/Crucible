@@ -134,6 +134,7 @@ Luồng thay thế và ngoại lệ:
 | 3d | Phiên dùng CPU bất thường kéo dài | Cảnh báo trong terminal; tiếp diễn 5 phút thì phiên bị kết thúc, lượt làm bài tạm dừng, giữ điểm các bước đã đạt; lần phát hiện được ghi nhận cho quản trị (AC-R5.1) |
 | 4a | Sinh viên mở gợi ý | Hệ thống hỏi xác nhận, hiển thị tỉ lệ trừ điểm của gợi ý trước khi mở |
 | 4b | Bước trả lời đã dùng hết số lần mà chưa đúng | Bước khóa ở trạng thái không đạt; các bước khác vẫn làm được (AC-C2.10) |
+| 4c | Bài lab yêu cầu chẩn đoán trước | Nút "Kiểm tra" của các bước khác bị khóa kèm chú thích tới khi sinh viên nộp chẩn đoán (AC-C2.13) |
 | 6a | Bài tập hết hạn khi đang làm | Hệ thống nộp tự động tại thời điểm hết hạn cuối cùng |
 
 | Mục | Nội dung |
@@ -200,7 +201,8 @@ Luồng chính:
 
 Luồng chính:
 1. Giảng viên nhập thông tin theo từng phần của form; có thể chuyển sang tab YAML và ngược lại. Mỗi bước chọn loại kiểm tra
-   trạng thái (lệnh kiểm tra) hoặc trả lời câu hỏi (đáp án, biểu thức chính quy hoặc lệnh lấy đáp án, số lần tối đa).
+   trạng thái (lệnh kiểm tra) hoặc trả lời câu hỏi (tự luận: đáp án, biểu thức chính quy hoặc lệnh lấy đáp án; trắc nghiệm:
+   phương án, đáp án cố định hoặc theo lỗi cài sẵn; số lần tối đa; bắt buộc trả lời trước khi kiểm tra).
 2. Hệ thống kiểm tra lược đồ và quy tắc ngữ nghĩa khi nhập, hiển thị lỗi tại trường tương ứng.
 3. Giảng viên xem trước mô tả các bước với một biến thể.
 4. Giảng viên chạy thử: chọn seed, nhận một phiên có terminal, chạy từng lệnh kiểm tra, chạy lời giải mẫu.

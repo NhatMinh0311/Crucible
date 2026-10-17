@@ -129,6 +129,8 @@ Phác thảo dưới đây xác định vị trí và nội dung; hình ảnh c�
 - Kỳ thi: nút "Gia hạn" ẩn; nút "Kiểm tra" và "Gợi ý" hiển thị theo cấu hình; đồng hồ tính tới giờ kết thúc chung.
 - Bước trả lời: ô nhập kèm gợi ý định dạng và số lần còn lại; trả lời sai hiển thị "Chưa đúng — còn n lần"; ở kỳ thi
   `RECORDED_ONLY`, `DISABLED` ô nhập vẫn hiển thị, nút ghi "Lưu câu trả lời" và không hiện số lần.
+- Bước chẩn đoán trắc nghiệm: danh sách ô chọn (một hoặc nhiều), nút "Nộp chẩn đoán" có hộp xác nhận khi chỉ được nộp
+  một lần. Trước khi nộp, nút "Kiểm tra" của các bước khác mờ đi kèm chú thích "Nộp chẩn đoán trước khi kiểm tra".
 - Phiên ở trạng thái chuẩn bị, hàng đợi hoặc khôi phục: cột terminal hiển thị trạng thái theo UX1 thay cho terminal.
 - Khung `warning` từ máy chủ hiển thị thành dải cảnh báo trên terminal kèm đồng hồ tới `terminateAt`: "Không có thao tác
   — phiên sẽ kết thúc lúc …" (`IDLE`) hoặc "Môi trường đang dùng CPU liên tục ở mức cao, ảnh hưởng người khác. Hãy dừng
