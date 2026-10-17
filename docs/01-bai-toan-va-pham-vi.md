@@ -134,7 +134,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | C02 | Tham số với bộ sinh `pick`, `range`, `pattern`, `subnet`; ràng buộc giá trị khác nhau |
 | C03 | Lỗi cài sẵn chọn ngẫu nhiên theo seed từ danh sách do giảng viên khai báo |
 | C04 | Xuất bản phiên bản bất biến; lượt làm bài đang chạy giữ phiên bản cũ |
-| C05 | Kiểm thử bài lab khi xuất bản: lời giải mẫu đạt mọi bước với N seed; môi trường mới dựng không đạt bước nào |
+| C05 | Kiểm thử bài lab khi xuất bản: lời giải mẫu đạt mọi bước với N seed; môi trường mới dựng không đạt bước nào; đo bộ nhớ cao nhất để cảnh báo khi mức tài nguyên đã chọn không đủ |
 | C06 | Sinh biến thể tất định cho mỗi học viên theo ngữ cảnh (bài tập, kỳ thi) |
 | C07 | Lượt làm bài: tạo, tiếp tục bằng phiên mới, nộp bài |
 | C14 | Khôi phục tiến độ khi tiếp tục: chạy lời giải mẫu của các bước đã đạt trên phiên mới trước khi giao cho học viên |
@@ -224,6 +224,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-C1.5: Sửa trên form rồi chuyển sang tab YAML và ngược lại không làm mất hoặc thay đổi nội dung ngoài phần đã sửa.
 - AC-C1.6: Phiên chạy thử của giảng viên dùng biến thể theo seed được chọn và không tạo lượt làm bài.
 - AC-C1.7: Bài lab riêng tư không hiển thị với giảng viên khác; nhân bản tạo bài lab mới thuộc người nhân bản, ghi nguồn gốc.
+- AC-C1.8: Kiểm thử bài lab không đạt khi một seed bị dừng vì vượt giới hạn bộ nhớ; kết quả kiểm thử cảnh báo khi bộ nhớ cao nhất vượt 80% giới hạn của mức tài nguyên đã chọn, kèm đề xuất mức tài nguyên.
 
 **US-C2 (C06–C10, C14–C16)** — Là học viên, tôi muốn biết bước nào đã làm đúng và nhận điểm công bằng.
 - AC-C2.1: Một lượt làm bài luôn dùng cùng một biến thể, kể cả khi tiếp tục bằng phiên mới; lượt làm bài mới của cùng bài luyện tập nhận biến thể mới; học viên khác nhau trong cùng kỳ thi nhận biến thể khác nhau khi miền tham số cho phép.

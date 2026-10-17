@@ -378,12 +378,23 @@ components:
                   format: uuid
                 endReason:
                   type: string
-                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST]
+                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST, OUT_OF_MEMORY]
                 endedAt:
                   type: string
                   format: date-time
                 usedMinutes:
                   type: integer
+                resourceUsage:
+                  description: Có khi phiên đã từng sẵn sàng.
+                  type: object
+                  required: [memoryPeakBytes, memoryLimitBytes, oomKilled]
+                  properties:
+                    memoryPeakBytes:
+                      type: integer
+                    memoryLimitBytes:
+                      type: integer
+                    oomKilled:
+                      type: boolean
                 labels:
                   $ref: '#/components/schemas/Labels'
 

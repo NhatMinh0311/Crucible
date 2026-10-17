@@ -169,6 +169,12 @@ M2 chỉ xuất bản một phiên bản khi các điều kiện sau đúng vớ
 1. Trên môi trường mới dựng: mọi bước `expectInitially: fail` không đạt, mọi bước `expectInitially: pass` đạt; bước
    `expectInitially: any` không được kiểm tra.
 2. Sau khi chạy toàn bộ lời giải mẫu theo thứ tự bước: mọi bước đạt.
+3. Không phiên nào kết thúc vì vượt giới hạn bộ nhớ (`OUT_OF_MEMORY`).
+
+Sau khi kết thúc các phiên kiểm thử, M2 đọc `resourceUsage` của từng phiên. Nếu bộ nhớ cao nhất của một seed vượt 80%
+giới hạn của mức tài nguyên đã chọn, phiên bản vẫn được xuất bản nhưng kết quả kiểm thử kèm cảnh báo và đề xuất mức
+tài nguyên lớn hơn. Khi điều kiện 3 không đạt, kết quả đề xuất mức lớn hơn; nếu đã ở mức lớn nhất, đề xuất giảm nhu cầu
+bộ nhớ của bài lab. Số đo dựa trên lời giải mẫu nên chỉ là ước tính cho thao tác thật của học viên.
 
 ## 5. Sự kiện
 

@@ -44,6 +44,7 @@ và gVisor; API và sự kiện giữ nguyên.
 | `status.node`, `status.podName`, `status.source` | Nơi chạy; `source` là `warm` hoặc `cold` |
 | `status.admittedAt`, `status.readyAt`, `status.expiresAt`, `status.endedAt`, `status.lostAt` | Mốc thời gian |
 | `status.idleWarningAt` | Thời điểm đã gửi cảnh báo không hoạt động |
+| `status.memoryPeakBytes`, `status.oomKilled` | Bộ nhớ cao nhất đã đo, môi trường bị dừng vì vượt bộ nhớ (mục 5.5) |
 
 Thời điểm hoạt động cuối được `runtime-gateway` ghi vào annotation `crucible.dev/last-activity`, tối đa mỗi 30 giây một lần.
 
@@ -84,6 +85,7 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.14 | Mỗi phiên có tối đa một kết nối tương tác; kết nối mới đóng kết nối cũ với mã 4009 | CR-DOC-03 mục 6 |
 | BR-M1.15 | Phiên `EXAM` không được xếp lên node `crucible.dev/node-class=volatile` | CR-DOC-04 mục 4 |
 | BR-M1.16 | Mỗi phiên chạy tối đa một lệnh exec (`CHECK` hoặc `RESTORE`) tại một thời điểm (`EXEC_BUSY`); chỉ ở pha `READY`, `EXPIRING`. `RESTORE` chạy bằng shell và `PATH` của môi trường, `CHECK` chạy bằng bộ công cụ chỉ đọc | CR-DOC-03 mục 7 |
+| BR-M1.17 | Môi trường bị dừng vì vượt giới hạn bộ nhớ làm phiên chuyển `TERMINATED` với lý do `OUT_OF_MEMORY`; pod không được khởi động lại | AC-C1.8 |
 
 ## 5. Cấp phát
 
@@ -146,6 +148,14 @@ Trạng thái trong `LabSession` là nguồn sự thật. Sau mỗi lần đổi
 vào `outbox` trong cùng một transaction, với `sequence` tăng dần theo phiên. Nếu operator dừng giữa hai bước, lần đối
 soát sau phát hiện pha trong CSDL khác pha trong `LabSession` và ghi bù; `sequence` bảo đảm bên nhận bỏ qua sự kiện trùng.
 
+### 5.5. Đo tài nguyên của phiên
+
+Operator lấy mẫu bộ nhớ làm việc của pod phiên mỗi 15 giây từ resource metrics của kubelet và giữ giá trị cao nhất
+trong `status.memoryPeakBytes`. Trạng thái kết thúc của container có lý do `OOMKilled` được ghi thành `oomKilled`
+(BR-M1.17). Khi phiên kết thúc, giá trị được ghi vào bảng `sessions`, trả trong `resourceUsage` của `getSession` và
+sự kiện `runtime.session.terminated`. Độ chính xác của số đo dưới gVisor (phần chi phí của sandbox có bị tính vào hay
+không) được xác định ở thử nghiệm S5.
+
 ## 6. Terminal
 
 | Mục | Thiết kế |
@@ -186,6 +196,8 @@ erDiagram
         timestamptz ended_at
         int used_minutes
         text node
+        bigint memory_peak_bytes
+        bool oom_killed
     }
     quota_accounts {
         text ref PK

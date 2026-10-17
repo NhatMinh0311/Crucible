@@ -87,7 +87,7 @@ flowchart LR
 | SCR-22 | Lộ trình, bài tập, chính sách quá hạn, gia hạn riêng, tiến độ lớp | Giảng viên | M3 | UC12, UC13 |
 | SCR-23 | Thư viện bài lab: của tôi, được chia sẻ; nhân bản | Giảng viên | M2 | UC10 |
 | SCR-24 | Soạn bài lab: form theo phần, tab YAML, xem trước với biến thể | Giảng viên | M2 | UC07 |
-| SCR-25 | Chạy thử (terminal, chạy từng lệnh kiểm tra, chạy lời giải), kết quả kiểm thử khi xuất bản | Giảng viên | M2 | UC08, UC09 |
+| SCR-25 | Chạy thử (terminal, chạy từng lệnh kiểm tra, chạy lời giải), kết quả kiểm thử khi xuất bản kèm bộ nhớ cao nhất của từng seed so với giới hạn | Giảng viên | M2 | UC08, UC09 |
 | SCR-26 | Lên lịch kỳ thi: bài lab, giờ, hạn vào thi, phản hồi, gợi ý; sức chứa khả dụng theo khung giờ; khi không đủ chỗ: phần thiếu và khung giờ gợi ý | Giảng viên | M3 | UC14 |
 | SCR-27 | Giám sát kỳ thi: bảng sinh viên, trạng thái, tiến độ, bù giờ, tín hiệu | Giảng viên, trợ giảng | M3 | UC15 |
 | SCR-28 | Xem trực tiếp terminal, xem lại bản ghi | Giảng viên, trợ giảng | M3 (nhúng thành phần của M1) | UC15 |
@@ -214,7 +214,7 @@ Số chỗ cần bằng số sinh viên của lớp. Khung giờ gợi ý có c�
 | `RESTORING` | "Đang khôi phục tiến độ (k/n bước)" |
 | `IN_PROGRESS` | Trang làm bài |
 | `ENV_LOST` | "Môi trường gặp sự cố hạ tầng. Tiến độ đã được lưu." + nút "Tiếp tục"; với kỳ thi: "Đồng hồ tạm dừng, thời gian gián đoạn được bù" |
-| `SUSPENDED` | "Phiên đã kết thúc do hết hạn hoặc không hoạt động. Tiến độ đã được lưu." + nút "Tiếp tục" |
+| `SUSPENDED` | "Phiên đã kết thúc do hết hạn, không hoạt động hoặc vượt giới hạn bộ nhớ. Tiến độ đã được lưu." + nút "Tiếp tục" |
 | `GRADING` | "Đang chấm bài" |
 | `GRADED` | Kết quả (luyện tập, bài tập) hoặc "Đã nộp — điểm sẽ có khi giảng viên công bố" (kỳ thi) |
 

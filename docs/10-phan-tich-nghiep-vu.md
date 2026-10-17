@@ -206,6 +206,8 @@ Luồng chính:
 | Mã | Điều kiện | Xử lý |
 |---|---|---|
 | 5a | Kiểm thử không đạt | Hiển thị seed, bước, kết quả mong đợi và kết quả thực tế; phiên bản vẫn là nháp |
+| 5b | Một seed bị dừng vì vượt giới hạn bộ nhớ | Kiểm thử không đạt; đề xuất mức tài nguyên lớn hơn (AC-C1.8) |
+| 6b | Bộ nhớ cao nhất vượt 80% giới hạn | Phiên bản được xuất bản; kết quả kiểm thử kèm cảnh báo và đề xuất mức tài nguyên lớn hơn (AC-C1.8) |
 | 6a | Sửa bài đã xuất bản | Tạo phiên bản nháp mới; lượt làm bài và kỳ thi đã lên lịch giữ phiên bản cũ |
 
 | Mục | Nội dung |

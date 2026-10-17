@@ -552,7 +552,7 @@ components:
 
     EndReason:
       type: string
-      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST]
+      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST, OUT_OF_MEMORY]
 
     RenderedEnvironment:
       description: Phần `environment` của đặc tả bài lab sau khi kết xuất tham số, kèm script lỗi cài sẵn đã chọn. M1 không nhận tham số hay bước. Tổng kích thước tệp và setup không vượt 256 KiB.
@@ -660,10 +660,29 @@ components:
           $ref: '#/components/schemas/EndReason'
         failureDetail:
           type: string
+        resourceUsage:
+          $ref: '#/components/schemas/ResourceUsage'
         labels:
           type: object
           additionalProperties:
             type: string
+
+    ResourceUsage:
+      description: Mức dùng tài nguyên đo được của phiên, lấy mẫu mỗi 15 giây; có từ khi phiên sẵn sàng (CR-MOD-M1 mục 5.5).
+      type: object
+      required: [memoryPeakBytes, memoryLimitBytes, oomKilled]
+      properties:
+        memoryPeakBytes:
+          description: Bộ nhớ làm việc cao nhất đã đo, không gồm chi phí gVisor.
+          type: integer
+          format: int64
+        memoryLimitBytes:
+          description: Giới hạn bộ nhớ của mức tài nguyên.
+          type: integer
+          format: int64
+        oomKilled:
+          description: Môi trường bị dừng vì vượt giới hạn bộ nhớ.
+          type: boolean
 
     ExecRequest:
       type: object
