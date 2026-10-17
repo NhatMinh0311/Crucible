@@ -109,6 +109,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `VARIANT_UNSATISFIABLE` | 422 | M2 | Không sinh được biến thể thỏa ràng buộc `distinct` |
 | `CHECK_DISABLED` | 409 | M2 | Ngữ cảnh của lượt làm bài không cho học viên kiểm tra |
 | `ANSWER_TRIES_EXHAUSTED` | 409 | M2 | Bước trả lời đã dùng hết số lần trả lời |
+| `CHECK_LOCKED` | 409 | M2 | Bài lab yêu cầu trả lời bước chẩn đoán trước khi kiểm tra |
 | `PREREQUISITE_NOT_MET` | 403 | M3 | Chưa đạt bài tiên quyết |
 | `ATTEMPT_LIMIT` | 409 | M3 | Hết số lượt làm bài của bài tập |
 | `ASSIGNMENT_CLOSED` | 409 | M3 | Bài tập đã quá hạn |
@@ -146,7 +147,8 @@ tài khoản `instructor:` của giảng viên đang chạy thử.
 
 Lược đồ đầy đủ tại `contracts/lab-spec/lab-spec.schema.json`. Bốn bài mẫu tại `contracts/lab-spec/examples/` thể hiện
 các dạng bài tại CR-DOC-01 mục 5.4: cấu hình theo yêu cầu (`linux-user-nginx`), sửa hệ thống hỏng (`fix-broken-web`),
-bảo mật và gia cố (`harden-server`), điều tra và trả lời (`investigate-web-log`).
+bảo mật và gia cố (`harden-server`), điều tra và trả lời (`investigate-web-log`). Bài `fix-broken-web` có bước chẩn đoán
+trắc nghiệm lấy đáp án theo lỗi cài sẵn.
 
 Trường `machine` của bước và lỗi cài sẵn hiện chỉ nhận `main`; môi trường nhiều máy mở rộng giá trị này (ADR-0015).
 
@@ -162,6 +164,8 @@ Ngoài lược đồ, đặc tả phải thỏa các quy tắc sau (kiểm tra b
 6. `faults.pick` nhỏ hơn số lỗi trong danh sách; mã lỗi không trùng.
 7. Bước `check` có lời giải `run`; bước `answer` có lời giải `answer` hoặc `run`.
 8. Biểu thức `answer.regex` hợp lệ.
+9. Trắc nghiệm: mã phương án không trùng; `correct` chỉ gồm mã có trong `choices`; nhiều phương án đúng cần `multiple: true`;
+   với `correctFromFaults`, mọi lỗi cài sẵn có phương án cùng mã, và bài chọn nhiều lỗi (`faults.pick` > 1) cần `multiple: true`.
 
 ### 4.3. Kết xuất tham số
 
@@ -169,6 +173,8 @@ Ngoài lược đồ, đặc tả phải thỏa các quy tắc sau (kiểm tra b
   lệnh kiểm tra, thông điệp lỗi, gợi ý, lời giải.
 - Giá trị tham số chỉ gồm ký tự an toàn trong shell (chữ, số, `._/:@-`), được bảo đảm bởi bộ sinh và lược đồ, nên được
   chèn trực tiếp vào script mà không cần thoát ký tự.
+- Biến có sẵn `{{faults}}`: mã các lỗi cài sẵn được chọn cho biến thể, sắp theo tên, nối bằng dấu phẩy (ví dụ
+  `portConflict,serviceStopped`). Chỉ dùng trong bài có lỗi cài sẵn; `faults` không được dùng làm tên tham số.
 - M2 kết xuất toàn bộ đặc tả. M1 chỉ nhận phần `environment` đã kết xuất, đã nối script lỗi cài sẵn được chọn vào sau
   `setup`. M1 không nhận tham số, bước hay lời giải.
 
@@ -202,9 +208,11 @@ bộ nhớ của bài lab. Số đo dựa trên lời giải mẫu nên chỉ l�
 | Mục | Quy định |
 |---|---|
 | Chuẩn hóa | Bỏ khoảng trắng đầu và cuối; không phân biệt hoa thường trừ khi `caseSensitive: true`. Áp dụng cho câu trả lời và đáp án |
-| Đúng khi | Khớp một giá trị trong `accepted` (đã kết xuất tham số), hoặc khớp toàn bộ `regex` (RE2), hoặc bằng stdout của `from.run` |
+| Đúng khi (tự luận) | Khớp một giá trị trong `accepted` (đã kết xuất tham số), hoặc khớp toàn bộ `regex` (RE2), hoặc bằng stdout của `from.run` |
+| Trắc nghiệm | Phương án hiển thị theo thứ tự xáo trộn bằng `HMAC-SHA256(seed, "choice#" + id)`. Tập đúng là `correct`, hoặc các lỗi cài sẵn được chọn khi `correctFromFaults`. Chọn một: đúng thì đạt. Chọn nhiều: điểm = điểm bước × max(0, (số phương án đúng đã chọn − số phương án sai đã chọn) / số phương án đúng); đạt khi bằng điểm bước. Câu trả lời gửi lên là danh sách mã phương án |
+| `answerFirst` | Trước khi bước có `answerFirst` được trả lời (đúng, sai hoặc hết lượt), yêu cầu kiểm tra các bước `check` bị từ chối (409 `CHECK_LOCKED`). Không ảnh hưởng chấm ngầm và chấm cuối |
 | `from.run` | Chạy như lệnh kiểm tra (mục 7) tại thời điểm học viên trả lời; kết quả so khớp được lưu cùng câu trả lời |
-| Chế độ `FULL` | Học viên biết ngay đúng hay sai; tối đa `maxTries` lần cho mỗi bước trong một lượt làm bài; hết lượt mà chưa đúng thì bước không đạt (409 `ANSWER_TRIES_EXHAUSTED`); trả lời đúng thì bước khóa lại |
+| Chế độ `FULL` | Học viên biết ngay đúng hay sai; tối đa `maxTries` lần (mặc định 3 với tự luận, 1 với trắc nghiệm) cho mỗi bước trong một lượt làm bài; điểm của bước là điểm của lần trả lời cao nhất; hết lượt mà chưa đúng thì bước không đạt (409 `ANSWER_TRIES_EXHAUSTED`); trả lời đúng thì bước khóa lại |
 | Chế độ `RECORDED_ONLY`, `DISABLED` | Học viên vẫn nhập được câu trả lời, chỉ nhận thông báo đã ghi nhận; không giới hạn số lần; câu trả lời cuối cùng được dùng khi chấm cuối |
 | Gợi ý | Như bước `check` |
 | Khôi phục khi tiếp tục | Bước `answer` không cần khôi phục môi trường; kết quả đã ghi được giữ |

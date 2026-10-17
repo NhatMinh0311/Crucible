@@ -225,7 +225,7 @@
       "required": ["id", "title", "description", "points"],
       "if": { "required": ["type"], "properties": { "type": { "const": "answer" } } },
       "then": { "required": ["answer"], "not": { "anyOf": [{ "required": ["check"] }, { "required": ["expectInitially"] }] } },
-      "else": { "required": ["check"], "not": { "required": ["answer"] } },
+      "else": { "required": ["check"], "not": { "anyOf": [{ "required": ["answer"] }, { "required": ["answerFirst"] }] } },
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
         "type": {
@@ -237,12 +237,58 @@
         "description": { "$ref": "#/$defs/markdown" },
         "points": { "type": "integer", "minimum": 0, "maximum": 100 },
         "machine": { "$ref": "#/$defs/machine" },
+        "answerFirst": {
+          "description": "Chỉ với bước type: answer. Học viên phải nộp câu trả lời của bước này (đúng hay sai) trước khi kiểm tra được các bước check; chấm cuối vẫn chấm mọi bước.",
+          "type": "boolean",
+          "default": false
+        },
         "answer": {
-          "description": "Chỉ với bước type: answer. Khai báo ít nhất một trong accepted, regex, from.",
+          "description": "Chỉ với bước type: answer. Tự luận: khai báo ít nhất một trong accepted, regex, from. Trắc nghiệm: khai báo choices cùng đúng một trong correct, correctFromFaults.",
           "type": "object",
           "additionalProperties": false,
-          "anyOf": [{ "required": ["accepted"] }, { "required": ["regex"] }, { "required": ["from"] }],
+          "oneOf": [
+            {
+              "anyOf": [{ "required": ["accepted"] }, { "required": ["regex"] }, { "required": ["from"] }],
+              "not": { "anyOf": [{ "required": ["choices"] }, { "required": ["correct"] }, { "required": ["correctFromFaults"] }, { "required": ["multiple"] }] }
+            },
+            {
+              "required": ["choices"],
+              "oneOf": [{ "required": ["correct"] }, { "required": ["correctFromFaults"] }],
+              "not": { "anyOf": [{ "required": ["accepted"] }, { "required": ["regex"] }, { "required": ["from"] }, { "required": ["caseSensitive"] }, { "required": ["placeholder"] }] }
+            }
+          ],
           "properties": {
+            "choices": {
+              "description": "Trắc nghiệm: các phương án hiển thị cho học viên theo thứ tự xáo trộn theo seed.",
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "label"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/identifier" },
+                  "label": { "description": "Mẫu.", "type": "string", "minLength": 1, "maxLength": 200 }
+                }
+              }
+            },
+            "multiple": {
+              "description": "Cho chọn nhiều phương án; điểm theo từng phương án (CR-DOC-03 mục 4.6).",
+              "type": "boolean",
+              "default": false
+            },
+            "correct": {
+              "description": "Mã các phương án đúng.",
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/identifier" }
+            },
+            "correctFromFaults": {
+              "description": "Phương án đúng là các lỗi cài sẵn được chọn cho biến thể; mã phương án trùng mã lỗi.",
+              "const": true
+            },
             "accepted": {
               "description": "Mẫu. Các đáp án được chấp nhận.",
               "type": "array",
@@ -268,11 +314,10 @@
             },
             "caseSensitive": { "type": "boolean", "default": false },
             "maxTries": {
-              "description": "Số lần trả lời tối đa khi học viên được xem kết quả (chế độ FULL).",
+              "description": "Số lần trả lời tối đa khi học viên được xem kết quả (chế độ FULL). Mặc định 3 với tự luận, 1 với trắc nghiệm.",
               "type": "integer",
               "minimum": 1,
-              "maximum": 10,
-              "default": 3
+              "maximum": 10
             },
             "placeholder": { "description": "Gợi ý định dạng trong ô nhập, ví dụ 'Địa chỉ IPv4'.", "type": "string", "maxLength": 80 }
           }

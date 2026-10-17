@@ -59,10 +59,28 @@ faults:
         setsid busybox httpd -p {{port}} -h /tmp/legacy
 
 steps:
+  - id: diagnosis
+    type: answer
+    answerFirst: true
+    title: Chẩn đoán nguyên nhân
+    description: |
+      Trước khi sửa, hãy điều tra và chọn **tất cả** nguyên nhân gây ra sự cố. Bạn chỉ được nộp một lần;
+      nút "Kiểm tra" của các bước sau mở khi đã nộp chẩn đoán.
+    points: 20
+    answer:
+      multiple: true
+      correctFromFaults: true
+      choices:
+        - { id: serviceStopped, label: Dịch vụ nginx không chạy }
+        - { id: badPermission, label: nginx không có quyền đọc thư mục nội dung trang }
+        - { id: syntaxError, label: Tệp cấu hình của trang có lỗi cú pháp }
+        - { id: portConflict, label: 'Một tiến trình khác đang chiếm cổng {{port}}' }
+        - { id: diskFull, label: Đĩa đầy nên nginx không ghi được nhật ký }
+        - { id: dnsBroken, label: Phân giải tên miền trên máy chủ bị hỏng }
   - id: nginxListening
     title: nginx lắng nghe đúng cổng
     description: Tiến trình đang lắng nghe cổng `{{port}}` phải là nginx.
-    points: 30
+    points: 20
     expectInitially: any
     check:
       run: netstat -ltnp | grep ':{{port}} ' | grep -q nginx
@@ -70,7 +88,7 @@ steps:
   - id: serving
     title: Trang hoạt động trở lại
     description: Trang `http://127.0.0.1:{{port}}/` trả về nội dung ban đầu.
-    points: 70
+    points: 60
     check:
       run: test "$(curl -sf http://127.0.0.1:{{port}}/)" = '{{marker}}'
       timeoutSeconds: 8
@@ -80,6 +98,8 @@ steps:
         penalty: 0.15
 
 solution:
+  - step: diagnosis
+    answer: '{{faults}}'
   - step: nginxListening
     run: |
       sed -i 's/root \/var\/www\/app$/root \/var\/www\/app;/' /etc/nginx/sites-enabled/app

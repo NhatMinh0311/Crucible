@@ -32,6 +32,8 @@ def templated_fields(spec):
             if "failureMessage" in step["check"]:
                 yield f"steps[{i}].check.failureMessage", step["check"]["failureMessage"]
         answer = step.get("answer", {})
+        for j, choice in enumerate(answer.get("choices", [])):
+            yield f"steps[{i}].answer.choices[{j}].label", choice["label"]
         for j, accepted in enumerate(answer.get("accepted", [])):
             yield f"steps[{i}].answer.accepted[{j}]", accepted
         if "regex" in answer:
@@ -49,8 +51,14 @@ def semantic_errors(spec):
     params = spec.get("params", {})
     used = set()
 
+    if "faults" in params:
+        errors.append("params.faults: tên 'faults' dành cho biến có sẵn (CR-DOC-03 mục 4.3)")
     for where, text in templated_fields(spec):
         for name in PLACEHOLDER.findall(text):
+            if name == "faults":
+                if "faults" not in spec:
+                    errors.append(f"{where}: dùng biến 'faults' nhưng bài lab không có lỗi cài sẵn")
+                continue
             if name not in params:
                 errors.append(f"{where}: tham số '{name}' chưa được khai báo")
             used.add(name)
@@ -78,6 +86,25 @@ def semantic_errors(spec):
         kind = kinds.get(sol["step"])
         if kind == "check" and "run" not in sol:
             errors.append(f"solution[{i}]: bước '{sol['step']}' là bước kiểm tra, lời giải phải dùng run")
+    fault_ids = [f["id"] for f in spec.get("faults", {}).get("from", [])]
+    for i, step in enumerate(spec["steps"]):
+        answer = step.get("answer", {})
+        choice_ids = [c["id"] for c in answer.get("choices", [])]
+        if len(choice_ids) != len(set(choice_ids)):
+            errors.append(f"steps[{i}].answer.choices: mã phương án bị trùng")
+        for cid in answer.get("correct", []):
+            if cid not in choice_ids:
+                errors.append(f"steps[{i}].answer.correct: '{cid}' không có trong choices")
+        if len(answer.get("correct", [])) > 1 and not answer.get("multiple"):
+            errors.append(f"steps[{i}].answer: nhiều phương án đúng cần multiple: true")
+        if answer.get("correctFromFaults"):
+            if not fault_ids:
+                errors.append(f"steps[{i}].answer.correctFromFaults: bài lab không có lỗi cài sẵn")
+            missing = sorted(set(fault_ids) - set(choice_ids))
+            if missing:
+                errors.append(f"steps[{i}].answer.choices: thiếu phương án cho lỗi cài sẵn {', '.join(missing)}")
+            if spec.get("faults", {}).get("pick", 1) > 1 and not answer.get("multiple"):
+                errors.append(f"steps[{i}].answer: bài chọn nhiều lỗi cài sẵn cần multiple: true")
     for i, step in enumerate(spec["steps"]):
         regex = step.get("answer", {}).get("regex")
         if regex:
