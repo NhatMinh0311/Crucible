@@ -110,6 +110,10 @@ Quy định:
 | Bài mạng nhiều máy | Chuẩn bị hợp đồng (khái niệm máy), hiện thực sau MVP (ADR-0015) | Đưa vào MVP tối đa 2 máy; giữ nguyên |
 | Trả lời sai ở bước trả lời | Tối đa N lần do giảng viên đặt, mặc định 3 | Trừ điểm mỗi lần sai; không giới hạn |
 | So khớp câu trả lời | Chuẩn hóa khoảng trắng, hoa thường; nhiều đáp án; tùy chọn biểu thức chính quy | Khớp chính xác; thêm kiểu số có sai số |
+| Mẫu kịch bản bổ sung | Sự cố tái phát, truy dấu xâm nhập, chuỗi manh mối, cứu dữ liệu, tự động hóa chấm theo hệ quả, chẩn đoán nguyên nhân | Ít quyền nhất (để sau) |
+| Số lần chọn khi chẩn đoán trắc nghiệm | Mặc định 1, giảng viên đổi được | Mặc định 3 như tự luận |
+| Chấm chẩn đoán nhiều lỗi | Điểm theo từng phương án, chọn sai bị trừ, không âm | Đúng cả tập mới đạt; mỗi lỗi một câu |
+| Thứ tự chẩn đoán và sửa | Khóa kiểm tra các bước sửa tới khi đã nộp chẩn đoán | Không ràng buộc; chẩn đoán trước khi có terminal |
 | Kênh thông báo | Trong ứng dụng và email cho sự kiện quan trọng | Chỉ trong ứng dụng |
 | Thiết bị | Làm bài trên máy tính; trang khác dùng được trên điện thoại | Chỉ máy tính |
 | Trước giờ thi | Phòng chờ có kiểm tra kết nối | Phòng chờ đơn giản; không có phòng chờ |
@@ -156,6 +160,7 @@ Quy định:
 | 15 | Hỏi hệ thống đã ước lượng được sức chứa, báo giảng viên khi kỳ thi không đủ chỗ, giới hạn tài nguyên theo giảng viên chưa | Đối chiếu thiết kế, chỉ ra 4 thiếu sót (phản hồi khi thiếu chỗ, tài nguyên bài lab không được đo, chưa có giới hạn theo giảng viên, bài tập không có cảnh báo tải); hỏi đợt 8 | Chọn phương án cho 4 câu hỏi |
 | 16 | Hỏi cơ chế giám sát phiên bị dùng chạy tiến trình nặng | Đối chiếu biện pháp hiện có (chặn mạng, giới hạn tài nguyên, thời hạn); chỉ ra thiếu sót về CPU kéo dài và máy chủ gói có thể bị dùng làm proxy; hỏi đợt 9; cập nhật hợp đồng, tài liệu, backlog | Chọn phương án cho 3 câu hỏi |
 | 17 | Hỏi các dạng bài hiện có; hỏi bài quản trị mạng và số pod mỗi phiên | Liệt kê hai dạng hiện có và ba dạng phổ biến chưa hỗ trợ trọn vẹn; phân tích ba mức bài mạng; hỏi đợt 10; thêm bước trả lời, hai bài mẫu, danh mục dạng bài, ADR-0015 | Chọn dạng điều tra và gia cố, để sau dạng viết script; chọn phương án cho 3 câu hỏi |
+| 18 | Hỏi thêm dạng bài sáng tạo ít thay đổi | Đề xuất 5 mẫu kịch bản dùng cơ chế sẵn có và 2 dạng cần thay đổi nhỏ; hỏi đợt 11 về chẩn đoán; thêm trắc nghiệm, biến `{{faults}}`, `answerFirst`, bước chẩn đoán trong bài mẫu | Chọn 6 dạng; chọn phương án cho 3 câu hỏi |
 
 ### 3.6. Các lần điều chỉnh hướng
 
@@ -184,4 +189,4 @@ Quy định:
 |---|---|---|
 | 1.0 | 17/10/2026 | Ghi nhận giai đoạn 1 |
 | 1.1 | 17/10/2026 | Vòng 15, 16: sức chứa, hạn mức theo giảng viên, giám sát tài nguyên |
-| 1.2 | 18/10/2026 | Vòng 17: dạng bài, bài mạng nhiều máy |
+| 1.2 | 18/10/2026 | Vòng 17: dạng bài, bài mạng nhiều máy; vòng 18: mẫu kịch bản, chẩn đoán |

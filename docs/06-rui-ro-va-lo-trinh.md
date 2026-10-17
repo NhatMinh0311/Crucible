@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-06 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 đến CR-DOC-05, CR-DOC-07 Quy trình phát triển |
 
@@ -101,3 +101,4 @@ Một chức năng được coi là hoàn thành khi:
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
+| 1.1 | 18/10/2026 | Thử nghiệm S4 kiểm chứng thêm cơ chế của mẫu kịch bản |

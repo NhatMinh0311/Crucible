@@ -497,4 +497,4 @@ Liên kết giữa các module (mũi tên đi qua ranh giới namespace) chỉ l
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | UC03 3d, UC09 5b và 6b, UC11 5a, UC13 (mục 3.9), UC14 2a và 2b; tài khoản hạn mức phân cấp trong mô hình miền |
-| 1.2 | 18/10/2026 | Bước trả lời trong UC03 và soạn bài lab |
+| 1.2 | 18/10/2026 | Bước trả lời trong UC03 và soạn bài lab; UC03 4c |

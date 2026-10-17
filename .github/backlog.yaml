@@ -38,12 +38,12 @@ issues:
   - {title: "Sinh biến thể tất định theo seed HMAC, lỗi cài sẵn", owner: m2, milestone: MA, labels: [m2, feature], refs: "C02, C03, C06; AC-C2.1, AC-C2.2; CR-DOC-03 mục 4.4"}
   - {title: "Lượt làm bài qua content-api: tạo, đọc, nộp; yêu cầu phiên từ runtime-api", owner: m2, milestone: MA, labels: [m2, feature], refs: "C07; contracts/content-api.yaml"}
   - {title: "Kiểm tra bước, điểm thành phần, gợi ý có trừ điểm, trang làm bài", owner: m2, milestone: MA, labels: [m2, feature], refs: "C08, C09; AC-C2.3-AC-C2.6; SCR-12"}
-  - {title: "Bước trả lời: so khớp đáp án, giới hạn số lần, chế độ phản hồi, ô trả lời trên trang làm bài", owner: m2, milestone: MB, labels: [m2, feature], refs: "C17; AC-C2.10, AC-C2.11; CR-DOC-03 mục 4.6; SCR-12"}
+  - {title: "Bước trả lời: so khớp đáp án, giới hạn số lần, chế độ phản hồi, ô trả lời trên trang làm bài", owner: m2, milestone: MB, labels: [m2, feature], refs: "C17; AC-C2.10-AC-C2.13; CR-DOC-03 mục 4.3, 4.6; SCR-12"}
   - {title: "Form soạn bài lab đồng bộ YAML, xem trước biến thể, chạy thử", owner: m2, milestone: MB, labels: [m2, feature], refs: "C01, C13; AC-C1.5, AC-C1.6; SCR-24, SCR-25"}
   - {title: "Kiểm thử bài lab khi xuất bản với 5 seed", owner: m2, milestone: MC, labels: [m2, feature], refs: "C05; AC-C1.2, AC-C1.8; CR-DOC-03 mục 4.5"}
   - {title: "Chấm cuối, tiếp tục và khôi phục tiến độ, chấm ngầm, chế độ phản hồi", owner: m2, milestone: MC, labels: [m2, feature], refs: "C10, C14-C16; AC-C2.5, AC-C2.7-AC-C2.9"}
   - {title: "Thư viện bài lab: riêng tư, chia sẻ, nhân bản", owner: m2, milestone: MC, labels: [m2, feature], refs: "C11; AC-C1.7; SCR-23"}
-  - {title: "Bộ 10 bài lab mẫu đủ các dạng", owner: m2, milestone: MD, labels: [m2, content], refs: "CR-DOC-01 mục 5.4; CR-DOC-12 mục 6"}
+  - {title: "Bộ 10 bài lab mẫu đủ các dạng và mẫu kịch bản", owner: m2, milestone: MD, labels: [m2, content], refs: "CR-DOC-01 mục 5.4; CR-DOC-12 mục 6"}
 
   # M3
   - {title: "Viết tài liệu thiết kế module M3 (docs/modules/m3-learning.md)", owner: m3, milestone: MA, labels: [m3, docs], refs: "CR-DOC-06 mục 5; docs/modules/_mau.md"}

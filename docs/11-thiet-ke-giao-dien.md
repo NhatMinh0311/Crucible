@@ -266,4 +266,4 @@ outbox (CR-DOC-01 L15).
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Bố cục SCR-26 khi thiếu sức chứa; cảnh báo CPU trên SCR-12, SCR-27; SCR-21, SCR-22, SCR-25, SCR-40, SCR-41 |
-| 1.2 | 18/10/2026 | Ô trả lời trên SCR-12, chọn loại bước trên SCR-24 |
+| 1.2 | 18/10/2026 | Ô trả lời trên SCR-12, chọn loại bước trên SCR-24; bước chẩn đoán trên SCR-12 |
