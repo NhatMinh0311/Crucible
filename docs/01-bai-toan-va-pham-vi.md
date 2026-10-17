@@ -60,6 +60,19 @@ mờ giữa module và hạn mức theo tài khoản hạn mức (ADR-0013).
 | Người vận hành của đơn vị | Ngoài hệ thống | Cài đặt, nâng cấp, sao lưu, giám sát bản cài đặt trên hạ tầng của đơn vị theo tài liệu phát hành |
 | Hệ thống chấm bài lab | Nội bộ | Chạy lời giải mẫu để kiểm thử bài lab trước khi xuất bản |
 
+### 2.1. Ràng buộc dự án
+
+| Loại | Ràng buộc |
+|---|---|
+| Nhân lực | 3 thành viên, mỗi người phụ trách một module; thành viên dùng trợ lý AI để viết mã |
+| Thời gian | Khoảng 11 tuần từ khi đề tài được duyệt (CR-DOC-06 mục 4) |
+| Hạ tầng | Một máy vật lý 16 luồng CPU, 38 GB bộ nhớ chạy toàn bộ cụm chuẩn; không có ngân sách cloud |
+| Chi phí | Chỉ dùng phần mềm mã nguồn mở và dịch vụ miễn phí (GitHub, GHCR, Tailscale gói miễn phí) |
+| Công nghệ | Go cho M1; Spring Boot cho M2, M3; React cho giao diện; Kubernetes (k3s) |
+| Ngôn ngữ | Giao diện và tài liệu tiếng Việt |
+| Giấy phép | Mã nguồn phát hành theo AGPL-3.0; phụ thuộc phải có giấy phép tương thích |
+| Học phần | Đánh giá theo module của từng thành viên; tài liệu và nhật ký sử dụng AI phục vụ báo cáo |
+
 ## 3. Thuật ngữ
 
 | Thuật ngữ | Định nghĩa |
@@ -138,17 +151,18 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | Mã | Chức năng |
 |---|---|
 | L01 | Lớp học: tạo lớp; nhập danh sách sinh viên từ tệp CSV (mã số sinh viên, họ tên, email trường); sinh viên đăng nhập lần đầu bằng email trùng được gắn vào lớp; thêm giảng viên phụ trách và trợ giảng |
-| L02 | Lộ trình: chuỗi bài lab có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm |
+| L02 | Lộ trình: chuỗi bài lab luyện tập có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm; không giới hạn số lượt; không tính vào điểm học phần, giảng viên theo dõi tiến độ của lớp |
 | L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do |
 | L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên, hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
 | L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
 | L06 | Bù giờ khi phiên thi bị gián đoạn do sự cố hạ tầng, có giới hạn và ghi nhật ký |
 | L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal |
-| L08 | Xem lại bản ghi phiên |
+| L08 | Xem lại bản ghi phiên: giảng viên phụ trách và trợ giảng xem mọi bản ghi của lớp; sinh viên xem bản ghi phiên thi của chính mình sau khi điểm được công bố |
 | L09 | Tín hiệu gian lận: lộ giá trị biến thể, chuỗi lệnh tương đồng, kết nối từ hai địa chỉ, dán khối lớn |
 | L13 | Xử lý tín hiệu gian lận: giảng viên lập biên bản với một trong ba kết luận `DISMISSED` (bác bỏ), `WARNED` (nhắc nhở), `VOIDED` (hủy kết quả, điểm 0) kèm lý do; học viên được thông báo và được phúc khảo |
 | L10 | Bảng điểm lớp; xuất CSV |
-| L11 | Phúc khảo: học viên gửi yêu cầu, giảng viên điều chỉnh điểm có ghi lý do |
+| L11 | Phúc khảo: trong thời hạn (mặc định 7 ngày sau công bố, giảng viên đổi được), sinh viên gửi một yêu cầu cho mỗi bài, nêu bước và lý do; trợ giảng góp ý; giảng viên phụ trách giữ hoặc sửa điểm kèm trả lời |
+| L14 | Công bố điểm kỳ thi: sinh viên xem điểm từng bước và bản ghi phiên của mình; không xem lời giải mẫu |
 | L12 | Hạn mức giờ máy theo lớp |
 
 ### 5.4. Chức năng dùng chung
@@ -236,13 +250,16 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-L2.4: Phiên thi bị `LOST` được bù đúng thời gian gián đoạn, tối đa 15 phút cho mỗi học viên mỗi kỳ thi; mỗi lần bù được ghi nhật ký.
 - AC-L2.5: Chỉ giảng viên phụ trách và trợ giảng của lớp xem được trực tiếp terminal và bản ghi của học viên trong kỳ thi.
 - AC-L2.7: Sinh viên bắt đầu sau hạn chót được vào thi bị từ chối (409 `EXAM_ENTRY_CLOSED`); mọi sinh viên được nộp tự động tại giờ kết thúc chung cộng thời gian bù giờ của riêng mình.
+- AC-L2.8: Nộp bài thi trước giờ kết thúc cần xác nhận hai lần; sau khi nộp, lượt làm bài được chấm cuối, phiên được thu hồi và sinh viên không vào lại được.
+- AC-L2.9: Trước khi công bố, sinh viên không xem được điểm và bản ghi của kỳ thi; sau khi công bố, sinh viên xem được điểm từng bước và bản ghi của chính mình.
 - AC-L2.6: Màn hình giám sát hiển thị tiến độ từng học viên theo kết quả chấm ngầm gần nhất, kể cả khi học viên không được xem kết quả kiểm tra.
 
-**US-L3 (L09–L11, L13)** — Là giảng viên, tôi muốn phát hiện dấu hiệu gian lận và xử lý khiếu nại.
+**US-L3 (L08–L11, L13, L14)** — Là giảng viên, tôi muốn phát hiện dấu hiệu gian lận và xử lý khiếu nại.
 - AC-L3.1: Học viên nhập giá trị tham số thuộc biến thể của học viên khác trong cùng kỳ thi tạo tín hiệu `VARIANT_LEAK`.
 - AC-L3.2: Tín hiệu gian lận không tự động thay đổi điểm; trợ giảng đề xuất, giảng viên phụ trách lập biên bản có kết luận và lý do.
 - AC-L3.4: Kết luận `VOIDED` đặt điểm lượt làm bài về 0 qua điều chỉnh điểm của M2 (lưu điểm cũ); học viên nhận thông báo kèm lý do và gửi được yêu cầu phúc khảo.
 - AC-L3.3: Điều chỉnh điểm khi phúc khảo lưu điểm cũ, điểm mới, người điều chỉnh và lý do.
+- AC-L3.5: Yêu cầu phúc khảo gửi sau thời hạn hoặc gửi lần thứ hai cho cùng một bài bị từ chối (409 `REGRADE_NOT_ALLOWED`).
 
 ## 8. Yêu cầu chất lượng
 
