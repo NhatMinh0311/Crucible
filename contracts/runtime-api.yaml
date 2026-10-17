@@ -186,6 +186,8 @@ paths:
       operationId: createTerminalTicket
       summary: Cấp vé terminal tương tác
       description: Chỉ chủ phiên (người dùng có `sub` trùng `ownerRef.userId`). Vé dùng một lần, hết hạn sau 30 giây.
+      parameters:
+        - $ref: '#/components/parameters/Machine'
       responses:
         '201':
           description: Vé
@@ -210,6 +212,8 @@ paths:
         trước khi gọi; M1 ghi nhận `viewerUserId` vào nhật ký truy cập.
       security:
         - oidc: [runtime.view]
+      parameters:
+        - $ref: '#/components/parameters/Machine'
       requestBody:
         required: true
         content:
@@ -603,6 +607,12 @@ components:
       schema:
         type: string
         format: uuid
+    Machine:
+      name: machine
+      in: query
+      description: Máy trong môi trường. Phiên bản hiện tại chỉ có `main` (ADR-0015).
+      schema:
+        $ref: '#/components/schemas/MachineName'
     IdempotencyKey:
       name: Idempotency-Key
       in: header
@@ -629,6 +639,12 @@ components:
     Profile:
       type: string
       enum: [small, medium]
+
+    MachineName:
+      description: Tên máy trong môi trường. Phiên bản hiện tại chỉ có `main`; môi trường nhiều máy (R14) mở rộng danh sách (ADR-0015).
+      type: string
+      enum: [main]
+      default: main
 
     Priority:
       type: string
@@ -807,6 +823,8 @@ components:
       additionalProperties: false
       required: [script, timeoutSeconds, purpose]
       properties:
+        machine:
+          $ref: '#/components/schemas/MachineName'
         purpose:
           description: CHECK chạy lệnh kiểm tra bằng bộ công cụ chỉ đọc, thời hạn tối đa 15 giây; RESTORE chạy lời giải mẫu bằng /bin/sh và PATH chuẩn của môi trường để khôi phục tiến độ hoặc kiểm thử bài lab, tối đa 60 giây.
           type: string

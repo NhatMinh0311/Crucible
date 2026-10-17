@@ -34,7 +34,7 @@ Chi tiết tại CR-DOC-02.
 | [CR-DOC-10](docs/10-phan-tich-nghiep-vu.md) | Phân tích nghiệp vụ: use case, đặc tả use case, biểu đồ hoạt động, mô hình miền |
 | [CR-DOC-11](docs/11-thiet-ke-giao-dien.md) | Thiết kế giao diện: nguyên tắc trải nghiệm, hệ thống thiết kế, sơ đồ và danh mục màn hình, bố cục, trạng thái, thông báo |
 | [CR-DOC-12](docs/12-ke-hoach-kiem-thu.md) | Kế hoạch kiểm thử: mức kiểm thử, bất biến hệ thống, truy vết, kịch bản đầu cuối |
-| [`docs/adr/`](docs/adr/) | Hồ sơ quyết định kiến trúc ADR-0001 đến ADR-0014 |
+| [`docs/adr/`](docs/adr/) | Hồ sơ quyết định kiến trúc ADR-0001 đến ADR-0015 |
 | [`docs/modules/`](docs/modules/) | Thiết kế bên trong từng module; mẫu tại `_mau.md` |
 
 ## Cấu trúc kho mã
