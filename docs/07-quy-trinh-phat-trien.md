@@ -93,7 +93,31 @@ Helm chart `crucible` lên GHCR, tạo GitHub Release với ghi chú phát hành
 
 Workflow chỉ có quyền đọc nội dung kho mã, trừ job `images` có thêm quyền ghi package và `id-token` để ký.
 
-## 7. Truy vết
+## 7. Phát triển với trợ lý AI
+
+Các thành viên dùng trợ lý AI để viết mã; quy trình dưới đây bảo đảm thành viên duyệt giải pháp trước khi mã được viết
+và mã do AI viết tuân theo cùng một chuẩn.
+
+| Thành phần | Nội dung |
+|---|---|
+| `AGENTS.md` | Quy tắc bắt buộc cho mọi trợ lý AI: phạm vi sửa mã, không tự quyết định nghiệp vụ, kiểm thử mang mã tiêu chí, quy ước mã nguồn. `CLAUDE.md` nạp lại nội dung này cho Claude Code |
+| GitHub Spec Kit | Mỗi tính năng có `specs/<số>-<tên>/spec.md`, `plan.md`, `tasks.md`. Pull request đặc tả và kế hoạch được duyệt trước; pull request hiện thực dẫn tới thư mục `specs/` tương ứng. Phiên bản Spec Kit được cố định khi khởi tạo |
+| Skill `frontend-design` (Anthropic) | Dùng khi tạo màn hình mới để có định hướng thẩm mỹ thống nhất; kết hợp shadcn/ui và theme chung |
+| Review | Pull request do AI viết được người review theo CODEOWNERS đọc như mã do người viết; người mở pull request chịu trách nhiệm về nội dung |
+
+Luồng một tính năng:
+
+```mermaid
+flowchart LR
+    ac[Tiêu chí chấp nhận<br/>CR-DOC-01] --> spec[spec.md<br/>làm rõ trường hợp biên]
+    spec --> plan[plan.md]
+    plan --> pr1[PR đặc tả và kế hoạch<br/>được duyệt]
+    pr1 --> tasks[tasks.md]
+    tasks --> code[AI viết mã và kiểm thử<br/>theo từng việc]
+    code --> pr2[PR hiện thực<br/>CI, review]
+```
+
+## 8. Truy vết
 
 | Đối tượng | Truy vết qua |
 |---|---|
