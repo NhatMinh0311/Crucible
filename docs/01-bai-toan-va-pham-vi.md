@@ -163,6 +163,8 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L10 | Bảng điểm lớp; xuất CSV |
 | L11 | Phúc khảo: trong thời hạn (mặc định 7 ngày sau công bố, giảng viên đổi được), sinh viên gửi một yêu cầu cho mỗi bài, nêu bước và lý do; trợ giảng góp ý; giảng viên phụ trách giữ hoặc sửa điểm kèm trả lời |
 | L14 | Công bố điểm kỳ thi: sinh viên xem điểm từng bước và bản ghi phiên của mình; không xem lời giải mẫu |
+| L15 | Thông báo trong ứng dụng cho mọi người dùng; email cho sự kiện quan trọng (CR-DOC-11 mục 8.2), gửi qua outbox |
+| L16 | Phòng chờ thi mở trước 15 phút: quy chế, đếm ngược, kiểm tra kết nối bằng một môi trường mẫu ngắn |
 | L12 | Hạn mức giờ máy theo lớp |
 
 ### 5.4. Chức năng dùng chung
