@@ -32,6 +32,7 @@ Chi tiết tại CR-DOC-02.
 | [CR-DOC-08](docs/08-nhat-ky-su-dung-ai.md) | Nhật ký sử dụng công cụ AI |
 | [CR-DOC-09](docs/09-giai-phap-tuong-tu.md) | Khảo sát giải pháp tương tự, khoảng trống và định vị |
 | [CR-DOC-10](docs/10-phan-tich-nghiep-vu.md) | Phân tích nghiệp vụ: use case, đặc tả use case, biểu đồ hoạt động, mô hình miền |
+| [CR-DOC-12](docs/12-ke-hoach-kiem-thu.md) | Kế hoạch kiểm thử: mức kiểm thử, bất biến hệ thống, truy vết, kịch bản đầu cuối |
 | [`docs/adr/`](docs/adr/) | Hồ sơ quyết định kiến trúc ADR-0001 đến ADR-0013 |
 | [`docs/modules/`](docs/modules/) | Thiết kế bên trong từng module; mẫu tại `_mau.md` |
 
