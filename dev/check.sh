@@ -4,14 +4,15 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 set -a; source .env; set +a
-dc() { docker compose -f compose.yaml "$@"; }
+# Tìm container theo tên dịch vụ, dùng được cả khi chạy trên máy và trong Dev Container.
+ctr() { docker ps --filter "label=com.docker.compose.service=$1" --format '{{.Names}}' | head -1; }
 ok()   { printf '  \033[32m✔\033[0m %s\n' "$1"; }
 fail() { printf '  \033[31m✘\033[0m %s\n' "$1"; exit 1; }
 
 echo "PostgreSQL"
 for db in runtime content learning; do
   var="$(echo "$db" | tr a-z A-Z)_DB_PASSWORD"
-  dc exec -T -e PGPASSWORD="${!var}" postgres psql -h 127.0.0.1 -U "$db" -d "$db" -tAc 'select 1' >/dev/null \
+  docker exec -e PGPASSWORD="${!var}" "$(ctr postgres)" psql -h 127.0.0.1 -U "$db" -d "$db" -tAc 'select 1' >/dev/null \
     && ok "CSDL $db, tài khoản $db" || fail "CSDL $db"
 done
 
@@ -21,9 +22,9 @@ curl -sf -u "$RABBITMQ_USER:$RABBITMQ_PASSWORD" "http://localhost:${RABBITMQ_UI_
 
 echo "SeaweedFS (S3)"
 for b in recordings lab-assets; do
-  echo "s3.bucket.create -name $b" | dc exec -T seaweedfs weed shell >/dev/null 2>&1 || true
+  echo "s3.bucket.create -name $b" | docker exec -i "$(ctr seaweedfs)" weed shell >/dev/null 2>&1 || true
 done
-buckets=$(echo "s3.bucket.list" | dc exec -T seaweedfs weed shell 2>/dev/null)
+buckets=$(echo "s3.bucket.list" | docker exec -i "$(ctr seaweedfs)" weed shell 2>/dev/null)
 for b in recordings lab-assets; do
   grep -q "$b" <<<"$buckets" && ok "bucket $b tại http://localhost:${S3_PORT}" || fail "bucket $b"
 done

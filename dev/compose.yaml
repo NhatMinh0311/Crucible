@@ -65,6 +65,7 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?}
+      KC_HTTP_PORT: ${KEYCLOAK_PORT:-8180}
       KC_HOSTNAME: http://localhost:${KEYCLOAK_PORT:-8180}
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_HEALTH_ENABLED: "true"
@@ -72,7 +73,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?}
       JAVA_OPTS_KC_HEAP: "-XX:MaxRAMPercentage=50 -Xms128m -Xmx512m"
     ports:
-      - "127.0.0.1:${KEYCLOAK_PORT:-8180}:8080"
+      - "127.0.0.1:${KEYCLOAK_PORT:-8180}:${KEYCLOAK_PORT:-8180}"
     volumes:
       - ./keycloak/realm-crucible.json:/opt/keycloak/data/import/realm-crucible.json:ro
     depends_on:
