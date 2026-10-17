@@ -66,6 +66,15 @@ channels:
         $ref: '#/components/messages/SessionLost'
     bindings:
       $ref: '#/components/channelBindings/eventsExchange'
+  runtimeSessionResourceAlert:
+    address: runtime.session.resource-alert
+    x-producer: M1
+    x-consumers: [M3]
+    messages:
+      sessionResourceAlert:
+        $ref: '#/components/messages/SessionResourceAlert'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
   runtimeTerminalConnected:
     address: runtime.terminal.connected
     x-producer: M1
@@ -160,6 +169,10 @@ operations:
     action: send
     channel:
       $ref: '#/channels/runtimeSessionLost'
+  publishSessionResourceAlert:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeSessionResourceAlert'
   publishTerminalConnected:
     action: send
     channel:
@@ -232,6 +245,11 @@ components:
       summary: Node chạy phiên mất kết nối; môi trường không còn sử dụng được
       payload:
         $ref: '#/components/schemas/SessionLostEvent'
+    SessionResourceAlert:
+      name: runtime.session.resource-alert
+      summary: Phiên dùng CPU bất thường kéo dài; với phiên thi, M3 hiển thị cho giám thị
+      payload:
+        $ref: '#/components/schemas/SessionResourceAlertEvent'
     TerminalConnected:
       name: runtime.terminal.connected
       summary: Một kết nối terminal được mở
@@ -378,7 +396,7 @@ components:
                   format: uuid
                 endReason:
                   type: string
-                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST, OUT_OF_MEMORY]
+                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST, OUT_OF_MEMORY, RESOURCE_ABUSE]
                 endedAt:
                   type: string
                   format: date-time
@@ -395,6 +413,36 @@ components:
                       type: integer
                     oomKilled:
                       type: boolean
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    SessionResourceAlertEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, ownerUserId, priority, detectedAt, cpuRatio, action, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                ownerUserId:
+                  type: string
+                  format: uuid
+                priority:
+                  type: string
+                  enum: [EXAM, PRACTICE]
+                detectedAt:
+                  type: string
+                  format: date-time
+                cpuRatio:
+                  type: number
+                action:
+                  description: WARNED với phiên luyện tập (sẽ bị kết thúc nếu tiếp diễn); REPORTED với phiên thi.
+                  type: string
+                  enum: [WARNED, REPORTED]
                 labels:
                   $ref: '#/components/schemas/Labels'
 

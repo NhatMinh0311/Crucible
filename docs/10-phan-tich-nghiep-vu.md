@@ -97,7 +97,7 @@ flowchart LR
 | UC17 | Xử lý phúc khảo | Giảng viên (quyết định), trợ giảng (góp ý) | L11 | M3, M2 |
 | UC18 | Công bố điểm kỳ thi, xem và xuất bảng điểm | Giảng viên | L10, L14 | M3 |
 | UC19 | Quản lý tài khoản, vai trò, trần hạn mức của giảng viên | Quản trị | R05, P01 | Nền tảng, M1 |
-| UC20 | Giám sát sức chứa, hàng đợi, phiên; kết thúc phiên | Quản trị | R13 | M1 |
+| UC20 | Giám sát sức chứa, hàng đợi, phiên, lần phát hiện dùng CPU bất thường; kết thúc phiên | Quản trị | R13, R16 | M1 |
 | UC21 | Nộp tự động khi hết giờ, chấm ngầm mỗi 2 phút, thu hồi phiên hết hạn hoặc không hoạt động, nâng nhóm ấm trước kỳ thi | Hệ thống | R03, R07, C15, L04 | M1, M2, M3 |
 
 ## 3. Đặc tả use case chính
@@ -130,6 +130,7 @@ Luồng thay thế và ngoại lệ:
 | 3a | Sinh viên không thao tác trong thời gian `idleMinutes` | Cảnh báo trước 2 phút; hết hạn thì phiên bị thu hồi, lượt làm bài tạm dừng, giữ điểm các bước đã đạt (UC04) |
 | 3b | Phiên còn 5 phút | Cảnh báo; sinh viên gia hạn được trong giới hạn |
 | 3c | Kết nối terminal bị ngắt | Giao diện tự kết nối lại; môi trường giữ nguyên |
+| 3d | Phiên dùng CPU bất thường kéo dài | Cảnh báo trong terminal; tiếp diễn 5 phút thì phiên bị kết thúc, lượt làm bài tạm dừng, giữ điểm các bước đã đạt; lần phát hiện được ghi nhận cho quản trị (AC-R5.1) |
 | 4a | Sinh viên mở gợi ý | Hệ thống hỏi xác nhận, hiển thị tỉ lệ trừ điểm của gợi ý trước khi mở |
 | 6a | Bài tập hết hạn khi đang làm | Hệ thống nộp tự động tại thời điểm hết hạn cuối cùng |
 
@@ -250,7 +251,7 @@ Luồng chính:
 
 Luồng chính:
 1. Giảng viên hoặc trợ giảng mở màn hình giám sát: danh sách sinh viên với trạng thái (chưa vào, đang làm, gián đoạn,
-   đã nộp), tiến độ theo lần chấm ngầm gần nhất, thời gian bù, số tín hiệu gian lận.
+   đã nộp), tiến độ theo lần chấm ngầm gần nhất, thời gian bù, số tín hiệu gian lận, cảnh báo dùng CPU bất thường.
 2. Chọn một sinh viên để xem trực tiếp terminal (chỉ đọc).
 3. Sau kỳ thi, hệ thống phân tích và tạo tín hiệu gian lận: lộ giá trị biến thể, chuỗi lệnh tương đồng, kết nối từ hai
    địa chỉ, dán khối lớn.

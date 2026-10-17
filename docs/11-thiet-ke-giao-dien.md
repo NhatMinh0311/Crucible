@@ -93,8 +93,8 @@ flowchart LR
 | SCR-28 | Xem trực tiếp terminal, xem lại bản ghi | Giảng viên, trợ giảng | M3 (nhúng thành phần của M1) | UC15 |
 | SCR-29 | Tín hiệu gian lận, đề xuất và biên bản | Giảng viên, trợ giảng | M3 | UC16 |
 | SCR-30 | Bảng điểm, xuất CSV, công bố điểm, xử lý phúc khảo | Giảng viên (trợ giảng xem, góp ý) | M3 | UC17, UC18 |
-| SCR-40 | Sức chứa theo node, nhóm ấm, hàng đợi, đặt trước, phiên đang chạy | Quản trị | M1 | UC20 |
-| SCR-41 | Tài khoản, vai trò, trần hạn mức của từng giảng viên (giờ máy, phiên đồng thời, chỗ × giờ đặt trước) và mức đã dùng | Quản trị | Nền tảng, M1 | UC19 |
+| SCR-40 | Sức chứa theo node, nhóm ấm, hàng đợi, đặt trước, phiên đang chạy, lần phát hiện dùng CPU bất thường | Quản trị | M1 | UC20 |
+| SCR-41 | Tài khoản, vai trò, trần hạn mức của từng giảng viên (giờ máy, phiên đồng thời, chỗ × giờ đặt trước) và mức đã dùng; lịch sử phát hiện dùng CPU bất thường của người dùng | Quản trị | Nền tảng, M1 | UC19 |
 
 ## 7. Bố cục các màn hình chính
 
@@ -125,6 +125,9 @@ Phác thảo dưới đây xác định vị trí và nội dung; hình ảnh c�
 - Thanh ngăn giữa hai cột kéo được; tỉ lệ được ghi nhớ trên trình duyệt; `Ctrl+\` thu gọn hoặc mở cột hướng dẫn.
 - Kỳ thi: nút "Gia hạn" ẩn; nút "Kiểm tra" và "Gợi ý" hiển thị theo cấu hình; đồng hồ tính tới giờ kết thúc chung.
 - Phiên ở trạng thái chuẩn bị, hàng đợi hoặc khôi phục: cột terminal hiển thị trạng thái theo UX1 thay cho terminal.
+- Khung `warning` từ máy chủ hiển thị thành dải cảnh báo trên terminal kèm đồng hồ tới `terminateAt`: "Không có thao tác
+  — phiên sẽ kết thúc lúc …" (`IDLE`) hoặc "Môi trường đang dùng CPU liên tục ở mức cao, ảnh hưởng người khác. Hãy dừng
+  tiến trình nặng (Ctrl+C, `kill`); nếu tiếp diễn, phiên sẽ kết thúc lúc …" (`CPU_ABUSE`).
 
 ### 7.2. SCR-13 Phòng chờ thi
 
@@ -160,9 +163,13 @@ thời hạn 5 phút), mở terminal, đo độ trễ khứ hồi rồi thu hồ
 │ 20215001  Nguyễn Văn A       ● Đang làm     ███░░  3/5 (2 phút)   —        —      [Xem]    │
 │ 20215002  Trần Thị B         ⚠ Gián đoạn    ██░░░  2/5            +2:10    —      [Xem]    │
 │ 20215003  Lê Văn C           ✔ Đã nộp       █████  5/5            —        1      [Xem]    │
+│ 20215005  Đỗ Văn E           ● Đang làm ⚡   ██░░░  2/5            —        —      [Xem]    │
 │ 20215004  Phạm Thị D         ○ Chưa vào     —                     —        —               │
 └──────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+Biểu tượng ⚡ là cảnh báo phiên dùng CPU bất thường (AC-L2.10); di chuột hiển thị thời điểm và mức dùng. Cảnh báo không
+phải tín hiệu gian lận; giám thị xem trực tiếp terminal để quyết định.
 
 Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiếp terminal chỉ có trên máy tính.
 
@@ -215,7 +222,7 @@ Màn hình hiển thị thêm ngân sách chỗ × giờ đặt trước còn l�
 | `RESTORING` | "Đang khôi phục tiến độ (k/n bước)" |
 | `IN_PROGRESS` | Trang làm bài |
 | `ENV_LOST` | "Môi trường gặp sự cố hạ tầng. Tiến độ đã được lưu." + nút "Tiếp tục"; với kỳ thi: "Đồng hồ tạm dừng, thời gian gián đoạn được bù" |
-| `SUSPENDED` | "Phiên đã kết thúc do hết hạn, không hoạt động hoặc vượt giới hạn bộ nhớ. Tiến độ đã được lưu." + nút "Tiếp tục" |
+| `SUSPENDED` | "Phiên đã kết thúc do hết hạn, không hoạt động, vượt giới hạn bộ nhớ hoặc dùng CPU bất thường. Tiến độ đã được lưu." + nút "Tiếp tục"; lý do cụ thể hiển thị theo `endReason` |
 | `GRADING` | "Đang chấm bài" |
 | `GRADED` | Kết quả (luyện tập, bài tập) hoặc "Đã nộp — điểm sẽ có khi giảng viên công bố" (kỳ thi) |
 

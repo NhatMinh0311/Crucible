@@ -45,6 +45,7 @@ và gVisor; API và sự kiện giữ nguyên.
 | `status.admittedAt`, `status.readyAt`, `status.expiresAt`, `status.endedAt`, `status.lostAt` | Mốc thời gian |
 | `status.idleWarningAt` | Thời điểm đã gửi cảnh báo không hoạt động |
 | `status.memoryPeakBytes`, `status.oomKilled` | Bộ nhớ cao nhất đã đo, môi trường bị dừng vì vượt bộ nhớ (mục 5.5) |
+| `status.cpuAbuseSince`, `status.cpuAbuseTerminateAt` | Thời điểm phát hiện dùng CPU bất thường, thời điểm kết thúc nếu tiếp diễn (BR-M1.23) |
 
 Thời điểm hoạt động cuối được `runtime-gateway` ghi vào annotation `crucible.dev/last-activity`, tối đa mỗi 30 giây một lần.
 
@@ -90,6 +91,10 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.19 | Phiên `PRACTICE` bị từ chối khi tổng phiên đang chạy của tài khoản cha và mọi tài khoản con đạt `max_concurrent_sessions` của tài khoản cha | AC-R2.6 |
 | BR-M1.20 | Chỗ × giờ của đặt trước = `slots` × thời lượng tính theo giờ, làm tròn lên theo nửa giờ; tính vào tháng dương lịch (giờ Việt Nam) chứa `startsAt` của tài khoản gốc. Tổng trong tháng không vượt `monthly_reservation_slot_hours`. Hủy trước `startsAt` hoàn lại; kết thúc sớm do kỳ thi đóng không hoàn lại | AC-R2.7 |
 | BR-M1.21 | Scope `runtime.quota.write` chỉ ghi tài khoản có `parent_ref`; tài khoản không có cha chỉ vai trò `ADMIN` ghi. Tài khoản cha chưa tồn tại được tạo với giá trị `QUOTA_DEFAULT_*` | AC-R2.8 |
+| BR-M1.22 | Phiên `PRACTICE`, `EXAM` có CPU dùng trung bình trong 10 phút từ `CPU_ABUSE_RATIO` (0,9) lần giới hạn CPU trở lên bị coi là dùng CPU bất thường. Không áp dụng cho phiên `LAB_CI` và phiên có `environment.cpuIntensive` | AC-R5.1, AC-R5.4 |
+| BR-M1.23 | Phiên `PRACTICE` dùng CPU bất thường nhận khung `warning` mã `CPU_ABUSE` với `terminateAt` = thời điểm phát hiện + 5 phút và sự kiện `resource-alert` (`WARNED`). Tới `terminateAt`, nếu CPU trung bình 5 phút vừa qua vẫn từ ngưỡng trở lên, phiên chuyển `TERMINATED` với lý do `RESOURCE_ABUSE`; nếu không, cảnh báo được gỡ và lần phát hiện ghi `WARNED` | AC-R5.1 |
+| BR-M1.24 | Phiên `EXAM` dùng CPU bất thường không bị kết thúc; phát `runtime.session.resource-alert` (`REPORTED`), tối đa một lần mỗi 10 phút cho một phiên | AC-R5.2, AC-L2.10 |
+| BR-M1.25 | Mỗi lần phát hiện được ghi vào `resource_violations` với cách xử lý cuối cùng; không có biện pháp tự động theo số lần vi phạm | AC-R5.3 |
 
 ## 5. Cấp phát
 
@@ -160,6 +165,11 @@ trong `status.memoryPeakBytes`. Trạng thái kết thúc của container có l�
 sự kiện `runtime.session.terminated`. Độ chính xác của số đo dưới gVisor (phần chi phí của sandbox có bị tính vào hay
 không) được xác định ở thử nghiệm S5.
 
+Cùng lần lấy mẫu, operator đọc tổng thời gian CPU của pod và tính tỉ lệ CPU dùng so với giới hạn CPU của mức tài nguyên
+cho từng khoảng 15 giây. Trung bình trượt 10 phút và 5 phút của tỉ lệ này là đầu vào của BR-M1.22, BR-M1.23. Phiên mới
+sẵn sàng chưa đủ 10 phút dữ liệu thì chưa được xét. Ngưỡng được chỉnh theo phân bố `crucible_session_cpu_ratio` đo
+trong kiểm thử tải.
+
 ## 6. Terminal
 
 | Mục | Thiết kế |
@@ -183,6 +193,7 @@ erDiagram
     sessions ||--o| usage_ledger : ""
     sessions ||--o{ terminal_tickets : ""
     sessions ||--o{ view_access_log : ""
+    sessions ||--o{ resource_violations : ""
     reservations ||--o{ sessions : "reservation_ref"
 
     sessions {
@@ -246,6 +257,15 @@ erDiagram
         uuid viewer_user_id
         timestamptz issued_at
     }
+    resource_violations {
+        uuid id PK
+        uuid session_id FK
+        uuid owner_user_id
+        text priority
+        timestamptz detected_at
+        numeric cpu_ratio
+        text action
+    }
 ```
 
 Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 5.2).
@@ -254,7 +274,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 
 | Sự kiện | Phát / nhận | Xử lý |
 |---|---|---|
-| `runtime.session.*`, `runtime.terminal.*`, `runtime.recording.available` | Phát | Theo mục 5.4 và mục 6 |
+| `runtime.session.*`, `runtime.terminal.*`, `runtime.recording.available` | Phát | Theo mục 5.4 và mục 6; `runtime.session.resource-alert` theo BR-M1.23, BR-M1.24 |
 | `content.lab.published` | Nhận | Thêm image vào danh sách kéo sẵn của DaemonSet trên node phiên |
 | `learning.exam.closed` | Nhận | Kết thúc sớm đặt trước có `reservationRef` tương ứng; hạ nhóm ấm |
 
@@ -263,8 +283,8 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | Màn hình, thành phần | Vai trò | Nội dung |
 |---|---|---|
 | Thành phần `<Terminal sessionId mode>` | Học viên, giảng viên | xterm.js; lấy vé, kết nối, tự kết nối lại theo mã đóng; được M2 nhúng vào trang làm bài, M3 nhúng vào trang giám sát |
-| Thanh trạng thái phiên | Học viên | Pha, thời gian còn lại, vị trí hàng đợi, gia hạn, cảnh báo không hoạt động |
-| Quản trị cụm | `ADMIN` | Sức chứa theo node và mức tài nguyên, nhóm ấm, hàng đợi, phiên đang chạy (lọc, kết thúc), đặt trước theo lịch, tài khoản hạn mức |
+| Thanh trạng thái phiên | Học viên | Pha, thời gian còn lại, vị trí hàng đợi, gia hạn, cảnh báo không hoạt động, cảnh báo dùng CPU bất thường |
+| Quản trị cụm | `ADMIN` | Sức chứa theo node và mức tài nguyên, nhóm ấm, hàng đợi, phiên đang chạy (lọc, kết thúc, sắp theo CPU), đặt trước theo lịch, trần hạn mức của giảng viên, lần phát hiện dùng CPU bất thường theo người dùng |
 
 ## 10. Tác vụ định kỳ
 
@@ -272,6 +292,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 |---|---|---|---|
 | Vòng xếp hàng | 5 giây và theo sự kiện | Operator (leader) | Mục 5.2 |
 | Hết hạn và không hoạt động | 15 giây | Operator | Chuyển `EXPIRING`, `TERMINATED`; cảnh báo không hoạt động |
+| Lấy mẫu tài nguyên | 15 giây | Operator | Bộ nhớ cao nhất, tỉ lệ CPU; xét BR-M1.22–BR-M1.24 (mục 5.5) |
 | Dọn tài nguyên mồ côi | 60 giây | Operator | BR-M1.12; cập nhật `crucible_orphan_resources` |
 | Chuyển tiếp outbox | 1 giây | `runtime-api` (một bản qua khóa tư vấn) | CR-DOC-03 mục 5.2 |
 | Dọn vé, khóa lặp lại an toàn, outbox, inbox | 1 giờ | `runtime-api` | Xóa bản ghi quá hạn |
@@ -298,6 +319,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | AC-R3.1, BR-M1.13 | Tích hợp: dùng lại vé, vé hết hạn, vé của người khác |
 | AC-R4.1, BR-M1.11 | envtest và chaos CH1 |
 | AC-R4.2, BR-M1.12 | envtest và chaos CH2, CH3 |
+| AC-R5.1–AC-R5.4, BR-M1.22–BR-M1.25 | Đơn vị: trung bình trượt và chuyển trạng thái cảnh báo với chuỗi mẫu giả lập; cụm chuẩn: kiểm thử cách ly I10 |
 
 ## 12. Cấu hình
 
@@ -316,6 +338,9 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | `QUOTA_DEFAULT_WEEKLY_MINUTES` | Trần giờ máy mỗi tuần của giảng viên mới (BR-M1.21) | `6000` |
 | `QUOTA_DEFAULT_MAX_CONCURRENT` | Trần phiên đồng thời của giảng viên mới | `60` |
 | `QUOTA_DEFAULT_RESERVATION_SLOT_HOURS` | Ngân sách chỗ × giờ đặt trước mỗi tháng của giảng viên mới | `300` |
+| `CPU_ABUSE_RATIO` | Ngưỡng BR-M1.22 | `0.9` |
+| `CPU_ABUSE_WINDOW` | Cửa sổ phát hiện BR-M1.22 | `10m` |
+| `CPU_ABUSE_GRACE` | Thời gian chờ trước khi kết thúc BR-M1.23 | `5m` |
 
 ## Lịch sử thay đổi
 

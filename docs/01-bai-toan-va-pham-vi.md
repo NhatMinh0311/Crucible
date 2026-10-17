@@ -122,7 +122,8 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | R10 | Ghi lại toàn bộ luồng terminal; phát dòng lệnh đã nhập cho phân tích gian lận (chỉ với phiên thi) |
 | R11 | Chạy lệnh kiểm tra trong phiên theo yêu cầu của M2, tách biệt với môi trường thao tác của học viên |
 | R12 | Phát hiện node mất kết nối; đánh dấu phiên bị ảnh hưởng và phát sự kiện |
-| R13 | Trang quản trị: sức chứa cụm, hàng đợi, phiên đang chạy, hạn mức |
+| R13 | Trang quản trị: sức chứa cụm, hàng đợi, phiên đang chạy, hạn mức, lần phát hiện dùng CPU bất thường |
+| R16 | Phát hiện phiên dùng CPU bất thường kéo dài: phiên luyện tập bị cảnh báo rồi kết thúc; phiên thi được báo cho giám thị, không bị kết thúc; mọi lần phát hiện được ghi nhận cho quản trị |
 | R14 (MR) | Môi trường nhiều máy: 2–3 container nối mạng riêng trong một phiên |
 | R15 (MR) | Bài lab Docker: chạy Docker Engine bên trong môi trường học viên (phụ thuộc kết quả thử nghiệm S6 tại CR-DOC-06) |
 
@@ -157,7 +158,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên, hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
 | L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
 | L06 | Bù giờ khi phiên thi bị gián đoạn do sự cố hạ tầng, có giới hạn và ghi nhật ký |
-| L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal |
+| L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal, cảnh báo phiên dùng CPU bất thường |
 | L08 | Xem lại bản ghi phiên: giảng viên phụ trách và trợ giảng xem mọi bản ghi của lớp; sinh viên xem bản ghi phiên thi của chính mình sau khi điểm được công bố |
 | L09 | Tín hiệu gian lận: lộ giá trị biến thể, chuỗi lệnh tương đồng, kết nối từ hai địa chỉ, dán khối lớn |
 | L13 | Xử lý tín hiệu gian lận: giảng viên lập biên bản với một trong ba kết luận `DISMISSED` (bác bỏ), `WARNED` (nhắc nhở), `VOIDED` (hủy kết quả, điểm 0) kèm lý do; học viên được thông báo và được phúc khảo |
@@ -218,6 +219,12 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-R4.1: Phiên trên node mất kết nối được chuyển sang `LOST` trong ≤ 60 giây kể từ khi node mất kết nối.
 - AC-R4.2: Không còn pod hoặc tài nguyên nào thuộc phiên đã kết thúc sau 2 phút (không có môi trường mồ côi).
 
+**US-R5 (R16)** — Là học viên, tôi muốn terminal không bị chậm vì người khác chạy tiến trình nặng; là quản trị, tôi muốn biết ai lạm dụng tài nguyên.
+- AC-R5.1: Phiên luyện tập dùng từ 90% giới hạn CPU trở lên, tính trung bình trong 10 phút, nhận cảnh báo trong terminal; nếu mức dùng trung bình trong 5 phút tiếp theo vẫn từ 90% trở lên, phiên bị kết thúc với lý do `RESOURCE_ABUSE`, lượt làm bài tạm dừng và giữ điểm các bước đã đạt.
+- AC-R5.2: Phiên thi thỏa điều kiện trên không bị kết thúc; giám thị thấy cảnh báo trên màn hình giám sát.
+- AC-R5.3: Mỗi lần phát hiện được ghi nhận với người dùng, phiên, thời điểm, mức dùng và cách xử lý; quản trị xem được theo người dùng. Hệ thống không tự động hạn chế người dùng vi phạm nhiều lần.
+- AC-R5.4: Phiên của bài lab khai báo `cpuIntensive` và phiên `LAB_CI` không bị giám sát CPU bất thường.
+
 ### 7.2. M2
 
 **US-C1 (C01–C05, C11, C13)** — Là giảng viên, tôi muốn soạn bài lab và chắc chắn bài lab giải được trước khi giao.
@@ -261,6 +268,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-L2.8: Nộp bài thi trước giờ kết thúc cần xác nhận hai lần; sau khi nộp, lượt làm bài được chấm cuối, phiên được thu hồi và sinh viên không vào lại được.
 - AC-L2.9: Trước khi công bố, sinh viên không xem được điểm và bản ghi của kỳ thi; sau khi công bố, sinh viên xem được điểm từng bước và bản ghi của chính mình.
 - AC-L2.6: Màn hình giám sát hiển thị tiến độ từng học viên theo kết quả chấm ngầm gần nhất, kể cả khi học viên không được xem kết quả kiểm tra.
+- AC-L2.10: Sự kiện `runtime.session.resource-alert` của phiên thi hiển thị thành cảnh báo trên dòng của học viên tại màn hình giám sát trong ≤ 30 giây; cảnh báo không phải tín hiệu gian lận và không ảnh hưởng điểm.
 
 **US-L3 (L08–L11, L13, L14)** — Là giảng viên, tôi muốn phát hiện dấu hiệu gian lận và xử lý khiếu nại.
 - AC-L3.1: Học viên nhập giá trị tham số thuộc biến thể của học viên khác trong cùng kỳ thi tạo tín hiệu `VARIANT_LEAK`.

@@ -189,6 +189,8 @@ flowchart LR
 | `crucible_orphan_resources` | Gauge | `kind` | Q5 |
 | `crucible_exec_duration_seconds` | Histogram | `result` | AC-C2.3 |
 | `crucible_terminal_connections` | Gauge | `mode` | Q3 |
+| `crucible_session_cpu_ratio` | Histogram | `priority` | CPU dùng của phiên so với giới hạn, phục vụ chỉnh ngưỡng BR-M1.22 |
+| `crucible_resource_violations_total` | Counter | `priority`, `action` | AC-R5.1–AC-R5.3 |
 | `crucible_terminal_rtt_seconds` | Histogram | | Q3 |
 | `crucible_outbox_lag_seconds` | Gauge | `service` | Q8 |
 | `crucible_events_dead_lettered_total` | Counter | `queue` | Q8 |
@@ -210,6 +212,7 @@ flowchart LR
 | Hết nhóm ấm khi có hàng đợi | `crucible_warm_pool_available == 0` và `crucible_session_queue_length > 0` trong 2 phút |
 | Thiếu sức chứa trước kỳ thi | 15 phút trước giờ bắt đầu, nhóm ấm nhỏ hơn số chỗ đặt trước |
 | Node không sẵn sàng | Node `NotReady` quá 1 phút |
+| CPU node phiên bão hòa | CPU dùng của một node phiên trên 90% trong 10 phút (dấu hiệu nhiều phiên nặng hoặc ngưỡng giám sát chưa phù hợp) |
 | Sao lưu thất bại | Lần sao lưu gần nhất quá 26 giờ hoặc WAL không được lưu quá 15 phút |
 
 ### 7.4. Dashboard
@@ -217,7 +220,7 @@ flowchart LR
 | Dashboard | Nội dung |
 |---|---|
 | Tổng quan SLO | Các SLO, ngân sách lỗi còn lại |
-| Phiên và sức chứa | Phiên theo pha, theo node; hàng đợi; nhóm ấm; đặt trước; thời gian sẵn sàng theo nguồn |
+| Phiên và sức chứa | Phiên theo pha, theo node; hàng đợi; nhóm ấm; đặt trước; thời gian sẵn sàng theo nguồn; phiên dùng CPU cao nhất; số lần phát hiện dùng CPU bất thường |
 | Kỳ thi | Theo thời gian thực trong kỳ thi: học viên đã bắt đầu, phiên đang chạy, lỗi, bù giờ |
 | Dịch vụ | Tốc độ yêu cầu, tỉ lệ lỗi, độ trễ của mỗi dịch vụ; outbox; hàng đợi RabbitMQ |
 | Cụm | Tài nguyên theo node, theo namespace |

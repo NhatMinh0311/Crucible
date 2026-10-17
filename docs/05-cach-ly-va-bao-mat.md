@@ -65,6 +65,7 @@ flowchart LR
 | T2 | Gọi Kubernetes API bằng token của pod | `automountServiceAccountToken: false`; tài khoản dịch vụ của pod phiên không có Role nào; NetworkPolicy chặn địa chỉ API server |
 | T3 | Truy cập dịch vụ nền tảng, pod khác, dịch vụ metadata | NetworkPolicy mặc định chặn mọi chiều vào và ra trong `crucible-sessions`; bài lab `network: mirror` chỉ được ra tới máy chủ gói nội bộ cổng 3142; không có DNS nội bộ cụm cho pod phiên ngoại trừ tên máy chủ gói |
 | T4 | Chiếm tài nguyên (fork bomb, đầy bộ nhớ, đầy đĩa) | Giới hạn bộ nhớ, CPU, `pids` theo mức tài nguyên; ephemeral storage giới hạn 2 GiB; vượt giới hạn chỉ ảnh hưởng phiên đó |
+| T4a | Dùng CPU kéo dài (đào tiền ảo, vòng lặp vô hạn) làm chậm phiên khác trên cùng node | Không có đường ra Internet nên không gửi được kết quả đào tới bên ngoài (T3, T5); giám sát CPU theo phiên: phiên luyện tập bị cảnh báo rồi kết thúc, phiên thi được báo giám thị, mọi lần phát hiện được ghi nhận (CR-MOD-M1 BR-M1.22–BR-M1.25) |
 | T5 | Tấn công từ chối dịch vụ ra ngoài Internet | Mặc định không có đường ra Internet |
 | T6 | Làm sai lệch kết quả chấm | Lệnh kiểm tra chạy bằng công cụ liên kết tĩnh từ volume chỉ đọc, môi trường biến sạch (ADR-0011); học viên không có `CAP_SYS_ADMIN` nên không gắn đè được volume |
 | T7 | Đọc được lời giải, biến thể của người khác | Lời giải và lệnh kiểm tra không được ghi vào môi trường; lệnh kiểm tra được truyền qua exec và không lưu lại trong môi trường; biến thể sinh bằng HMAC với khóa chỉ M2 giữ |
@@ -121,6 +122,7 @@ chứng Q6.
 | I7 | Gắn hệ thống tệp, nạp mô-đun nhân, thay đổi `/opt/crucible/bin` | Thất bại |
 | I8 | Fork bomb, cấp phát vượt bộ nhớ | Chỉ phiên đó bị ảnh hưởng; phiên khác trên cùng node vẫn đạt Q1 |
 | I9 | Tạo pod thiếu `runtimeClassName` hoặc có `hostPath` trong `crucible-sessions` bằng tài khoản có quyền tạo pod | Bị chính sách từ chối |
+| I10 | Chạy tiến trình dùng hết CPU trong phiên luyện tập 16 phút | Cảnh báo sau 10 phút, phiên kết thúc với `RESOURCE_ABUSE` sau 15 phút; phiên khác trên cùng node giữ độ trễ terminal p95 ≤ 150 ms |
 
 ### 6.2. Kiểm thử ứng dụng
 

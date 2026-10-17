@@ -138,7 +138,7 @@ tài khoản `instructor:` của giảng viên đang chạy thử.
 | `metadata` | Mã định danh (`slug`), tiêu đề, độ khó, thời lượng ước tính, thẻ |
 | `params` | Tham số và bộ sinh: `pick`, `range`, `pattern`, `subnet` |
 | `constraints.distinct` | Nhóm tham số phải nhận giá trị khác nhau |
-| `environment` | Image, mức tài nguyên, thời hạn, mạng, tệp ghi sẵn, script dựng |
+| `environment` | Image, mức tài nguyên, thời hạn, mạng, khai báo dùng CPU cao, tệp ghi sẵn, script dựng |
 | `faults` | Lỗi cài sẵn: số lỗi được chọn và danh sách lỗi |
 | `steps` | Các bước: mô tả, điểm, lệnh kiểm tra, gợi ý, kết quả mong đợi ban đầu |
 | `solution` | Lời giải mẫu cho từng bước |
@@ -204,6 +204,7 @@ theo `subject`) và `traceparent` (W3C Trace Context). Danh mục và lược đ
 | `runtime.session.terminated` | M1 | M2, M3 | Mã phiên |
 | `runtime.session.failed` | M1 | M2 | Mã phiên |
 | `runtime.session.lost` | M1 | M2, M3 | Mã phiên |
+| `runtime.session.resource-alert` | M1 | M3 | Mã phiên |
 | `runtime.terminal.connected` | M1 | M3 | Mã phiên |
 | `runtime.terminal.input-line` | M1 | M3 | Mã phiên |
 | `runtime.recording.available` | M1 | M3 | Mã phiên |
@@ -236,7 +237,7 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | Vé | Lấy từ `createTerminalTicket` (tương tác) hoặc `createViewTicket` (xem); dùng một lần, hết hạn sau 30 giây |
 | Khung nhị phân | Dữ liệu terminal thô, hai chiều với kết nối tương tác; chỉ chiều máy chủ → trình duyệt với kết nối xem |
 | Khung văn bản từ trình duyệt | JSON: `{"type":"resize","cols":120,"rows":32}` |
-| Khung văn bản từ máy chủ | JSON: `{"type":"status","phase":"READY","expiresAt":"..."}`, `{"type":"expiring","expiresAt":"..."}`, `{"type":"closing","reason":"EXPIRED"}` |
+| Khung văn bản từ máy chủ | JSON: `{"type":"status","phase":"READY","expiresAt":"..."}`, `{"type":"expiring","expiresAt":"..."}`, `{"type":"warning","code":"IDLE","terminateAt":"..."}`, `{"type":"warning","code":"CPU_ABUSE","terminateAt":"..."}`, `{"type":"closing","reason":"EXPIRED"}` |
 | Giữ kết nối | Máy chủ gửi ping mỗi 20 giây; không có pong sau 60 giây thì đóng kết nối |
 | Một kết nối tương tác | Mỗi phiên có tối đa một kết nối tương tác; kết nối mới đóng kết nối cũ với mã 4009 |
 

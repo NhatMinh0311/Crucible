@@ -451,6 +451,46 @@ paths:
         '400':
           $ref: '#/components/responses/Problem'
 
+  /v1/resource-violations:
+    get:
+      tags: [capacity]
+      operationId: listResourceViolations
+      summary: Liệt kê lần phát hiện phiên dùng CPU bất thường
+      description: Vai trò `ADMIN`. Sắp theo thời điểm phát hiện, mới nhất trước.
+      parameters:
+        - name: ownerUserId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Danh sách
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResourceViolation'
+        '403':
+          $ref: '#/components/responses/Problem'
+
   /v1/quota-accounts:
     get:
       tags: [quota]
@@ -600,7 +640,7 @@ components:
 
     EndReason:
       type: string
-      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST, OUT_OF_MEMORY]
+      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST, OUT_OF_MEMORY, RESOURCE_ABUSE]
 
     RenderedEnvironment:
       description: Phần `environment` của đặc tả bài lab sau khi kết xuất tham số, kèm script lỗi cài sẵn đã chọn. M1 không nhận tham số hay bước. Tổng kích thước tệp và setup không vượt 256 KiB.
@@ -627,6 +667,10 @@ components:
         network:
           type: string
           enum: [none, mirror]
+        cpuIntensive:
+          description: Bài lab khai báo dùng CPU cao kéo dài có chủ đích; phiên không bị giám sát CPU bất thường.
+          type: boolean
+          default: false
         files:
           type: array
           maxItems: 20
@@ -731,6 +775,32 @@ components:
         oomKilled:
           description: Môi trường bị dừng vì vượt giới hạn bộ nhớ.
           type: boolean
+
+    ResourceViolation:
+      type: object
+      required: [id, sessionId, ownerUserId, priority, detectedAt, cpuRatio, action]
+      properties:
+        id:
+          type: string
+          format: uuid
+        sessionId:
+          type: string
+          format: uuid
+        ownerUserId:
+          type: string
+          format: uuid
+        priority:
+          $ref: '#/components/schemas/Priority'
+        detectedAt:
+          type: string
+          format: date-time
+        cpuRatio:
+          description: CPU dùng trung bình trong cửa sổ phát hiện so với giới hạn CPU của phiên.
+          type: number
+        action:
+          description: WARNED - đã cảnh báo, mức dùng giảm trong thời gian chờ; TERMINATED - phiên luyện tập bị kết thúc; REPORTED - phiên thi, đã báo giám thị.
+          type: string
+          enum: [WARNED, TERMINATED, REPORTED]
 
     ExecRequest:
       type: object

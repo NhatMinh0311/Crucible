@@ -203,7 +203,7 @@ stateDiagram-v2
     PROVISIONING --> FAILED: lỗi image, lỗi setup
     READY --> EXPIRING: còn ≤ 5 phút
     EXPIRING --> READY: gia hạn
-    READY --> TERMINATED: kết thúc, IDLE, ADMIN
+    READY --> TERMINATED: kết thúc, IDLE, ADMIN, OUT_OF_MEMORY, RESOURCE_ABUSE
     EXPIRING --> TERMINATED: EXPIRED
     READY --> LOST: node mất kết nối
     EXPIRING --> LOST: node mất kết nối
