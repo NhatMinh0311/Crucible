@@ -70,7 +70,7 @@ dịch vụ trong Keycloak. Scope được cấp cho từng tài khoản dịch 
 | `runtime.view` | `learning-service` | Cấp vé xem chỉ đọc |
 | `runtime.recordings.read` | `learning-service` | Lấy bản ghi phiên |
 | `runtime.reservations.write` | `learning-service` | Đặt trước và hủy đặt trước tài nguyên |
-| `runtime.quota.write` | `learning-service` | Thiết lập hạn mức giờ máy |
+| `runtime.quota.write` | `learning-service` | Thiết lập hạn mức của lớp trong trần của giảng viên; không sửa được trần |
 | `content.attempts.write` | `learning-service` | Tạo lượt làm bài, nộp bài thay học viên khi hết giờ, điều chỉnh điểm |
 | `content.attempts.read` | `learning-service` | Đọc lượt làm bài |
 | `content.variants.read` | `learning-service` | Đọc giá trị biến thể (phân tích gian lận sau kỳ thi) |
@@ -97,6 +97,8 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `IDEMPOTENCY_KEY_REUSED` | 422 | Mọi module | Khóa lặp lại an toàn dùng cho nội dung khác |
 | `SESSION_LIMIT` | 409 | M1 | Học viên đã có phiên cùng loại đang hoạt động |
 | `QUOTA_EXHAUSTED` | 402 | M1 | Tài khoản hạn mức hết giờ máy hoặc hết số phiên đồng thời |
+| `QUOTA_CEILING_EXCEEDED` | 422 | M1 | Tổng hạn mức chia cho các lớp vượt trần của giảng viên |
+| `RESERVATION_BUDGET_EXHAUSTED` | 402 | M1 | Đặt trước làm vượt ngân sách chỗ × giờ trong tháng của giảng viên |
 | `EXTENSION_LIMIT` | 409 | M1 | Gia hạn vượt mức tối đa hoặc phiên thi |
 | `SESSION_NOT_ACTIVE` | 409 | M1 | Thao tác yêu cầu phiên ở pha `READY` hoặc `EXPIRING` |
 | `EXEC_BUSY` | 409 | M1 | Phiên đang chạy một lệnh kiểm tra khác |
@@ -113,7 +115,19 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `EXAM_ENTRY_CLOSED` | 409 | M3 | Đã qua hạn chót được vào thi |
 | `REGRADE_NOT_ALLOWED` | 409 | M3 | Quá thời hạn phúc khảo hoặc đã gửi yêu cầu cho bài này |
 
-Lỗi `QUOTA_EXHAUSTED`, `SESSION_LIMIT`, `CAPACITY_UNAVAILABLE` của M1 được M2, M3 chuyển tiếp nguyên mã tới giao diện.
+Lỗi `QUOTA_EXHAUSTED`, `QUOTA_CEILING_EXCEEDED`, `RESERVATION_BUDGET_EXHAUSTED`, `SESSION_LIMIT`, `CAPACITY_UNAVAILABLE`
+của M1 được M2, M3 chuyển tiếp nguyên mã tới giao diện.
+
+### 3.5. Tài khoản hạn mức
+
+| Tài khoản | Mã tham chiếu | Tài khoản cha | Người đặt | Dùng cho |
+|---|---|---|---|---|
+| Trần của giảng viên | `instructor:<mã người dùng>` | Không có | Quản trị | Giới hạn tổng của mọi lớp do giảng viên phụ trách chính; phần chưa chia dùng cho phiên chạy thử bài lab (C13) |
+| Lớp | `class:<mã lớp>` | `instructor:<mã giảng viên phụ trách chính>` | Giảng viên qua M3 | Phiên luyện tập, bài tập của sinh viên trong lớp; đặt trước cho kỳ thi của lớp |
+| Kiểm thử bài lab | `system:lab-ci` | Không có | Quản trị | Phiên `LAB_CI` |
+
+M3 tạo tài khoản của lớp khi tạo lớp và đổi tài khoản cha khi đổi giảng viên phụ trách chính. M2 tính phiên chạy thử vào
+tài khoản `instructor:` của giảng viên đang chạy thử.
 
 ## 4. Đặc tả bài lab
 

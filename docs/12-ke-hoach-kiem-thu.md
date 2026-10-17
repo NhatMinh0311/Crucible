@@ -44,6 +44,7 @@ và được kiểm tra lại sau mỗi thí nghiệm chaos bằng script đối
 | INV10 | Sinh viên chỉ đọc được dữ liệu của mình; điểm và bản ghi thi chỉ hiển thị sau khi công bố | Ma trận phân quyền API |
 | INV11 | Tổng chỗ đặt trước chồng lấn thời gian không vượt 80% sức chứa | Đơn vị M1 |
 | INV12 | Tổng thời gian bù giờ của một sinh viên trong một kỳ thi không vượt 15 phút | Đơn vị M3 |
+| INV13 | Tổng hạn mức của các lớp không vượt trần của giảng viên; tổng chỗ × giờ đặt trước trong tháng không vượt ngân sách | Tích hợp M1 (yêu cầu đồng thời) |
 
 ## 4. Truy vết tiêu chí chấp nhận
 

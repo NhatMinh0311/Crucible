@@ -56,7 +56,7 @@ mờ giữa module và hạn mức theo tài khoản hạn mức (ADR-0013).
 | Học viên | `STUDENT` | Làm bài luyện tập và bài thi trong lớp đã ghi danh |
 | Giảng viên | `INSTRUCTOR` | Soạn bài lab; với lớp được phân công là giảng viên phụ trách: quản lý lớp và lộ trình, tổ chức và giám sát kỳ thi, chấm phúc khảo, lập biên bản gian lận |
 | Trợ giảng | Vai trò trong lớp | Người dùng được giảng viên phụ trách thêm vào lớp với vai trò trợ giảng: giám sát kỳ thi, xem bản ghi, đề xuất biên bản gian lận; không sửa điểm, không sửa cấu hình bài tập và kỳ thi |
-| Quản trị nền tảng | `ADMIN` | Quản lý tài khoản, hạn mức tài nguyên, giám sát cụm |
+| Quản trị nền tảng | `ADMIN` | Quản lý tài khoản, trần hạn mức tài nguyên của từng giảng viên, giám sát cụm |
 | Người vận hành của đơn vị | Ngoài hệ thống | Cài đặt, nâng cấp, sao lưu, giám sát bản cài đặt trên hạ tầng của đơn vị theo tài liệu phát hành |
 | Hệ thống chấm bài lab | Nội bộ | Chạy lời giải mẫu để kiểm thử bài lab trước khi xuất bản |
 
@@ -89,6 +89,7 @@ mờ giữa module và hạn mức theo tài khoản hạn mức (ADR-0013).
 | Nhóm môi trường ấm (warm pool) | Các môi trường dựng sẵn chưa gán cho ai, dùng để cấp phiên nhanh |
 | Đặt trước tài nguyên | Phần sức chứa của cụm được giữ cho một kỳ thi trong khung giờ xác định |
 | Hạn mức giờ máy | Tổng thời lượng phiên một tài khoản hạn mức được dùng trong một chu kỳ |
+| Trần hạn mức của giảng viên | Giới hạn do quản trị đặt cho một giảng viên: tổng giờ máy mỗi tuần chia cho các lớp, số phiên đồng thời, số chỗ × giờ đặt trước cho kỳ thi mỗi tháng |
 
 ## 4. Phân chia module
 
@@ -113,7 +114,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | R02 | Vòng đời phiên: chờ cấp, đang cấp, sẵn sàng, sắp hết hạn, kết thúc, lỗi, mất kết nối node |
 | R03 | Gia hạn phiên trong giới hạn; kết thúc phiên khi hết thời lượng hoặc không hoạt động quá ngưỡng |
 | R04 | Hàng đợi có ưu tiên `EXAM` > `PRACTICE` > `LAB_CI` khi cụm không đủ sức chứa; báo vị trí trong hàng đợi |
-| R05 | Hạn mức theo tài khoản hạn mức: số phiên đồng thời và giờ máy mỗi tuần; sổ ghi nhận mức sử dụng |
+| R05 | Hạn mức theo tài khoản hạn mức: số phiên đồng thời và giờ máy mỗi tuần; sổ ghi nhận mức sử dụng. Tài khoản phân cấp: trần của giảng viên do quản trị đặt, hạn mức của lớp chia từ trần; ngân sách chỗ × giờ đặt trước cho kỳ thi mỗi tháng |
 | R06 | Nhóm môi trường ấm theo cấu hình môi trường; tự bổ sung sau khi được cấp |
 | R07 | Đặt trước tài nguyên cho kỳ thi; nhóm môi trường ấm được nâng trước giờ thi |
 | R08 | Terminal trên trình duyệt qua WebSocket, truy cập bằng vé dùng một lần |
@@ -165,7 +166,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L14 | Công bố điểm kỳ thi: sinh viên xem điểm từng bước và bản ghi phiên của mình; không xem lời giải mẫu |
 | L15 | Thông báo trong ứng dụng cho mọi người dùng; email cho sự kiện quan trọng (CR-DOC-11 mục 8.2), gửi qua outbox |
 | L16 | Phòng chờ thi mở trước 15 phút: quy chế, đếm ngược, kiểm tra kết nối bằng một môi trường mẫu ngắn |
-| L12 | Hạn mức giờ máy theo lớp |
+| L12 | Hạn mức giờ máy theo lớp, giảng viên chia từ trần hạn mức của mình |
 
 ### 5.4. Chức năng dùng chung
 
@@ -203,6 +204,9 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-R2.3: Yêu cầu chờ quá 10 phút bị hủy với lý do `QUEUE_TIMEOUT`.
 - AC-R2.4: Tài khoản hạn mức hết giờ máy trong tuần không tạo được phiên `PRACTICE` (402 `QUOTA_EXHAUSTED`); phiên `EXAM` không bị chặn bởi giờ máy.
 - AC-R2.5: Mức sử dụng được ghi theo phút thực tế của phiên, kể cả phiên kết thúc bất thường.
+- AC-R2.6: Tổng giờ máy mỗi tuần chia cho các lớp không vượt trần của giảng viên (422 `QUOTA_CEILING_EXCEEDED`); tổng phiên đang chạy của các lớp không vượt số phiên đồng thời của trần (402 `QUOTA_EXHAUSTED`).
+- AC-R2.7: Đặt trước làm tổng chỗ × giờ trong tháng của giảng viên vượt ngân sách bị từ chối (402 `RESERVATION_BUDGET_EXHAUSTED`); hủy đặt trước trước giờ bắt đầu hoàn lại ngân sách.
+- AC-R2.8: Chỉ quản trị đặt được trần hạn mức của giảng viên; dịch vụ M3 chỉ ghi được hạn mức của lớp.
 
 **US-R3 (R08–R10)** — Là học viên, tôi muốn thao tác terminal ổn định; là giảng viên, tôi muốn xem được học viên đang làm gì trong kỳ thi.
 - AC-R3.1: Vé terminal chỉ cấp cho chủ phiên, dùng một lần, hết hạn sau 30 giây nếu không được dùng.

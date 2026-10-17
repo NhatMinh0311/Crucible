@@ -270,6 +270,8 @@ paths:
       description: |
         Scope `runtime.reservations.write`. Từ chối khi sức chứa khả dụng trong khung giờ không đủ: lỗi 409
         `CAPACITY_UNAVAILABLE` kèm trường `capacity` (số chỗ cần, số chỗ còn) để giao diện báo phần thiếu.
+        Số chỗ × số giờ của đặt trước được tính vào ngân sách đặt trước trong tháng của tài khoản hạn mức gốc
+        (tài khoản cha nếu có); vượt ngân sách trả 402 `RESERVATION_BUDGET_EXHAUSTED`.
       security:
         - oidc: [runtime.reservations.write]
       parameters:
@@ -287,6 +289,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reservation'
+        '402':
+          $ref: '#/components/responses/Problem'
         '409':
           $ref: '#/components/responses/Problem'
         '422':
@@ -317,7 +321,7 @@ paths:
       tags: [reservations]
       operationId: cancelReservation
       summary: Hủy đặt trước
-      description: Phiên đang chạy thuộc đặt trước không bị ảnh hưởng.
+      description: Phiên đang chạy thuộc đặt trước không bị ảnh hưởng. Hủy trước giờ bắt đầu hoàn lại ngân sách đặt trước.
       responses:
         '204':
           description: Đã hủy
@@ -447,6 +451,39 @@ paths:
         '400':
           $ref: '#/components/responses/Problem'
 
+  /v1/quota-accounts:
+    get:
+      tags: [quota]
+      operationId: listQuotaAccounts
+      summary: Liệt kê tài khoản hạn mức
+      description: Vai trò `ADMIN` hoặc scope `runtime.quota.write`. Lọc theo tài khoản cha để xem phần đã chia cho các lớp.
+      parameters:
+        - name: parentRef
+          in: query
+          schema:
+            $ref: '#/components/schemas/Ref'
+        - name: rootOnly
+          description: Chỉ lấy tài khoản không có tài khoản cha (trần của giảng viên).
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Danh sách
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QuotaAccount'
+        '403':
+          $ref: '#/components/responses/Problem'
+
   /v1/quota-accounts/{quotaAccountRef}:
     parameters:
       - name: quotaAccountRef
@@ -471,7 +508,11 @@ paths:
       tags: [quota]
       operationId: putQuotaAccount
       summary: Tạo hoặc cập nhật hạn mức
-      description: Scope `runtime.quota.write` (cấp cho M3) hoặc vai trò `ADMIN`.
+      description: |
+        Vai trò `ADMIN` ghi mọi tài khoản. Scope `runtime.quota.write` (cấp cho M3) chỉ ghi tài khoản có `parentRef`
+        (hạn mức của lớp); tài khoản không có cha là trần của giảng viên, chỉ quản trị đặt được. Tổng `weeklyMinutes`
+        của các tài khoản con không vượt `weeklyMinutes` của tài khoản cha (422 `QUOTA_CEILING_EXCEEDED`). Tài khoản cha
+        chưa tồn tại được tạo với giá trị mặc định của bản cài đặt.
       security:
         - oidc: [runtime.quota.write]
       requestBody:
@@ -483,6 +524,8 @@ paths:
               additionalProperties: false
               required: [weeklyMinutes, maxConcurrentSessions]
               properties:
+                parentRef:
+                  $ref: '#/components/schemas/Ref'
                 weeklyMinutes:
                   type: integer
                   minimum: 0
@@ -491,6 +534,11 @@ paths:
                   type: integer
                   minimum: 0
                   maximum: 500
+                monthlyReservationSlotHours:
+                  description: Chỉ với tài khoản không có cha. Ngân sách chỗ × giờ đặt trước cho kỳ thi mỗi tháng.
+                  type: integer
+                  minimum: 0
+                  maximum: 100000
       responses:
         '200':
           description: Tài khoản hạn mức
@@ -739,9 +787,12 @@ components:
     ReservationCreate:
       type: object
       additionalProperties: false
-      required: [reservationRef, profile, slots, startsAt, endsAt, warmImages]
+      required: [reservationRef, quotaAccountRef, profile, slots, startsAt, endsAt, warmImages]
       properties:
         reservationRef:
+          $ref: '#/components/schemas/Ref'
+        quotaAccountRef:
+          description: Tài khoản hạn mức của lớp; ngân sách đặt trước được tính ở tài khoản gốc của nó.
           $ref: '#/components/schemas/Ref'
         profile:
           $ref: '#/components/schemas/Profile'
@@ -766,13 +817,18 @@ components:
 
     Reservation:
       type: object
-      required: [id, reservationRef, profile, slots, startsAt, endsAt, slotsInUse]
+      required: [id, reservationRef, quotaAccountRef, profile, slots, startsAt, endsAt, slotsInUse, slotHours]
       properties:
         id:
           type: string
           format: uuid
         reservationRef:
           $ref: '#/components/schemas/Ref'
+        quotaAccountRef:
+          $ref: '#/components/schemas/Ref'
+        slotHours:
+          description: Số chỗ × số giờ của khung giờ, làm tròn lên theo nửa giờ.
+          type: number
         profile:
           $ref: '#/components/schemas/Profile'
         slots:
@@ -792,6 +848,17 @@ components:
       properties:
         quotaAccountRef:
           $ref: '#/components/schemas/Ref'
+        parentRef:
+          $ref: '#/components/schemas/Ref'
+        allocatedWeeklyMinutes:
+          description: Tổng `weeklyMinutes` đã chia cho các tài khoản con; chỉ có với tài khoản có con.
+          type: integer
+        monthlyReservationSlotHours:
+          description: Chỉ có với tài khoản không có cha.
+          type: integer
+        usedReservationSlotHoursThisMonth:
+          description: Chỉ có với tài khoản không có cha; gồm đặt trước của mọi tài khoản con.
+          type: number
         weeklyMinutes:
           type: integer
         maxConcurrentSessions:

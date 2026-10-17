@@ -86,6 +86,10 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.15 | Phiên `EXAM` không được xếp lên node `crucible.dev/node-class=volatile` | CR-DOC-04 mục 4 |
 | BR-M1.16 | Mỗi phiên chạy tối đa một lệnh exec (`CHECK` hoặc `RESTORE`) tại một thời điểm (`EXEC_BUSY`); chỉ ở pha `READY`, `EXPIRING`. `RESTORE` chạy bằng shell và `PATH` của môi trường, `CHECK` chạy bằng bộ công cụ chỉ đọc | CR-DOC-03 mục 7 |
 | BR-M1.17 | Môi trường bị dừng vì vượt giới hạn bộ nhớ làm phiên chuyển `TERMINATED` với lý do `OUT_OF_MEMORY`; pod không được khởi động lại | AC-C1.8 |
+| BR-M1.18 | Tổng `weekly_minutes` của các tài khoản con không vượt `weekly_minutes` của tài khoản cha; phần chưa chia dùng cho phiên tính trực tiếp vào tài khoản cha. Kiểm tra trong transaction có khóa dòng tài khoản cha | AC-R2.6 |
+| BR-M1.19 | Phiên `PRACTICE` bị từ chối khi tổng phiên đang chạy của tài khoản cha và mọi tài khoản con đạt `max_concurrent_sessions` của tài khoản cha | AC-R2.6 |
+| BR-M1.20 | Chỗ × giờ của đặt trước = `slots` × thời lượng tính theo giờ, làm tròn lên theo nửa giờ; tính vào tháng dương lịch (giờ Việt Nam) chứa `startsAt` của tài khoản gốc. Tổng trong tháng không vượt `monthly_reservation_slot_hours`. Hủy trước `startsAt` hoàn lại; kết thúc sớm do kỳ thi đóng không hoàn lại | AC-R2.7 |
+| BR-M1.21 | Scope `runtime.quota.write` chỉ ghi tài khoản có `parent_ref`; tài khoản không có cha chỉ vai trò `ADMIN` ghi. Tài khoản cha chưa tồn tại được tạo với giá trị `QUOTA_DEFAULT_*` | AC-R2.8 |
 
 ## 5. Cấp phát
 
@@ -173,6 +177,8 @@ không) được xác định ở thử nghiệm S5.
 ```mermaid
 erDiagram
     quota_accounts ||--o{ sessions : "quota_account_ref"
+    quota_accounts ||--o{ quota_accounts : "parent_ref"
+    quota_accounts ||--o{ reservations : "quota_account_ref"
     quota_accounts ||--o{ usage_ledger : ""
     sessions ||--o| usage_ledger : ""
     sessions ||--o{ terminal_tickets : ""
@@ -201,8 +207,10 @@ erDiagram
     }
     quota_accounts {
         text ref PK
+        text parent_ref FK
         int weekly_minutes
         int max_concurrent_sessions
+        int monthly_reservation_slot_hours
     }
     usage_ledger {
         bigint id PK
@@ -215,6 +223,8 @@ erDiagram
     reservations {
         uuid id PK
         text reservation_ref UK
+        text quota_account_ref FK
+        numeric slot_hours
         text profile
         int slots
         timestamptz starts_at
@@ -284,6 +294,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | AC-R2.1, BR-M1.4, BR-M1.5 | Đơn vị và envtest: thứ tự cấp, không dừng phiên đang chạy |
 | AC-R2.2, BR-M1.6, BR-M1.7 | Đơn vị và envtest: đặt trước |
 | AC-R2.4, AC-R2.5, BR-M1.2, BR-M1.3 | Tích hợp: sổ hạn mức |
+| AC-R2.6–AC-R2.8, BR-M1.18–BR-M1.21 | Tích hợp: chia hạn mức đồng thời cho hai lớp cùng giảng viên không vượt trần; ngân sách đặt trước theo tháng; quyền ghi theo scope |
 | AC-R3.1, BR-M1.13 | Tích hợp: dùng lại vé, vé hết hạn, vé của người khác |
 | AC-R4.1, BR-M1.11 | envtest và chaos CH1 |
 | AC-R4.2, BR-M1.12 | envtest và chaos CH2, CH3 |
@@ -302,6 +313,9 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | `RESERVATION_MAX_RATIO` | BR-M1.7 | `0.8` |
 | `RESERVATION_LEAD_TIME` | BR-M1.6 | `15m` |
 | `SETUP_TIMEOUT` | Thời hạn setup | `60s` |
+| `QUOTA_DEFAULT_WEEKLY_MINUTES` | Trần giờ máy mỗi tuần của giảng viên mới (BR-M1.21) | `6000` |
+| `QUOTA_DEFAULT_MAX_CONCURRENT` | Trần phiên đồng thời của giảng viên mới | `60` |
+| `QUOTA_DEFAULT_RESERVATION_SLOT_HOURS` | Ngân sách chỗ × giờ đặt trước mỗi tháng của giảng viên mới | `300` |
 
 ## Lịch sử thay đổi
 

@@ -96,7 +96,7 @@ flowchart LR
 | UC16 | Xem tín hiệu gian lận, đề xuất và lập biên bản | Giảng viên, trợ giảng | L09, L13 | M3 |
 | UC17 | Xử lý phúc khảo | Giảng viên (quyết định), trợ giảng (góp ý) | L11 | M3, M2 |
 | UC18 | Công bố điểm kỳ thi, xem và xuất bảng điểm | Giảng viên | L10, L14 | M3 |
-| UC19 | Quản lý tài khoản, vai trò, tài khoản hạn mức | Quản trị | R05, P01 | Nền tảng, M1 |
+| UC19 | Quản lý tài khoản, vai trò, trần hạn mức của giảng viên | Quản trị | R05, P01 | Nền tảng, M1 |
 | UC20 | Giám sát sức chứa, hàng đợi, phiên; kết thúc phiên | Quản trị | R13 | M1 |
 | UC21 | Nộp tự động khi hết giờ, chấm ngầm mỗi 2 phút, thu hồi phiên hết hạn hoặc không hoạt động, nâng nhóm ấm trước kỳ thi | Hệ thống | R03, R07, C15, L04 | M1, M2, M3 |
 
@@ -223,24 +223,27 @@ Luồng chính:
 3. Giảng viên xác nhận; sinh viên trong danh sách được gắn vào lớp ngay nếu đã có tài khoản, hoặc khi đăng nhập lần đầu
    bằng email trùng.
 4. Giảng viên thêm giảng viên phụ trách khác và trợ giảng bằng email.
-5. Giảng viên đặt hạn mức giờ máy mỗi tuần cho lớp.
+5. Giảng viên đặt hạn mức giờ máy mỗi tuần cho lớp; màn hình hiển thị trần của giảng viên và phần đã chia cho các lớp khác.
 
 | Mã | Điều kiện | Xử lý |
 |---|---|---|
 | 2a | Tệp có dòng lỗi | Chỉ nhập khi giảng viên chọn bỏ qua các dòng lỗi hoặc sửa tệp; báo lỗi theo dòng (AC-L1.5) |
 | 3a | Nhập lại danh sách đã có sinh viên | Dòng trùng mã số sinh viên được cập nhật họ tên, email; sinh viên không có trong tệp mới không bị xóa khỏi lớp |
+| 5a | Hạn mức vượt phần trần còn lại | Từ chối, hiển thị phần còn lại; giảng viên giảm hạn mức của lớp này hoặc lớp khác, hoặc đề nghị quản trị nâng trần (AC-R2.6) |
 
 ### 3.6. UC14 — Lên lịch kỳ thi
 
 Luồng chính:
 1. Giảng viên chọn lớp, bài lab (phiên bản đã xuất bản), giờ bắt đầu, giờ kết thúc, hạn chót được vào thi, chế độ phản hồi,
    bật hoặc tắt gợi ý.
-2. Hệ thống kiểm tra sức chứa khả dụng trong khung giờ cho số sinh viên của lớp và đặt trước tài nguyên.
+2. Hệ thống kiểm tra ngân sách đặt trước trong tháng của giảng viên và sức chứa khả dụng trong khung giờ cho số sinh viên
+   của lớp, rồi đặt trước tài nguyên.
 3. Kỳ thi ở trạng thái đã lên lịch; sinh viên thấy kỳ thi sắp tới.
 
 | Mã | Điều kiện | Xử lý |
 |---|---|---|
 | 2a | Không đủ sức chứa | Từ chối; hiển thị số chỗ cần, số chỗ còn và tối đa 3 khung giờ gần nhất cùng độ dài còn đủ chỗ; giảng viên chọn một khung giờ gợi ý hoặc nhập giờ khác (AC-L2.1) |
+| 2b | Vượt ngân sách chỗ × giờ đặt trước trong tháng của giảng viên | Từ chối, hiển thị ngân sách đã dùng và còn lại (AC-R2.7) |
 | 3a | Giảng viên hủy hoặc đổi giờ trước khi mở | Giải phóng đặt trước cũ, đặt trước theo giờ mới |
 
 ### 3.7. UC15, UC16 — Giám sát kỳ thi và xử lý tín hiệu gian lận
@@ -425,6 +428,7 @@ classDiagram
         class TaiKhoanHanMuc {
             phutMoiTuan
             soPhienDongThoi
+            choGioDatTruocMoiThang
         }
         class DatTruocTaiNguyen {
             soCho
@@ -446,6 +450,7 @@ classDiagram
     KyThi --> PhienBanBaiLab : cố định phiên bản
     KyThi --> DatTruocTaiNguyen : reservationRef
     Lop --> TaiKhoanHanMuc : quotaAccountRef
+    TaiKhoanHanMuc --> TaiKhoanHanMuc : tài khoản cha (trần của giảng viên)
     BaiLab "1" *-- "*" PhienBanBaiLab
     BaiLab --> BaiLab : nhân bản từ
     PhienBanBaiLab "1" --> "*" LuotLamBai

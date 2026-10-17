@@ -83,7 +83,7 @@ flowchart LR
 | SCR-13 | Phòng chờ thi | Sinh viên | M3 | UC05 |
 | SCR-14 | Kết quả từng bước, bản ghi phiên, gửi phúc khảo | Sinh viên | M3 | UC06 |
 | SCR-20 | Trang chủ giảng viên: lớp, kỳ thi sắp tới, tín hiệu và phúc khảo chờ xử lý | Giảng viên, trợ giảng | M3 | |
-| SCR-21 | Quản lý lớp: danh sách, nhập CSV có xem trước lỗi, thành viên giảng dạy, hạn mức giờ máy | Giảng viên | M3 | UC11 |
+| SCR-21 | Quản lý lớp: danh sách, nhập CSV có xem trước lỗi, thành viên giảng dạy, hạn mức giờ máy của lớp kèm trần của giảng viên và phần đã chia | Giảng viên | M3 | UC11 |
 | SCR-22 | Lộ trình, bài tập, chính sách quá hạn, gia hạn riêng, tiến độ lớp | Giảng viên | M3 | UC12, UC13 |
 | SCR-23 | Thư viện bài lab: của tôi, được chia sẻ; nhân bản | Giảng viên | M2 | UC10 |
 | SCR-24 | Soạn bài lab: form theo phần, tab YAML, xem trước với biến thể | Giảng viên | M2 | UC07 |
@@ -94,7 +94,7 @@ flowchart LR
 | SCR-29 | Tín hiệu gian lận, đề xuất và biên bản | Giảng viên, trợ giảng | M3 | UC16 |
 | SCR-30 | Bảng điểm, xuất CSV, công bố điểm, xử lý phúc khảo | Giảng viên (trợ giảng xem, góp ý) | M3 | UC17, UC18 |
 | SCR-40 | Sức chứa theo node, nhóm ấm, hàng đợi, đặt trước, phiên đang chạy | Quản trị | M1 | UC20 |
-| SCR-41 | Tài khoản, vai trò, tài khoản hạn mức | Quản trị | Nền tảng, M1 | UC19 |
+| SCR-41 | Tài khoản, vai trò, trần hạn mức của từng giảng viên (giờ máy, phiên đồng thời, chỗ × giờ đặt trước) và mức đã dùng | Quản trị | Nền tảng, M1 | UC19 |
 
 ## 7. Bố cục các màn hình chính
 
@@ -202,6 +202,7 @@ Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiế
 ```
 
 Số chỗ cần bằng số sinh viên của lớp. Khung giờ gợi ý có cùng thời lượng, bắt đầu từ giờ giảng viên nhập trở đi.
+Màn hình hiển thị thêm ngân sách chỗ × giờ đặt trước còn lại trong tháng của giảng viên (ví dụ "đã dùng 135/300").
 
 ## 8. Trạng thái và thông báo
 

@@ -77,7 +77,7 @@ flowchart LR
 | T9 | Chiếm terminal bằng vé bị lộ | Vé hết hạn sau 30 giây, dùng một lần, chỉ truyền qua WebSocket TLS; không xuất hiện trong log (gateway che tham số `ticket`) |
 | T10 | Học viên giả mạo vai trò giảng viên | Vai trò lấy từ token do Keycloak ký; vai trò `INSTRUCTOR`, `ADMIN` chỉ được cấp bởi quản trị trong Keycloak |
 | T11 | Giảng viên xem bài của lớp không phụ trách | M3 kiểm tra quan hệ giảng viên – lớp trước khi xin vé xem và trước khi trả bản ghi; M1 ghi nhật ký mọi vé xem |
-| T12 | Lạm dụng tạo phiên để chiếm sức chứa | Giới hạn phiên đồng thời theo học viên; hạn mức giờ máy; giới hạn tần suất tạo phiên 10 lần mỗi phút mỗi người dùng |
+| T12 | Lạm dụng tạo phiên hoặc đặt trước để chiếm sức chứa | Giới hạn phiên đồng thời theo học viên; hạn mức giờ máy; giới hạn tần suất tạo phiên 10 lần mỗi phút mỗi người dùng; trần hạn mức theo giảng viên cho giờ máy, phiên đồng thời và chỗ × giờ đặt trước, chỉ quản trị đặt được |
 | T13 | Giảng viên đưa script độc hại vào bài lab | Script chỉ chạy trong môi trường đã cách ly như lệnh của học viên; image chỉ từ registry được phép (mục 5) |
 | T14 | Lỗ hổng web phổ biến (XSS từ mô tả bài lab, CSRF) | Markdown được làm sạch khi hiển thị; Content-Security-Policy chặn script nội tuyến; token trong header, không dùng cookie cho API |
 

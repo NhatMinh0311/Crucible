@@ -313,8 +313,8 @@ sequenceDiagram
     participant O as runtime-operator (M1)
 
     I->>L: Lên lịch kỳ thi (khung giờ, số học viên, bài lab)
-    L->>R: POST /reservations (profile, số chỗ, khung giờ, image của bài lab, reservationRef)
-    R->>R: Kiểm tra sức chứa khả dụng trong khung giờ
+    L->>R: POST /reservations (profile, số chỗ, khung giờ, image của bài lab, reservationRef, quotaAccountRef)
+    R->>R: Kiểm tra ngân sách đặt trước của giảng viên và sức chứa khả dụng trong khung giờ
     alt Đủ sức chứa
         R-->>L: 201 reservationId
         L->>L: Kỳ thi SCHEDULED
