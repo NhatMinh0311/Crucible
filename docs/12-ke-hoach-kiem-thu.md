@@ -77,7 +77,7 @@ quét mã kiểm thử và liệt kê tiêu chí chưa có kiểm thử.
 | Bộ dữ liệu | Nội dung | Vị trí |
 |---|---|---|
 | Lớp mẫu | 2 lớp, 2 giảng viên, 1 trợ giảng, 60 sinh viên giả (tệp CSV) | `tests/data/` |
-| Bài lab mẫu | Tối thiểu 10 bài thuộc các dạng: có tham số, có lỗi cài sẵn, dùng cho thi | `labs/` |
+| Bài lab mẫu | Tối thiểu 10 bài; mỗi dạng trong phạm vi MVP (CR-DOC-01 mục 5.4) có ít nhất hai bài; ít nhất hai bài dùng cho thi | `labs/` |
 | Tài khoản kiểm thử tải | 100 tài khoản cục bộ trong Keycloak, tạo bằng script | `tests/load/` |
 
 Dữ liệu kiểm thử không chứa thông tin cá nhân thật.

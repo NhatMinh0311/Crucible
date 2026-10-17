@@ -80,7 +80,7 @@ flowchart LR
 |---|---|---|---|---|
 | UC01 | Đăng nhập bằng tài khoản trường hoặc tài khoản cục bộ | Mọi người dùng | P01 | Nền tảng |
 | UC02 | Xem lớp, lộ trình, bài tập, kỳ thi sắp tới | Sinh viên | L01–L04 | M3 |
-| UC03 | Làm bài lab: bắt đầu, thao tác terminal, kiểm tra bước, xem gợi ý, nộp | Sinh viên | R01, R08, C07–C10, C16 | M2, M1 |
+| UC03 | Làm bài lab: bắt đầu, thao tác terminal, kiểm tra bước, trả lời câu hỏi, xem gợi ý, nộp | Sinh viên | R01, R08, C07–C10, C16, C17 | M2, M1 |
 | UC04 | Tiếp tục lượt làm bài có khôi phục tiến độ | Sinh viên | C07, C14 | M2 |
 | UC05 | Làm bài thi | Sinh viên | L04, L06, C15, C16 | M3, M2 |
 | UC06 | Xem kết quả, bản ghi sau công bố, gửi phúc khảo | Sinh viên | L08, L11, L14 | M3 |
@@ -117,6 +117,7 @@ Luồng chính:
    terminal ở bên còn lại, thời gian còn lại của phiên.
 3. Sinh viên thao tác trong terminal.
 4. Sinh viên bấm "Kiểm tra" ở một bước; hệ thống chạy lệnh kiểm tra và hiển thị đạt hoặc chưa đạt kèm thông điệp.
+   Với bước trả lời, sinh viên nhập câu trả lời và bấm "Trả lời"; hệ thống so với đáp án.
 5. Lặp lại bước 3–4 cho các bước còn lại.
 6. Sinh viên bấm "Nộp bài"; hệ thống chấm cuối, thu hồi môi trường, hiển thị điểm.
 
@@ -132,6 +133,7 @@ Luồng thay thế và ngoại lệ:
 | 3c | Kết nối terminal bị ngắt | Giao diện tự kết nối lại; môi trường giữ nguyên |
 | 3d | Phiên dùng CPU bất thường kéo dài | Cảnh báo trong terminal; tiếp diễn 5 phút thì phiên bị kết thúc, lượt làm bài tạm dừng, giữ điểm các bước đã đạt; lần phát hiện được ghi nhận cho quản trị (AC-R5.1) |
 | 4a | Sinh viên mở gợi ý | Hệ thống hỏi xác nhận, hiển thị tỉ lệ trừ điểm của gợi ý trước khi mở |
+| 4b | Bước trả lời đã dùng hết số lần mà chưa đúng | Bước khóa ở trạng thái không đạt; các bước khác vẫn làm được (AC-C2.10) |
 | 6a | Bài tập hết hạn khi đang làm | Hệ thống nộp tự động tại thời điểm hết hạn cuối cùng |
 
 | Mục | Nội dung |
@@ -197,7 +199,8 @@ Luồng chính:
 | Kích hoạt | Giảng viên tạo bài lab mới, nhân bản một bài chia sẻ, hoặc sửa bài của mình |
 
 Luồng chính:
-1. Giảng viên nhập thông tin theo từng phần của form; có thể chuyển sang tab YAML và ngược lại.
+1. Giảng viên nhập thông tin theo từng phần của form; có thể chuyển sang tab YAML và ngược lại. Mỗi bước chọn loại kiểm tra
+   trạng thái (lệnh kiểm tra) hoặc trả lời câu hỏi (đáp án, biểu thức chính quy hoặc lệnh lấy đáp án, số lần tối đa).
 2. Hệ thống kiểm tra lược đồ và quy tắc ngữ nghĩa khi nhập, hiển thị lỗi tại trường tương ứng.
 3. Giảng viên xem trước mô tả các bước với một biến thể.
 4. Giảng viên chạy thử: chọn seed, nhận một phiên có terminal, chạy từng lệnh kiểm tra, chạy lời giải mẫu.

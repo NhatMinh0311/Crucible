@@ -145,7 +145,7 @@ tài khoản `instructor:` của giảng viên đang chạy thử.
 | `solution` | Lời giải mẫu cho từng bước: script với bước `check`; câu trả lời viết sẵn hoặc script in ra câu trả lời với bước `answer` |
 
 Lược đồ đầy đủ tại `contracts/lab-spec/lab-spec.schema.json`. Bốn bài mẫu tại `contracts/lab-spec/examples/` thể hiện
-các dạng bài tại CR-DOC-01 mục 5.5: cấu hình theo yêu cầu (`linux-user-nginx`), sửa hệ thống hỏng (`fix-broken-web`),
+các dạng bài tại CR-DOC-01 mục 5.4: cấu hình theo yêu cầu (`linux-user-nginx`), sửa hệ thống hỏng (`fix-broken-web`),
 bảo mật và gia cố (`harden-server`), điều tra và trả lời (`investigate-web-log`).
 
 Trường `machine` của bước và lỗi cài sẵn hiện chỉ nhận `main`; môi trường nhiều máy mở rộng giá trị này (ADR-0015).

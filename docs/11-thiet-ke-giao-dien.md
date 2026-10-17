@@ -116,7 +116,10 @@ Phác thảo dưới đây xác định vị trí và nội dung; hình ảnh c�
 │   chứa đúng chuỗi page4k2…    │                                                           │
 │   [Kiểm tra]  [Gợi ý (−25%)]  │                                                           │
 │ ○ 4. Cấu hình nginx      40đ  │                                                           │
-│                               │                                                           │
+│ ○ 5. Tiến trình lạ (trả lời)  │                                                           │
+│   PID của tiến trình nghe     │                                                           │
+│   cổng 9142?                  │                                                           │
+│   [________] [Trả lời] 2/3 lần│                                                           │
 ├───────────────────────────────┴──────────────────────────────────────────────────────────┤
 │ ● Môi trường sẵn sàng · kết nối ổn định · phiên hết hạn lúc 15:42      [Gia hạn] [Ctrl+\] │
 └──────────────────────────────────────────────────────────────────────────────────────────┘
@@ -124,6 +127,8 @@ Phác thảo dưới đây xác định vị trí và nội dung; hình ảnh c�
 
 - Thanh ngăn giữa hai cột kéo được; tỉ lệ được ghi nhớ trên trình duyệt; `Ctrl+\` thu gọn hoặc mở cột hướng dẫn.
 - Kỳ thi: nút "Gia hạn" ẩn; nút "Kiểm tra" và "Gợi ý" hiển thị theo cấu hình; đồng hồ tính tới giờ kết thúc chung.
+- Bước trả lời: ô nhập kèm gợi ý định dạng và số lần còn lại; trả lời sai hiển thị "Chưa đúng — còn n lần"; ở kỳ thi
+  `RECORDED_ONLY`, `DISABLED` ô nhập vẫn hiển thị, nút ghi "Lưu câu trả lời" và không hiện số lần.
 - Phiên ở trạng thái chuẩn bị, hàng đợi hoặc khôi phục: cột terminal hiển thị trạng thái theo UX1 thay cho terminal.
 - Khung `warning` từ máy chủ hiển thị thành dải cảnh báo trên terminal kèm đồng hồ tới `terminateAt`: "Không có thao tác
   — phiên sẽ kết thúc lúc …" (`IDLE`) hoặc "Môi trường đang dùng CPU liên tục ở mức cao, ảnh hưởng người khác. Hãy dừng
@@ -183,7 +188,8 @@ Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiế
 │ Tham số (2)      │ Tiêu đề  [Trang hoạt động trở lại   ]  │ 2. Trang hoạt động trở lại     │
 │ Môi trường       │ Điểm     [70]                          │ Trang http://127.0.0.1:8143/   │
 │ Lỗi cài sẵn (4)  │ Mô tả    [Trang `http://127.0.0.1:…]   │ trả về nội dung ban đầu.       │
-│ Bước (2)         │ Lệnh kiểm tra                          │                                │
+│ Bước (2)         │ Loại  (•) Kiểm tra  ( ) Trả lời        │                                │
+│                  │ Lệnh kiểm tra                          │                                │
 │  1. nginx …      │ ┌───────────────────────────────────┐  │ Tham số: port=8143             │
 │ ▸2. Trang …      │ │ test "$(curl -sf http://…)" = …  │  │          marker=9f2c41ab07de   │
 │ Lời giải         │ └───────────────────────────────────┘  │ Lỗi cài sẵn: serviceStopped,   │

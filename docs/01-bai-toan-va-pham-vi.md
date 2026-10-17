@@ -124,7 +124,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | R12 | Phát hiện node mất kết nối; đánh dấu phiên bị ảnh hưởng và phát sự kiện |
 | R13 | Trang quản trị: sức chứa cụm, hàng đợi, phiên đang chạy, hạn mức, lần phát hiện dùng CPU bất thường |
 | R16 | Phát hiện phiên dùng CPU bất thường kéo dài: phiên luyện tập bị cảnh báo rồi kết thúc; phiên thi được báo cho giám thị, không bị kết thúc; mọi lần phát hiện được ghi nhận cho quản trị |
-| R14 (MR) | Môi trường nhiều máy: 2–3 container nối mạng riêng trong một phiên |
+| R14 (MR) | Môi trường nhiều máy: 2–3 container nối mạng riêng trong một phiên; hợp đồng đã có khái niệm máy, hiện chỉ một máy `main` (ADR-0015) |
 | R15 (MR) | Bài lab Docker: chạy Docker Engine bên trong môi trường học viên (phụ thuộc kết quả thử nghiệm S6 tại CR-DOC-06) |
 
 ### 5.2. M2 — Bài lab và chấm điểm
@@ -142,6 +142,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | C14 | Khôi phục tiến độ khi tiếp tục: chạy lời giải mẫu của các bước đã đạt trên phiên mới trước khi giao cho học viên |
 | C15 | Chấm ngầm mỗi 2 phút các lượt làm bài thi đang diễn ra để ghi nhận tiến độ, phục vụ khôi phục và giám sát; kết quả không hiển thị cho học viên ngoài chế độ `FULL` |
 | C08 | Kiểm tra từng bước theo yêu cầu học viên; điểm thành phần |
+| C17 | Bước trả lời: học viên nhập câu trả lời cho câu hỏi về môi trường; so với đáp án theo biến thể, theo biểu thức chính quy hoặc theo trạng thái môi trường lúc trả lời; số lần trả lời tối đa do giảng viên đặt |
 | C09 | Gợi ý theo bước, trừ điểm theo tỉ lệ khai báo; kỳ thi có thể tắt gợi ý |
 | C16 | Chế độ phản hồi khi kiểm tra theo ngữ cảnh: `FULL` (hiện đạt hay chưa đạt), `RECORDED_ONLY` (chỉ báo đã ghi nhận), `DISABLED` (không cho kiểm tra) |
 | C10 | Chấm cuối khi nộp bài: chạy lại toàn bộ lệnh kiểm tra trên trạng thái môi trường lúc nộp |
@@ -169,7 +170,22 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L16 | Phòng chờ thi mở trước 15 phút: quy chế, đếm ngược, kiểm tra kết nối bằng một môi trường mẫu ngắn |
 | L12 | Hạn mức giờ máy theo lớp, giảng viên chia từ trần hạn mức của mình |
 
-### 5.4. Chức năng dùng chung
+### 5.4. Dạng bài lab
+
+Các dạng bài được ghép từ cơ chế chung của đặc tả bài lab (tham số, lỗi cài sẵn, bước kiểm tra, bước trả lời). Một bài
+lab có thể kết hợp nhiều dạng.
+
+| Dạng | Học viên làm gì | Cơ chế | Phạm vi |
+|---|---|---|---|
+| Cấu hình theo yêu cầu | Dựng, cấu hình dịch vụ trên môi trường sạch theo đề | Tham số, bước kiểm tra | MVP |
+| Sửa hệ thống hỏng | Tìm nguyên nhân và khắc phục sự cố được cài sẵn | Lỗi cài sẵn chọn theo seed, bước kiểm tra | MVP |
+| Bảo mật và gia cố | Sửa cấu hình, quyền, dịch vụ không an toàn | Lỗi cài sẵn hoặc setup, bước kiểm tra | MVP |
+| Điều tra và trả lời | Đọc nhật ký, trạng thái hệ thống để trả lời câu hỏi | Tham số, bước trả lời (C17) | MVP |
+| Mạng trong một máy | Cổng, địa chỉ lắng nghe, phân giải tên, tường lửa cục bộ | Như các dạng trên; tường lửa phụ thuộc kết quả thử nghiệm S4 | MVP |
+| Mạng nhiều máy | Dịch vụ giữa các máy: DNS, cơ sở dữ liệu từ xa, reverse proxy, tường lửa giữa máy | Môi trường nhiều máy (R14) | Mở rộng |
+| Viết script | Viết script đạt yêu cầu, hệ thống chạy script để chấm | Cần chế độ chấm chạy mã của học viên trong điều kiện kiểm soát, khác nguyên tắc tại ADR-0011 | Mở rộng |
+
+### 5.5. Chức năng dùng chung
 
 | Mã | Chức năng | Phụ trách |
 |---|---|---|
@@ -184,6 +200,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 - Sinh đề hoặc chấm điểm bằng mô hình AI.
 - Người tự học không thuộc lớp nào; khóa học công khai.
 - Chấm bài lập trình theo đầu vào và đầu ra.
+- Bài mạng tầng liên kết dữ liệu và định tuyến (VLAN, DHCP, định tuyến giữa các mạng con): mạng của cụm chỉ kết nối các pod ở tầng IP (ADR-0015).
 - Ứng dụng di động, đa ngôn ngữ.
 
 ## 7. User story và tiêu chí chấp nhận
@@ -237,7 +254,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-C1.7: Bài lab riêng tư không hiển thị với giảng viên khác; nhân bản tạo bài lab mới thuộc người nhân bản, ghi nguồn gốc.
 - AC-C1.8: Kiểm thử bài lab không đạt khi một seed bị dừng vì vượt giới hạn bộ nhớ; kết quả kiểm thử cảnh báo khi bộ nhớ cao nhất vượt 80% giới hạn của mức tài nguyên đã chọn, kèm đề xuất mức tài nguyên.
 
-**US-C2 (C06–C10, C14–C16)** — Là học viên, tôi muốn biết bước nào đã làm đúng và nhận điểm công bằng.
+**US-C2 (C06–C10, C14–C17)** — Là học viên, tôi muốn biết bước nào đã làm đúng và nhận điểm công bằng.
 - AC-C2.1: Một lượt làm bài luôn dùng cùng một biến thể, kể cả khi tiếp tục bằng phiên mới; lượt làm bài mới của cùng bài luyện tập nhận biến thể mới; học viên khác nhau trong cùng kỳ thi nhận biến thể khác nhau khi miền tham số cho phép.
 - AC-C2.2: Học viên không suy ra được seed hoặc biến thể của người khác từ thông tin của mình.
 - AC-C2.3: Kết quả kiểm tra một bước trả về trong p95 ≤ 3 giây.
@@ -247,6 +264,8 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-C2.7: Lượt làm bài có phiên bị `LOST` hoặc đã hết hạn tiếp tục được bằng phiên mới; các bước đã đạt được giữ điểm.
 - AC-C2.8: Khi tiếp tục, môi trường mới được khôi phục bằng lời giải mẫu của các bước đã đạt trước khi học viên nhận terminal; học viên không thấy nội dung lời giải trong terminal. Bước khôi phục không thành công được báo cho học viên và không bị trừ điểm.
 - AC-C2.9: Trong ngữ cảnh `RECORDED_ONLY`, học viên chỉ nhận thông báo đã ghi nhận; trong ngữ cảnh `DISABLED`, nút kiểm tra không hiển thị và API từ chối (409 `CHECK_DISABLED`).
+- AC-C2.10: Ở chế độ `FULL`, bước trả lời nhận tối đa `maxTries` lần; hết lượt mà chưa đúng thì bước không đạt và API từ chối (409 `ANSWER_TRIES_EXHAUSTED`). Câu trả lời khác đáp án chỉ ở khoảng trắng đầu cuối hoặc hoa thường (khi không bật phân biệt) được chấp nhận.
+- AC-C2.11: Ở chế độ `RECORDED_ONLY`, `DISABLED`, học viên chỉ nhận thông báo đã ghi nhận câu trả lời; khi chấm cuối, bước trả lời được chấm theo câu trả lời cuối cùng.
 
 ### 7.3. M3
 
