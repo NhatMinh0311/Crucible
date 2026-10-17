@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011 |
 
@@ -287,3 +287,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Mã lỗi hạn mức mới, tài khoản hạn mức (mục 3.5), đo bộ nhớ khi kiểm thử bài lab, sự kiện `runtime.session.resource-alert`, khung `warning` của terminal |
+| 1.2 | 18/10/2026 | Bước trả lời (mục 4.6), trường `machine`, bốn bài mẫu, mã lỗi `ANSWER_TRIES_EXHAUSTED` |

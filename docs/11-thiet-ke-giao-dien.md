@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-11 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01, CR-DOC-10 (use case), CR-DOC-03 mục 6 (giao thức terminal), AGENTS.md mục 4 |
 
@@ -264,3 +264,4 @@ outbox (CR-DOC-01 L15).
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Bố cục SCR-26 khi thiếu sức chứa; cảnh báo CPU trên SCR-12, SCR-27; SCR-21, SCR-22, SCR-25, SCR-40, SCR-41 |
+| 1.2 | 18/10/2026 | Ô trả lời trên SCR-12, chọn loại bước trên SCR-24 |

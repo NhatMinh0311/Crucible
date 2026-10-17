@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
 
 ## 1. Mục đích
@@ -106,6 +106,10 @@ Quy định:
 | Phiên luyện tập dùng CPU bất thường | Cảnh báo, tiếp diễn 5 phút thì kết thúc phiên | Chỉ ghi nhận; hạ mức CPU |
 | Phiên thi dùng CPU bất thường | Không kết thúc, báo giám thị | Xử lý như luyện tập |
 | Vi phạm nhiều lần | Chỉ ghi nhận, quản trị tự xử lý | Tự động tạm khóa tạo phiên luyện tập |
+| Dạng bài bổ sung | Thêm điều tra và trả lời, bảo mật và gia cố vào MVP; viết script để sau | Chỉ hai dạng hiện có; thêm cả viết script |
+| Bài mạng nhiều máy | Chuẩn bị hợp đồng (khái niệm máy), hiện thực sau MVP (ADR-0015) | Đưa vào MVP tối đa 2 máy; giữ nguyên |
+| Trả lời sai ở bước trả lời | Tối đa N lần do giảng viên đặt, mặc định 3 | Trừ điểm mỗi lần sai; không giới hạn |
+| So khớp câu trả lời | Chuẩn hóa khoảng trắng, hoa thường; nhiều đáp án; tùy chọn biểu thức chính quy | Khớp chính xác; thêm kiểu số có sai số |
 | Kênh thông báo | Trong ứng dụng và email cho sự kiện quan trọng | Chỉ trong ứng dụng |
 | Thiết bị | Làm bài trên máy tính; trang khác dùng được trên điện thoại | Chỉ máy tính |
 | Trước giờ thi | Phòng chờ có kiểm tra kết nối | Phòng chờ đơn giản; không có phòng chờ |
@@ -151,6 +155,7 @@ Quy định:
 | 14 | Hỏi trải nghiệm người dùng của giao diện; hỏi khó khăn khi thành viên dùng Windows | Hỏi đợt 7 (bố cục trang làm bài, thông báo, thiết bị, phòng chờ); hướng dẫn phát triển trên Windows | Chọn phương án cho 4 câu hỏi |
 | 15 | Hỏi hệ thống đã ước lượng được sức chứa, báo giảng viên khi kỳ thi không đủ chỗ, giới hạn tài nguyên theo giảng viên chưa | Đối chiếu thiết kế, chỉ ra 4 thiếu sót (phản hồi khi thiếu chỗ, tài nguyên bài lab không được đo, chưa có giới hạn theo giảng viên, bài tập không có cảnh báo tải); hỏi đợt 8 | Chọn phương án cho 4 câu hỏi |
 | 16 | Hỏi cơ chế giám sát phiên bị dùng chạy tiến trình nặng | Đối chiếu biện pháp hiện có (chặn mạng, giới hạn tài nguyên, thời hạn); chỉ ra thiếu sót về CPU kéo dài và máy chủ gói có thể bị dùng làm proxy; hỏi đợt 9; cập nhật hợp đồng, tài liệu, backlog | Chọn phương án cho 3 câu hỏi |
+| 17 | Hỏi các dạng bài hiện có; hỏi bài quản trị mạng và số pod mỗi phiên | Liệt kê hai dạng hiện có và ba dạng phổ biến chưa hỗ trợ trọn vẹn; phân tích ba mức bài mạng; hỏi đợt 10; thêm bước trả lời, hai bài mẫu, danh mục dạng bài, ADR-0015 | Chọn dạng điều tra và gia cố, để sau dạng viết script; chọn phương án cho 3 câu hỏi |
 
 ### 3.6. Các lần điều chỉnh hướng
 
@@ -179,3 +184,4 @@ Quy định:
 |---|---|---|
 | 1.0 | 17/10/2026 | Ghi nhận giai đoạn 1 |
 | 1.1 | 17/10/2026 | Vòng 15, 16: sức chứa, hạn mức theo giảng viên, giám sát tài nguyên |
+| 1.2 | 18/10/2026 | Vòng 17: dạng bài, bài mạng nhiều máy |

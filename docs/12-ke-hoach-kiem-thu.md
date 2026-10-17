@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-12 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 7, 8; CR-DOC-04 mục 9, 11; CR-DOC-05 mục 6; CR-DOC-06 mục 6; tài liệu module |
 
@@ -119,3 +119,4 @@ kiểm thử phi chức năng hoặc chaos kèm biên bản thí nghiệm.
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | INV13; INV8 gồm kiểm thử I10, I11 |
+| 1.2 | 18/10/2026 | Bộ bài mẫu theo dạng bài |

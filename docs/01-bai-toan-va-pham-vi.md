@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
@@ -325,3 +325,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Phản hồi khi thiếu sức chứa (AC-L2.1), đo bộ nhớ bài lab (C05, AC-C1.8), trần hạn mức theo giảng viên (R05, AC-R2.6–AC-R2.8), cảnh báo tải bài tập (AC-L1.6), giám sát CPU (R16, US-R5, AC-L2.10) |
+| 1.2 | 18/10/2026 | Dạng bài lab (mục 5.4), bước trả lời (C17, AC-C2.10, AC-C2.11), mạng tầng 2 ngoài phạm vi |
