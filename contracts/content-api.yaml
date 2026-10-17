@@ -380,12 +380,17 @@ components:
 
     StepResult:
       type: object
-      required: [stepId, title, points, passed, pointsAwarded, hintsUsed]
+      required: [stepId, type, title, points, passed, pointsAwarded, hintsUsed]
       properties:
         stepId:
           type: string
-        title:
+        type:
+          description: Loại bước (CR-DOC-03 mục 4.6).
           type: string
+          enum: [CHECK, ANSWER]
+        triesUsed:
+          description: Số lần đã trả lời; chỉ có với bước ANSWER.
+          type: integer
         points:
           type: integer
         passed:

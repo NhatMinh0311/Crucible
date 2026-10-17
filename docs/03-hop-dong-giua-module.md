@@ -108,6 +108,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `ATTEMPT_STATE_CONFLICT` | 409 | M2 | Thao tác không hợp lệ với trạng thái hiện tại của lượt làm bài |
 | `VARIANT_UNSATISFIABLE` | 422 | M2 | Không sinh được biến thể thỏa ràng buộc `distinct` |
 | `CHECK_DISABLED` | 409 | M2 | Ngữ cảnh của lượt làm bài không cho học viên kiểm tra |
+| `ANSWER_TRIES_EXHAUSTED` | 409 | M2 | Bước trả lời đã dùng hết số lần trả lời |
 | `PREREQUISITE_NOT_MET` | 403 | M3 | Chưa đạt bài tiên quyết |
 | `ATTEMPT_LIMIT` | 409 | M3 | Hết số lượt làm bài của bài tập |
 | `ASSIGNMENT_CLOSED` | 409 | M3 | Bài tập đã quá hạn |
@@ -140,11 +141,14 @@ tài khoản `instructor:` của giảng viên đang chạy thử.
 | `constraints.distinct` | Nhóm tham số phải nhận giá trị khác nhau |
 | `environment` | Image, mức tài nguyên, thời hạn, mạng, khai báo dùng CPU cao, tệp ghi sẵn, script dựng |
 | `faults` | Lỗi cài sẵn: số lỗi được chọn và danh sách lỗi |
-| `steps` | Các bước: mô tả, điểm, lệnh kiểm tra, gợi ý, kết quả mong đợi ban đầu |
-| `solution` | Lời giải mẫu cho từng bước |
+| `steps` | Các bước: loại (`check` – kiểm tra trạng thái môi trường, `answer` – trả lời câu hỏi), mô tả, điểm, lệnh kiểm tra hoặc đáp án, gợi ý, kết quả mong đợi ban đầu |
+| `solution` | Lời giải mẫu cho từng bước: script với bước `check`; câu trả lời viết sẵn hoặc script in ra câu trả lời với bước `answer` |
 
-Lược đồ đầy đủ tại `contracts/lab-spec/lab-spec.schema.json`. Hai bài mẫu tại `contracts/lab-spec/examples/` thể hiện
-bài có tham số và bài có lỗi cài sẵn.
+Lược đồ đầy đủ tại `contracts/lab-spec/lab-spec.schema.json`. Bốn bài mẫu tại `contracts/lab-spec/examples/` thể hiện
+các dạng bài tại CR-DOC-01 mục 5.5: cấu hình theo yêu cầu (`linux-user-nginx`), sửa hệ thống hỏng (`fix-broken-web`),
+bảo mật và gia cố (`harden-server`), điều tra và trả lời (`investigate-web-log`).
+
+Trường `machine` của bước và lỗi cài sẵn hiện chỉ nhận `main`; môi trường nhiều máy mở rộng giá trị này (ADR-0015).
 
 ### 4.2. Quy tắc ngữ nghĩa
 
@@ -156,6 +160,8 @@ Ngoài lược đồ, đặc tả phải thỏa các quy tắc sau (kiểm tra b
 4. Tổng điểm lớn hơn 0; tổng tỉ lệ trừ điểm của các gợi ý trong một bước không vượt quá 1.
 5. Ít nhất một bước không đạt trên môi trường mới dựng.
 6. `faults.pick` nhỏ hơn số lỗi trong danh sách; mã lỗi không trùng.
+7. Bước `check` có lời giải `run`; bước `answer` có lời giải `answer` hoặc `run`.
+8. Biểu thức `answer.regex` hợp lệ.
 
 ### 4.3. Kết xuất tham số
 
@@ -181,14 +187,28 @@ Ngoài lược đồ, đặc tả phải thỏa các quy tắc sau (kiểm tra b
 M2 chỉ xuất bản một phiên bản khi các điều kiện sau đúng với 5 seed khác nhau, mỗi seed chạy trên một phiên ưu tiên `LAB_CI`:
 
 1. Trên môi trường mới dựng: mọi bước `expectInitially: fail` không đạt, mọi bước `expectInitially: pass` đạt; bước
-   `expectInitially: any` không được kiểm tra.
-2. Sau khi chạy toàn bộ lời giải mẫu theo thứ tự bước: mọi bước đạt.
+   `expectInitially: any` và bước `answer` không được kiểm tra.
+2. Sau khi chạy toàn bộ lời giải mẫu theo thứ tự bước: mọi bước `check` đạt; câu trả lời trong lời giải của mỗi bước
+   `answer` (viết sẵn, hoặc stdout của script lời giải) được chấp nhận theo mục 4.6.
 3. Không phiên nào kết thúc vì vượt giới hạn bộ nhớ (`OUT_OF_MEMORY`).
 
 Sau khi kết thúc các phiên kiểm thử, M2 đọc `resourceUsage` của từng phiên. Nếu bộ nhớ cao nhất của một seed vượt 80%
 giới hạn của mức tài nguyên đã chọn, phiên bản vẫn được xuất bản nhưng kết quả kiểm thử kèm cảnh báo và đề xuất mức
 tài nguyên lớn hơn. Khi điều kiện 3 không đạt, kết quả đề xuất mức lớn hơn; nếu đã ở mức lớn nhất, đề xuất giảm nhu cầu
 bộ nhớ của bài lab. Số đo dựa trên lời giải mẫu nên chỉ là ước tính cho thao tác thật của học viên.
+
+### 4.6. Bước trả lời
+
+| Mục | Quy định |
+|---|---|
+| Chuẩn hóa | Bỏ khoảng trắng đầu và cuối; không phân biệt hoa thường trừ khi `caseSensitive: true`. Áp dụng cho câu trả lời và đáp án |
+| Đúng khi | Khớp một giá trị trong `accepted` (đã kết xuất tham số), hoặc khớp toàn bộ `regex` (RE2), hoặc bằng stdout của `from.run` |
+| `from.run` | Chạy như lệnh kiểm tra (mục 7) tại thời điểm học viên trả lời; kết quả so khớp được lưu cùng câu trả lời |
+| Chế độ `FULL` | Học viên biết ngay đúng hay sai; tối đa `maxTries` lần cho mỗi bước trong một lượt làm bài; hết lượt mà chưa đúng thì bước không đạt (409 `ANSWER_TRIES_EXHAUSTED`); trả lời đúng thì bước khóa lại |
+| Chế độ `RECORDED_ONLY`, `DISABLED` | Học viên vẫn nhập được câu trả lời, chỉ nhận thông báo đã ghi nhận; không giới hạn số lần; câu trả lời cuối cùng được dùng khi chấm cuối |
+| Gợi ý | Như bước `check` |
+| Khôi phục khi tiếp tục | Bước `answer` không cần khôi phục môi trường; kết quả đã ghi được giữ |
+| Chấm cuối | Bước `answer` lấy kết quả của câu trả lời đúng hoặc câu trả lời cuối cùng đã ghi; không chạy lại `from.run` |
 
 ## 5. Sự kiện
 

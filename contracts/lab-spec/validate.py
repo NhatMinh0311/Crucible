@@ -27,13 +27,21 @@ def templated_fields(spec):
         yield f"faults.from[{i}].inject", fault["inject"]
     for i, step in enumerate(spec["steps"]):
         yield f"steps[{i}].description", step["description"]
-        yield f"steps[{i}].check.run", step["check"]["run"]
-        if "failureMessage" in step["check"]:
-            yield f"steps[{i}].check.failureMessage", step["check"]["failureMessage"]
+        if "check" in step:
+            yield f"steps[{i}].check.run", step["check"]["run"]
+            if "failureMessage" in step["check"]:
+                yield f"steps[{i}].check.failureMessage", step["check"]["failureMessage"]
+        answer = step.get("answer", {})
+        for j, accepted in enumerate(answer.get("accepted", [])):
+            yield f"steps[{i}].answer.accepted[{j}]", accepted
+        if "regex" in answer:
+            yield f"steps[{i}].answer.regex", answer["regex"]
+        if "from" in answer:
+            yield f"steps[{i}].answer.from.run", answer["from"]["run"]
         for j, hint in enumerate(step.get("hints", [])):
             yield f"steps[{i}].hints[{j}].text", hint["text"]
     for i, sol in enumerate(spec["solution"]):
-        yield f"solution[{i}].run", sol["run"]
+        yield f"solution[{i}]", sol.get("run", sol.get("answer"))
 
 
 def semantic_errors(spec):
@@ -65,12 +73,25 @@ def semantic_errors(spec):
     if sorted(solved) != sorted(set(step_ids)):
         errors.append("solution: mỗi bước phải có đúng một phần lời giải và chỉ tham chiếu bước tồn tại")
 
+    kinds = {s["id"]: s.get("type", "check") for s in spec["steps"]}
+    for i, sol in enumerate(spec["solution"]):
+        kind = kinds.get(sol["step"])
+        if kind == "check" and "run" not in sol:
+            errors.append(f"solution[{i}]: bước '{sol['step']}' là bước kiểm tra, lời giải phải dùng run")
+    for i, step in enumerate(spec["steps"]):
+        regex = step.get("answer", {}).get("regex")
+        if regex:
+            try:
+                re.compile(PLACEHOLDER.sub("x", regex))
+            except re.error as err:
+                errors.append(f"steps[{i}].answer.regex: biểu thức không hợp lệ ({err})")
+
     if sum(s["points"] for s in spec["steps"]) == 0:
         errors.append("steps: tổng điểm phải lớn hơn 0")
     for i, step in enumerate(spec["steps"]):
         if sum(h["penalty"] for h in step.get("hints", [])) > 1:
             errors.append(f"steps[{i}].hints: tổng tỉ lệ trừ điểm vượt quá 1")
-    if all(s.get("expectInitially", "fail") == "pass" for s in spec["steps"]):
+    if all(s.get("type", "check") == "check" and s.get("expectInitially", "fail") == "pass" for s in spec["steps"]):
         errors.append("steps: ít nhất một bước phải không đạt trên môi trường mới dựng")
 
     faults = spec.get("faults")
