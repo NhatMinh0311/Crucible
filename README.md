@@ -48,6 +48,10 @@ Chi tiết tại CR-DOC-02.
 | `infra/` | Terraform và cloud-init dựng máy ảo, k3s, gVisor |
 | `deploy/` | Helm chart, cấu hình cụm chuẩn, ứng dụng Argo CD |
 | `tests/` | Kiểm thử cách ly, tải, chaos, đầu cuối |
+| `libs/java/crucible-platform` | Thư viện dùng chung cho dịch vụ Spring Boot: outbox, inbox, CloudEvents, xác thực Keycloak |
+| `dev/` | Dịch vụ phụ thuộc khi phát triển (Docker Compose), realm Keycloak, script kiểm tra |
+| `.devcontainer/` | Môi trường phát triển chuẩn hóa |
+| `scripts/` | Script tiện ích (tạo backlog trên GitHub) |
 
 Các thư mục mã nguồn được bổ sung theo lộ trình tại CR-DOC-06.
 

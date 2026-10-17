@@ -79,10 +79,12 @@ chạy khi pull request thay đổi đường dẫn của module hoặc `contrac
 
 | Job | Nội dung | Trạng thái |
 |---|---|---|
+| `changes` | Xác định đường dẫn thay đổi để chỉ chạy job liên quan | Đang chạy |
 | `contracts` | Lint OpenAPI (`redocly lint`), kiểm tra AsyncAPI (`asyncapi validate`), kiểm tra lược đồ và quy tắc ngữ nghĩa của đặc tả bài lab trong `contracts/lab-spec/examples/` và `labs/` | Đang chạy |
+| `dev-env` | Khởi động dịch vụ phụ thuộc của `dev/compose.yaml`, chạy `dev/check.sh` | Đang chạy |
 | `runtime` | `go vet`, `staticcheck`, kiểm thử đơn vị, envtest, kiểm thử tích hợp | Bổ sung khi có mã |
-| `content`, `learning` | Gradle build, kiểm thử đơn vị, tích hợp với Testcontainers, kiểm thử hợp đồng | Bổ sung khi có mã |
-| `web` | Kiểm tra kiểu, lint, kiểm thử thành phần, build | Bổ sung khi có mã |
+| `content`, `learning` | Gradle build: sinh mã từ hợp đồng, biên dịch, kiểm thử đơn vị và tích hợp với Testcontainers | Đang chạy |
+| `web` | Sinh kiểu từ hợp đồng, kiểm tra kiểu, lint (oxlint), kiểm thử (Vitest), build | Đang chạy |
 | `e2e` | Dựng k3d, triển khai bằng Helm chart, chạy luồng đầu cuối bằng Playwright | Bổ sung từ mốc MA |
 | `security` | gitleaks, Trivy cho phụ thuộc và cấu hình Kubernetes | Bổ sung khi có mã |
 | `images` | Chỉ trên `main`: build image đa kiến trúc, Trivy, ký cosign, đẩy lên GHCR | Bổ sung từ mốc MB |
