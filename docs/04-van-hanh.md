@@ -91,7 +91,7 @@ cd infra/terraform && terraform apply          # dựng máy ảo; cloud-init c�
 | `crucible-learning` | `learning-service` | platform |
 | `crucible-web` | `web` | platform |
 | `crucible-sessions` | Pod phiên, `WarmPool`, `CapacityReservation` | lab |
-| `crucible-mirror` | Máy chủ gói nội bộ (apt-cacher-ng), DaemonSet kéo sẵn image bài lab | lab |
+| `crucible-mirror` | Máy chủ gói nội bộ (apt-cacher-ng chỉ phục vụ kho gói đã khai báo, không chuyển tiếp `CONNECT`; CR-DOC-05 T3), DaemonSet kéo sẵn image bài lab | lab |
 | `observability` | Prometheus, Alertmanager, Grafana, Loki, Tempo, OpenTelemetry Collector | platform |
 | `argocd`, `cert-manager`, `sealed-secrets`, `cnpg-system` | Thành phần nền | platform |
 

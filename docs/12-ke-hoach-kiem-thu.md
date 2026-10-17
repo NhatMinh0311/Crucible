@@ -39,7 +39,7 @@ và được kiểm tra lại sau mỗi thí nghiệm chaos bằng script đối
 | INV5 | Điểm các bước đã đạt của lượt luyện tập không giảm khi tiếp tục hoặc khi phiên bị mất | Tích hợp M2; chaos CH1 |
 | INV6 | Điểm thi bằng kết quả chấm cuối; mọi thay đổi sau đó có bản ghi điều chỉnh với điểm cũ, người sửa, lý do | Tích hợp M2, M3 |
 | INV7 | Mọi sự kiện đã ghi vào outbox được giao tới hàng đợi của bên nhận; mỗi sự kiện được xử lý đúng một lần | Tích hợp mỗi module; chaos CH4 |
-| INV8 | Từ pod phiên không kết nối được tới thành phần nền tảng, pod khác, Kubernetes API | Bộ kiểm thử cách ly I1–I9 |
+| INV8 | Từ pod phiên không kết nối được tới thành phần nền tảng, pod khác, Kubernetes API, Internet (kể cả qua máy chủ gói) | Bộ kiểm thử cách ly I1–I11 |
 | INV9 | Kết quả lệnh kiểm tra không phụ thuộc công cụ, biến môi trường, cấu hình shell trong môi trường | Tích hợp M2 với M1 (AC-C2.4) |
 | INV10 | Sinh viên chỉ đọc được dữ liệu của mình; điểm và bản ghi thi chỉ hiển thị sau khi công bố | Ma trận phân quyền API |
 | INV11 | Tổng chỗ đặt trước chồng lấn thời gian không vượt 80% sức chứa | Đơn vị M1 |
