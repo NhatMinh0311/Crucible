@@ -1,0 +1,27 @@
+# Quyền sở hữu mã theo module (CR-DOC-07 mục 4).
+# Có hiệu lực khi ruleset của main bật "Require review from Code Owners".
+# Thay <m2> và <m3> bằng tài khoản GitHub của thành viên phụ trách M2, M3 khi thêm collaborator;
+# trước khi thay, các dòng tương ứng để dưới dạng chú thích.
+
+*                             @NhatMinh0311
+
+# M1 và nền tảng: chủ sở hữu M1, review chéo bởi M2
+# /services/runtime/           @NhatMinh0311 @<m2>
+# /web/src/modules/runtime/    @NhatMinh0311 @<m2>
+# /infra/                      @NhatMinh0311 @<m2>
+# /deploy/                     @NhatMinh0311 @<m2>
+# /tests/                      @NhatMinh0311 @<m2>
+
+# M2: chủ sở hữu M2, review chéo bởi M3
+# /services/content/           @<m2> @<m3>
+# /web/src/modules/content/    @<m2> @<m3>
+# /labs/                       @<m2> @<m3>
+# /docs/modules/m2-*           @<m2> @<m3>
+
+# M3: chủ sở hữu M3, review chéo bởi M1
+# /services/learning/          @<m3> @NhatMinh0311
+# /web/src/modules/learning/   @<m3> @NhatMinh0311
+# /docs/modules/m3-*           @<m3> @NhatMinh0311
+
+# Hợp đồng: cả ba thành viên
+# /contracts/                  @NhatMinh0311 @<m2> @<m3>
