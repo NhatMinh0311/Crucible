@@ -1,0 +1,48 @@
+{
+  "name": "Crucible",
+  "initializeCommand": "test -f dev/.env || cp dev/.env.example dev/.env",
+  "dockerComposeFile": ["../dev/compose.yaml", "compose.devcontainer.yaml"],
+  "service": "workspace",
+  "runServices": ["workspace", "postgres", "rabbitmq", "seaweedfs", "keycloak", "mailpit"],
+  "workspaceFolder": "/workspaces/crucible",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": { "version": "25", "jdkDistro": "tem" },
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/devcontainers/features/go:1": { "version": "1.27" },
+    "ghcr.io/devcontainers/features/python:1": { "version": "3.12" },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": { "minikube": "none" }
+  },
+  "remoteEnv": {
+    "TESTCONTAINERS_HOST_OVERRIDE": "host.docker.internal"
+  },
+  "forwardPorts": [5173, 8081, 8082, 8083, 8180, 15672, 8025, 8333],
+  "portsAttributes": {
+    "5173": { "label": "web" },
+    "8081": { "label": "runtime-api" },
+    "8082": { "label": "content-service" },
+    "8083": { "label": "learning-service" },
+    "8180": { "label": "Keycloak" },
+    "15672": { "label": "RabbitMQ" },
+    "8025": { "label": "Mailpit" },
+    "8333": { "label": "S3" }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-boot-dev-pack",
+        "golang.go",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "redhat.vscode-yaml",
+        "42crunch.vscode-openapi",
+        "bierner.markdown-mermaid",
+        "ms-azuretools.vscode-containers"
+      ]
+    }
+  }
+}

@@ -21,6 +21,18 @@ Các lệnh dùng shell bash. Trên Windows, chạy trong WSL2 và đặt mã ng
 | Tailscale | Bản hiện hành | Truy cập cụm chuẩn (CR-DOC-04 mục 4) | Mọi thành viên |
 | kubectl, Helm | Bản tương thích cụm | Xem trạng thái module trên cụm chuẩn | Mọi thành viên |
 
+### 1.1a. Dev Container (khuyến nghị)
+
+Dev Container cài sẵn JDK 25, Node.js 24, Go 1.27, Python 3.12, kubectl, Helm đúng phiên bản và khởi động dịch vụ phụ thuộc
+(mục 5.1) cùng lúc; máy chỉ cần Git, Docker và VS Code (tiện ích Dev Containers) hoặc IntelliJ IDEA.
+
+1. Tải kho mã (mục 1.4). Trên Windows, tải vào hệ thống tệp của WSL2.
+2. Mở thư mục kho mã bằng VS Code, chọn **Reopen in Container**. Lần đầu mất vài phút để tải image và công cụ.
+3. Trong Dev Container, dịch vụ phụ thuộc chạy tại `localhost` như mục 5.1; VS Code tự chuyển tiếp các cổng ra máy.
+
+Không chạy đồng thời dịch vụ phụ thuộc bằng `docker compose` trên máy và Dev Container: hai cách dùng chung tên dự án
+Compose và volume dữ liệu.
+
 ### 1.2. Cấu hình Git
 
 Email trong cấu hình Git phải trùng một email đã khai báo trong tài khoản GitHub (Settings → Emails), để commit được
