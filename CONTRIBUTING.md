@@ -71,8 +71,8 @@ Phát triển M2, M3 và giao diện trên Windows được hỗ trợ đầy đ
 | Windows Defender làm chậm Gradle, `npm install` | Thêm thư mục dự án trong WSL2 và thư mục `~/.gradle` vào danh sách loại trừ |
 | Đường dẫn dài trong `node_modules` | Không gặp khi kho mã nằm trong WSL2 |
 
-Máy có 8 GB bộ nhớ chạy được một module kèm PostgreSQL và RabbitMQ; khi bộ nhớ không đủ chạy cả Keycloak, dùng hồ sơ
-phát triển rút gọn của module (máy chủ OIDC giả lập thay cho Keycloak) và kiểm thử tích hợp đầy đủ trên CI hoặc cụm chuẩn.
+Toàn bộ dịch vụ phụ thuộc (mục 5.1) dùng khoảng 0,9 GB bộ nhớ (đo ngày 17/10/2026, Keycloak chiếm khoảng 0,67 GB), nên máy
+8 GB vẫn chạy được dịch vụ phụ thuộc cùng một module và IDE.
 
 ## 2. Thực hiện một thay đổi
 
@@ -206,7 +206,41 @@ git branch -D <tên-nhánh>                  # squash merge tạo commit mới n
 | Kiểm tra hợp đồng thất bại trên CI nhưng chạy được ở máy | Kiểm tra đúng phiên bản công cụ tại mục 2.4 |
 | Script báo lỗi `\r` hoặc `bad interpreter` | Tệp bị đổi xuống dòng sang CRLF. Chạy `git add --renormalize . && git status`, commit kết quả |
 
-## 5. Môi trường phát triển theo module
+## 5. Môi trường phát triển
 
-Mục này được bổ sung khi mã nguồn của từng module có mặt, gồm: dịch vụ phụ thuộc cần chạy, cách chạy module từ IDE,
-cách dùng mock hoặc chế độ `docker` của M1 (CR-DOC-03 mục 2.3), lệnh kiểm thử.
+### 5.1. Dịch vụ phụ thuộc
+
+Dịch vụ phụ thuộc chạy bằng Docker Compose tại `dev/`; dịch vụ của module chạy từ IDE và kết nối qua `localhost`.
+
+```bash
+cp dev/.env.example dev/.env
+docker compose -f dev/compose.yaml up -d --wait
+./dev/check.sh                             # kết quả mong đợi: "Môi trường phát triển sẵn sàng."
+docker compose -f dev/compose.yaml down    # dừng; thêm -v để xóa toàn bộ dữ liệu
+```
+
+| Dịch vụ | Địa chỉ | Thông tin đăng nhập (chỉ dùng khi phát triển) |
+|---|---|---|
+| PostgreSQL 18 | `localhost:5432` | CSDL và tài khoản `runtime`, `content`, `learning`; mật khẩu trong `dev/.env` |
+| RabbitMQ 4.3 | AMQP `localhost:5672`, giao diện `http://localhost:15672` | `RABBITMQ_USER`, `RABBITMQ_PASSWORD` trong `dev/.env` |
+| SeaweedFS (S3) | `http://localhost:8333`, bucket `recordings`, `lab-assets` | Khóa `crucible-dev` / `crucible-dev-secret` |
+| Keycloak 26 | `http://localhost:8180`, realm `crucible` | Quản trị: `admin` / `KEYCLOAK_ADMIN_PASSWORD`; người dùng bên dưới |
+| Mailpit | SMTP `localhost:1025`, giao diện `http://localhost:8025` | |
+
+Tài khoản trong realm `crucible` (mật khẩu `crucible`):
+
+| Tài khoản | Vai trò |
+|---|---|
+| `admin` | `ADMIN` |
+| `gv1`, `gv2` | `INSTRUCTOR` |
+| `tg1` | `INSTRUCTOR` (được thêm vào lớp với vai trò trợ giảng khi thử nghiệp vụ) |
+| `sv1` … `sv5` | `STUDENT` |
+
+Client trong realm: `crucible-web` (giao diện, public, PKCE), `runtime-api`, `content-service`, `learning-service`
+(client credentials, secret `<tên client>-dev-secret`, scope theo CR-DOC-03 mục 3.2). Cấu hình realm tại
+`dev/keycloak/realm-crucible.json`; sửa realm bằng pull request sửa tệp này rồi tạo lại volume (`down -v`).
+
+### 5.2. Theo module
+
+Hướng dẫn chạy từng module, cách dùng mock hoặc chế độ `docker` của M1 (CR-DOC-03 mục 2.3) và lệnh kiểm thử được bổ sung
+khi mã nguồn module có mặt.
