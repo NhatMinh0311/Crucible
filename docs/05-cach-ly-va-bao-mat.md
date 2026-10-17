@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-05 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc, CR-DOC-03 Hợp đồng, CR-DOC-04 Vận hành, ADR-0003, ADR-0004, ADR-0011 |
 
@@ -148,3 +148,4 @@ chứng Q6.
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
+| 1.1 | 17/10/2026 | T4a dùng CPU kéo dài, T12 trần theo giảng viên, máy chủ gói không làm proxy, kiểm thử I10, I11 |

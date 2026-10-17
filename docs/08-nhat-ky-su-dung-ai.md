@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 17/10/2026 |
 
 ## 1. Mục đích
@@ -66,6 +66,7 @@ Quy định:
 | Công nghệ, tên | Go cho M1, Spring Boot cho M2 và M3; tên tiếng Anh cho dự án | TV-QĐ |
 | Duyệt và chỉnh sửa | Loại bỏ phần so sánh với đề tài chấm bài lập trình; yêu cầu được tham gia các quyết định nghiệp vụ và trải nghiệm người dùng; hỏi mức đầy đủ của thiết kế so với khung thực tế | TV-QĐ |
 | Mô hình cung cấp | Đặt câu hỏi giữa bán gói dịch vụ và mã nguồn mở tự cài; chọn phương án kết hợp | TV-QĐ |
+| Sức chứa và lạm dụng tài nguyên | Nêu trường hợp chưa có: ước lượng tài nguyên của bài lab và báo giảng viên khi kỳ thi không đủ chỗ; giới hạn tài nguyên theo giảng viên; phiên bị dùng để chạy tiến trình nặng như đào tiền ảo | TV-QĐ |
 
 ### 3.2. Quyết định của thành viên
 
@@ -98,6 +99,13 @@ Quy định:
 | Lộ trình | Không tính điểm học phần | Tính như một đầu điểm |
 | Nộp bài thi sớm | Nộp là kết thúc | Được mở lại khi còn giờ |
 | Bố cục trang làm bài | Chia đôi hướng dẫn và terminal, kéo được | Terminal toàn màn hình; hai tab |
+| Kỳ thi không đủ sức chứa | Báo số chỗ thiếu và gợi ý khung giờ gần nhất còn đủ chỗ | Thêm đề xuất chia ca; chỉ báo lỗi |
+| Tài nguyên của một phiên bài lab | Giảng viên chọn mức; kiểm thử khi xuất bản đo bộ nhớ, cảnh báo khi vượt 80%, chặn khi vượt giới hạn | Hệ thống tự chọn mức; không đo |
+| Giới hạn tài nguyên theo giảng viên | Trần theo giảng viên do quản trị đặt (giờ máy, phiên đồng thời, chỗ × giờ đặt trước mỗi tháng); giảng viên chia cho các lớp | Quản trị đặt từng lớp; trần theo bộ môn |
+| Bài tập cho lớp đông | Cảnh báo mềm khi tải ước tính gần hạn nộp vượt sức chứa | Không cảnh báo |
+| Phiên luyện tập dùng CPU bất thường | Cảnh báo, tiếp diễn 5 phút thì kết thúc phiên | Chỉ ghi nhận; hạ mức CPU |
+| Phiên thi dùng CPU bất thường | Không kết thúc, báo giám thị | Xử lý như luyện tập |
+| Vi phạm nhiều lần | Chỉ ghi nhận, quản trị tự xử lý | Tự động tạm khóa tạo phiên luyện tập |
 | Kênh thông báo | Trong ứng dụng và email cho sự kiện quan trọng | Chỉ trong ứng dụng |
 | Thiết bị | Làm bài trên máy tính; trang khác dùng được trên điện thoại | Chỉ máy tính |
 | Trước giờ thi | Phòng chờ có kiểm tra kết nối | Phòng chờ đơn giản; không có phòng chờ |
@@ -141,6 +149,8 @@ Quy định:
 | 12 | Công cụ AI thế hệ mới cho làm giao diện và viết mã có lập trình viên tham gia; bỏ khảo sát người dùng, thay bằng khảo sát dự án tương tự; phân vai; commit theo hạng mục | Tra cứu framework và skill; khảo sát dự án trên GitHub (CR-DOC-09); tách lịch sử thành commit theo hạng mục | Đạt |
 | 13 | Làm các mục còn thiếu, hỏi khi luồng nghiệp vụ chưa rõ | Hỏi đợt 4–6 (tài khoản, thi muộn, điểm bài tập, trợ giảng, quá hạn, thư viện, quy trình AI, công bố, phúc khảo, lộ trình, nộp sớm); ràng buộc dự án; `AGENTS.md`; CR-DOC-10, CR-DOC-11, CR-DOC-12 | Chọn phương án cho các câu hỏi |
 | 14 | Hỏi trải nghiệm người dùng của giao diện; hỏi khó khăn khi thành viên dùng Windows | Hỏi đợt 7 (bố cục trang làm bài, thông báo, thiết bị, phòng chờ); hướng dẫn phát triển trên Windows | Chọn phương án cho 4 câu hỏi |
+| 15 | Hỏi hệ thống đã ước lượng được sức chứa, báo giảng viên khi kỳ thi không đủ chỗ, giới hạn tài nguyên theo giảng viên chưa | Đối chiếu thiết kế, chỉ ra 4 thiếu sót (phản hồi khi thiếu chỗ, tài nguyên bài lab không được đo, chưa có giới hạn theo giảng viên, bài tập không có cảnh báo tải); hỏi đợt 8 | Chọn phương án cho 4 câu hỏi |
+| 16 | Hỏi cơ chế giám sát phiên bị dùng chạy tiến trình nặng | Đối chiếu biện pháp hiện có (chặn mạng, giới hạn tài nguyên, thời hạn); chỉ ra thiếu sót về CPU kéo dài và máy chủ gói có thể bị dùng làm proxy; hỏi đợt 9; cập nhật hợp đồng, tài liệu, backlog | Chọn phương án cho 3 câu hỏi |
 
 ### 3.6. Các lần điều chỉnh hướng
 
@@ -168,3 +178,4 @@ Quy định:
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 17/10/2026 | Ghi nhận giai đoạn 1 |
+| 1.1 | 17/10/2026 | Vòng 15, 16: sức chứa, hạn mức theo giảng viên, giám sát tài nguyên |

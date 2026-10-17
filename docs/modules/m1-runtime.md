@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.1 |
+| Phiên bản | 0.2 |
 | Ngày ban hành | 17/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011 |
@@ -347,3 +347,4 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 0.1 | 17/10/2026 | Bản thiết kế trước thử nghiệm S1–S3 |
+| 0.2 | 17/10/2026 | Gợi ý khung giờ còn đủ chỗ; đo tài nguyên phiên (mục 5.5); BR-M1.17–BR-M1.25: hết bộ nhớ, trần hạn mức theo giảng viên, ngân sách đặt trước, phát hiện dùng CPU bất thường |

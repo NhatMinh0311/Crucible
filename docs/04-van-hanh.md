@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-04 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 8 (yêu cầu chất lượng), CR-DOC-02 Kiến trúc, CR-DOC-05 Cách ly và bảo mật, ADR-0007, ADR-0008, ADR-0009, ADR-0012 |
 
@@ -300,3 +300,4 @@ Chaos Mesh chỉ được cài trong thời gian thí nghiệm. Sự cố mức 
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
+| 1.1 | 17/10/2026 | Chỉ số và cảnh báo CPU của phiên; cấu hình máy chủ gói |

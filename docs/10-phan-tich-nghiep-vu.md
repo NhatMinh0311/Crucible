@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-10 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 (chức năng, tiêu chí chấp nhận), CR-DOC-02 (vòng đời đối tượng, luồng kỹ thuật) |
 
@@ -491,3 +491,4 @@ Liên kết giữa các module (mũi tên đi qua ranh giới namespace) chỉ l
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
+| 1.1 | 17/10/2026 | UC03 3d, UC09 5b và 6b, UC11 5a, UC13 (mục 3.9), UC14 2a và 2b; tài khoản hạn mức phân cấp trong mô hình miền |
