@@ -238,7 +238,7 @@ Luồng chính:
 
 | Mã | Điều kiện | Xử lý |
 |---|---|---|
-| 2a | Không đủ sức chứa | Từ chối, hiển thị sức chứa còn lại theo khung giờ để giảng viên chọn giờ khác (AC-L2.1) |
+| 2a | Không đủ sức chứa | Từ chối; hiển thị số chỗ cần, số chỗ còn và tối đa 3 khung giờ gần nhất cùng độ dài còn đủ chỗ; giảng viên chọn một khung giờ gợi ý hoặc nhập giờ khác (AC-L2.1) |
 | 3a | Giảng viên hủy hoặc đổi giờ trước khi mở | Giải phóng đặt trước cũ, đặt trước theo giờ mới |
 
 ### 3.7. UC15, UC16 — Giám sát kỳ thi và xử lý tín hiệu gian lận

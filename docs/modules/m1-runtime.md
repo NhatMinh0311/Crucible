@@ -95,6 +95,11 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
   tính là đã chiếm chỗ nhưng có thể được nhận hoặc bị xóa (BR-M1.5).
 - Sức chứa của một mức tài nguyên = tổng chỗ của các node phiên `Ready`, không bị `cordon`.
 - `GET /v1/capacity` trả sức chứa hiện tại trừ chỗ đặt trước chồng lấn khung giờ hỏi.
+- Đặt trước bị từ chối trả `capacity.requiredSlots` và `capacity.availableSlots`, trong đó số chỗ còn là phần có thể đặt
+  trước theo BR-M1.7 sau khi trừ các đặt trước chồng lấn.
+- `GET /v1/capacity/windows` duyệt các mốc bắt đầu cách nhau 30 phút từ `from`, bỏ mốc làm khung giờ vượt ra ngoài
+  `dailyStart`–`dailyEnd`, tính số chỗ còn như trên và trả `limit` khung giờ đầu tiên đủ `slots`; dừng sau 14 ngày.
+  Sức chứa tương lai được tính bằng sức chứa hiện tại của các node, nên kết quả là ước tính.
 
 ### 5.2. Vòng xếp hàng
 

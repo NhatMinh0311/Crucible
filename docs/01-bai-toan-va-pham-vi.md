@@ -246,7 +246,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-L1.5: Nhập danh sách CSV báo lỗi theo từng dòng (thiếu cột, email sai định dạng, trùng mã số); sinh viên có email trong danh sách đăng nhập lần đầu được gắn vào lớp, không cần thao tác thêm.
 
 **US-L2 (L04–L07)** — Là giảng viên, tôi muốn tổ chức kỳ thi đồng loạt cho cả lớp.
-- AC-L2.1: Lên lịch kỳ thi tạo yêu cầu đặt trước tài nguyên tương ứng số học viên; cụm không đủ sức chứa cho khung giờ đó thì kỳ thi không được lên lịch (409 `CAPACITY_UNAVAILABLE`).
+- AC-L2.1: Lên lịch kỳ thi tạo yêu cầu đặt trước tài nguyên tương ứng số học viên; cụm không đủ sức chứa cho khung giờ đó thì kỳ thi không được lên lịch (409 `CAPACITY_UNAVAILABLE`). Giảng viên được báo số chỗ cần, số chỗ còn và tối đa 3 khung giờ gần nhất cùng độ dài còn đủ chỗ trong khoảng 07:00–21:00.
 - AC-L2.2: 30 học viên bắt đầu trong cùng một phút đều được cấp phiên, p95 thời gian cấp ≤ 10 giây.
 - AC-L2.3: Khi hết giờ, mọi lượt làm bài của kỳ thi được nộp tự động và chấm cuối; phiên được thu hồi.
 - AC-L2.4: Phiên thi bị `LOST` được bù đúng thời gian gián đoạn, tối đa 15 phút cho mỗi học viên mỗi kỳ thi; mỗi lần bù được ghi nhật ký.

@@ -100,7 +100,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `EXTENSION_LIMIT` | 409 | M1 | Gia hạn vượt mức tối đa hoặc phiên thi |
 | `SESSION_NOT_ACTIVE` | 409 | M1 | Thao tác yêu cầu phiên ở pha `READY` hoặc `EXPIRING` |
 | `EXEC_BUSY` | 409 | M1 | Phiên đang chạy một lệnh kiểm tra khác |
-| `CAPACITY_UNAVAILABLE` | 409 | M1, M3 | Không đủ sức chứa cho đặt trước |
+| `CAPACITY_UNAVAILABLE` | 409 | M1, M3 | Không đủ sức chứa cho đặt trước; kèm trường `capacity` gồm số chỗ cần và số chỗ còn |
 | `ENVIRONMENT_NOT_ALLOWED` | 422 | M1 | Image ngoài danh sách cho phép hoặc mức tài nguyên không tồn tại |
 | `LAB_NOT_PUBLISHED` | 409 | M2 | Bài lab hoặc phiên bản chưa xuất bản |
 | `ATTEMPT_STATE_CONFLICT` | 409 | M2 | Thao tác không hợp lệ với trạng thái hiện tại của lượt làm bài |

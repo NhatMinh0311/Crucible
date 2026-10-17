@@ -88,7 +88,7 @@ flowchart LR
 | SCR-23 | Thư viện bài lab: của tôi, được chia sẻ; nhân bản | Giảng viên | M2 | UC10 |
 | SCR-24 | Soạn bài lab: form theo phần, tab YAML, xem trước với biến thể | Giảng viên | M2 | UC07 |
 | SCR-25 | Chạy thử (terminal, chạy từng lệnh kiểm tra, chạy lời giải), kết quả kiểm thử khi xuất bản | Giảng viên | M2 | UC08, UC09 |
-| SCR-26 | Lên lịch kỳ thi: bài lab, giờ, hạn vào thi, phản hồi, gợi ý; sức chứa khả dụng theo khung giờ | Giảng viên | M3 | UC14 |
+| SCR-26 | Lên lịch kỳ thi: bài lab, giờ, hạn vào thi, phản hồi, gợi ý; sức chứa khả dụng theo khung giờ; khi không đủ chỗ: phần thiếu và khung giờ gợi ý | Giảng viên | M3 | UC14 |
 | SCR-27 | Giám sát kỳ thi: bảng sinh viên, trạng thái, tiến độ, bù giờ, tín hiệu | Giảng viên, trợ giảng | M3 | UC15 |
 | SCR-28 | Xem trực tiếp terminal, xem lại bản ghi | Giảng viên, trợ giảng | M3 (nhúng thành phần của M1) | UC15 |
 | SCR-29 | Tín hiệu gian lận, đề xuất và biên bản | Giảng viên, trợ giảng | M3 | UC16 |
@@ -183,6 +183,25 @@ Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiế
 │                  │ ⚠ Tham số 'markr' chưa được khai báo   │              portConflict      │
 └──────────────────┴───────────────────────────────────────┴───────────────────────────────┘
 ```
+
+### 7.5. SCR-26 Lên lịch kỳ thi khi không đủ sức chứa
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ Lên lịch kỳ thi · Lớp IT3070 (45 sinh viên) · Bài lab: Khắc phục máy chủ web  │
+│ Ngày [24/10/2026]  Bắt đầu [09:00]  Kết thúc [10:30]  Vào thi trước [09:15]   │
+│                                                                              │
+│ ⚠ Khung giờ này không đủ chỗ: cần 45, còn 32 (thiếu 13).                      │
+│   Khung giờ gần nhất còn đủ chỗ (cùng thời lượng 90 phút):                    │
+│   ( ) 24/10 13:30–15:00 · còn 48 chỗ                                          │
+│   ( ) 24/10 15:00–16:30 · còn 52 chỗ                                          │
+│   ( ) 25/10 09:00–10:30 · còn 60 chỗ                                          │
+│                                                                              │
+│                                    [Chọn giờ khác]  [Dùng khung giờ đã chọn]  │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+Số chỗ cần bằng số sinh viên của lớp. Khung giờ gợi ý có cùng thời lượng, bắt đầu từ giờ giảng viên nhập trở đi.
 
 ## 8. Trạng thái và thông báo
 

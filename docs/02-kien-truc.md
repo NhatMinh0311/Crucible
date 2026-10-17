@@ -319,7 +319,10 @@ sequenceDiagram
         R-->>L: 201 reservationId
         L->>L: Kỳ thi SCHEDULED
     else Không đủ
-        R-->>L: 409 CAPACITY_UNAVAILABLE
+        R-->>L: 409 CAPACITY_UNAVAILABLE (số chỗ cần, số chỗ còn)
+        L->>R: GET /capacity/windows (profile, số chỗ, thời lượng)
+        R-->>L: Khung giờ gần nhất còn đủ chỗ
+        L-->>I: Báo phần thiếu, gợi ý khung giờ
     end
     Note over O: T − 15 phút
     O->>O: Nâng WarmPool theo CapacityReservation
