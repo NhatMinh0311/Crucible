@@ -14,7 +14,7 @@ qua cập nhật dịch vụ (Q9).
 - `runtime-gateway` là dịch vụ riêng của M1, nhận WebSocket từ trình duyệt và mở luồng exec tới container phiên qua
   Kubernetes API; pod phiên không mở cổng.
 - Xác thực bằng vé dùng một lần do `runtime-api` cấp; vé lưu trong CSDL `runtime`, tiêu thụ nguyên tử.
-- Gateway ghi luồng ra asciicast v2 vào MinIO theo đoạn; tái dựng dòng lệnh từ luồng nhập cho phiên có `recordInput`.
+- Gateway ghi luồng ra asciicast v2 vào SeaweedFS theo đoạn; tái dựng dòng lệnh từ luồng nhập cho phiên có `recordInput`.
 - Mỗi phiên tối đa một kết nối tương tác; kết nối xem chỉ nhận dữ liệu.
 - Khi dừng để cập nhật, gateway gửi mã đóng 4010; giao diện lấy vé mới và kết nối lại.
 

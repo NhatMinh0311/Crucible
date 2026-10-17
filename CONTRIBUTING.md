@@ -14,10 +14,10 @@ Các lệnh dùng shell bash. Trên Windows, chạy trong WSL2 và đặt mã ng
 |---|---|---|---|
 | Git | 2.40 trở lên | Quản lý mã nguồn | Mọi thành viên |
 | Docker (Engine trên Linux; Docker Desktop hoặc OrbStack trên macOS; Docker Desktop với WSL2 trên Windows) | 24 trở lên | Dịch vụ phụ thuộc khi phát triển, Testcontainers | Mọi thành viên |
-| Node.js | 22 LTS | Kiểm tra hợp đồng, mock API, giao diện | Mọi thành viên |
+| Node.js | 24 LTS | Kiểm tra hợp đồng, mock API, giao diện | Mọi thành viên |
 | Python | 3.12 | Kiểm tra đặc tả bài lab | Mọi thành viên |
-| JDK | 21 | `content-service`, `learning-service` | Phụ trách M2, M3 |
-| Go | 1.24 | `runtime-api`, `runtime-operator`, `runtime-gateway` | Phụ trách M1 |
+| JDK | 25 | `content-service`, `learning-service` | Phụ trách M2, M3 |
+| Go | 1.27 | `runtime-api`, `runtime-operator`, `runtime-gateway` | Phụ trách M1 |
 | Tailscale | Bản hiện hành | Truy cập cụm chuẩn (CR-DOC-04 mục 4) | Mọi thành viên |
 | kubectl, Helm | Bản tương thích cụm | Xem trạng thái module trên cụm chuẩn | Mọi thành viên |
 

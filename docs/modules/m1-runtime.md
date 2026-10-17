@@ -22,7 +22,7 @@ Một Go module `services/runtime` với ba chương trình:
 |---|---|---|---|
 | `runtime-api` | `net/http`, oapi-codegen (sinh từ `contracts/runtime-api.yaml`), pgx, golang-migrate | API tại `contracts/runtime-api.yaml`; kiểm tra hạn mức; ghi `LabSession`; cấp vé; chạy lệnh kiểm tra; chuyển tiếp outbox; nhận sự kiện | 2 |
 | `runtime-operator` | controller-runtime | Đối soát `LabSession`, `WarmPool`, `CapacityReservation`; xếp hàng và cấp chỗ; theo dõi node; dọn tài nguyên mồ côi; ghi lịch sử và outbox | 2, bầu chọn leader |
-| `runtime-gateway` | `coder/websocket`, client-go `remotecommand` (WebSocket executor), MinIO SDK | Terminal WebSocket; ghi asciicast; tái dựng dòng lệnh; cập nhật thời điểm hoạt động | 2 |
+| `runtime-gateway` | `coder/websocket`, client-go `remotecommand` (WebSocket executor), AWS SDK for Go v2 (S3) | Terminal WebSocket; ghi asciicast; tái dựng dòng lệnh; cập nhật thời điểm hoạt động | 2 |
 
 Chế độ `RUNTIME_DRIVER=docker` của `runtime-api` thay operator và gateway bằng một trình điều khiển trong tiến trình dùng
 Docker Engine API, phục vụ môi trường phát triển của M2, M3 (CR-DOC-03 mục 2.3). Chế độ này không có nhóm ấm, đặt trước
@@ -148,7 +148,7 @@ soát sau phát hiện pha trong CSDL khác pha trong `LabSession` và ghi bù; 
 | Kết nối | Gateway tiêu thụ vé (`UPDATE ... SET used_at = now() WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now() RETURNING ...`), mở exec `bash -l` với TTY tới pod |
 | Phân bổ kết nối | Kết nối của một phiên có thể rơi vào bản gateway bất kỳ. Quy tắc một kết nối tương tác (BR-M1.14) dùng khóa tư vấn PostgreSQL theo mã phiên; bản giữ khóa đóng kết nối cũ khi nhận thông báo `LISTEN/NOTIFY` |
 | Xem trực tiếp | Bản gateway giữ kết nối tương tác phát lại đầu ra cho người xem qua exchange nội bộ `runtime.terminal-stream` của RabbitMQ (không bền, routing key là mã phiên; không thuộc hợp đồng). Bản gateway nhận kết nối xem gửi tín hiệu đăng ký; bản giữ kết nối tương tác chỉ phát khi có đăng ký còn hiệu lực (gia hạn mỗi 30 giây). Khi mới kết nối, người xem nhận 64 KB đầu ra gần nhất. Không dùng `tmux` trong môi trường vì học viên có thể thoát hoặc dừng tiến trình đó (S3 đo thông lượng) |
-| Ghi phiên | Đầu ra (và đầu vào với phiên `recordInput`) ghi theo asciicast v2; đệm 64 KB hoặc 10 giây rồi tải lên MinIO thành phần `recordings/<sessionId>/<số thứ tự>.part`; khi phiên kết thúc, operator ghép thành `recordings/<sessionId>.cast` và phát `runtime.recording.available` |
+| Ghi phiên | Đầu ra (và đầu vào với phiên `recordInput`) ghi theo asciicast v2; đệm 64 KB hoặc 10 giây rồi tải lên SeaweedFS thành phần `recordings/<sessionId>/<số thứ tự>.part`; khi phiên kết thúc, operator ghép thành `recordings/<sessionId>.cast` và phát `runtime.recording.available` |
 | Tái dựng dòng lệnh | Bộ đệm theo kết nối: ký tự in được thêm vào, `0x7f`/`0x08` xóa ký tự cuối, `Ctrl-U` xóa dòng, `\r` phát dòng; chuỗi escape bị bỏ qua. Khung nhập dài hơn 200 byte đánh dấu `pasted`. Tối đa 5 sự kiện mỗi giây mỗi phiên |
 | Hoạt động | Mỗi khung nhập cập nhật thời điểm hoạt động trong bộ nhớ; ghi annotation tối đa mỗi 30 giây |
 | Dừng có kiểm soát | Nhận SIGTERM: ngừng nhận kết nối mới, gửi `closing` mã 4010 cho mọi kết nối, đẩy phần bản ghi còn đệm, thoát sau tối đa 20 giây |
@@ -255,7 +255,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 |---|---|---|
 | Đơn vị | `go test` | Tính chỗ, thứ tự xếp hàng, quy tắc đặt trước, tính giờ máy, tái dựng dòng lệnh |
 | Bộ điều khiển | envtest (API server thật, không có node) | Vòng đời `LabSession`, nhóm ấm, mất node (giả lập điều kiện node), dọn mồ côi |
-| Tích hợp | Testcontainers (PostgreSQL, RabbitMQ, MinIO) | Outbox, vé, hạn mức đồng thời, chỉ mục duy nhất |
+| Tích hợp | Testcontainers (PostgreSQL, RabbitMQ, SeaweedFS) | Outbox, vé, hạn mức đồng thời, chỉ mục duy nhất |
 | Hợp đồng | Schemathesis với `runtime-api` chế độ `docker` | Khớp `contracts/runtime-api.yaml` |
 | Cụm | k3d trong CI (runc) | Luồng tạo phiên, exec, terminal, kết thúc |
 | Cụm chuẩn | Bộ kiểm thử cách ly, k6, chaos | Q1–Q6, Q9 |

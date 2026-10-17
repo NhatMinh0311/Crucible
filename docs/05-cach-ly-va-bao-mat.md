@@ -36,7 +36,7 @@ flowchart LR
     subgraph p[Tin cậy: nền tảng]
         ingress[Ingress]
         svc[Dịch vụ M1, M2, M3]
-        data[(CSDL, broker, MinIO)]
+        data[(CSDL, broker, SeaweedFS)]
         kapi[Kubernetes API]
     end
     browser -- "HTTPS, token OIDC" --> ingress --> svc
@@ -114,7 +114,7 @@ chứng Q6.
 |---|---|---|
 | I1 | Kết nối tới Kubernetes API (`kubernetes.default`, địa chỉ ClusterIP, địa chỉ node cổng 6443) | Thất bại |
 | I2 | Đọc token tài khoản dịch vụ tại `/var/run/secrets/kubernetes.io/serviceaccount/` | Không tồn tại |
-| I3 | Kết nối tới PostgreSQL, RabbitMQ, MinIO, Keycloak, các dịch vụ M1–M3 | Thất bại |
+| I3 | Kết nối tới PostgreSQL, RabbitMQ, SeaweedFS, Keycloak, các dịch vụ M1–M3 | Thất bại |
 | I4 | Kết nối tới pod phiên khác | Thất bại |
 | I5 | Kết nối tới địa chỉ Internet | Thất bại (bài lab `network: none`) |
 | I6 | Kiểm tra môi trường đang chạy trong gVisor (`dmesg`, `/proc/version`) | Nhận diện nhân của gVisor |

@@ -17,7 +17,7 @@ kiểm thử tải và thí nghiệm chaos. Thao tác chi tiết cho từng tìn
 
 | Môi trường | Mục đích | Nơi chạy | Thành phần |
 |---|---|---|---|
-| Phát triển | Mỗi thành viên phát triển module của mình | Máy cá nhân (Linux, macOS, Windows) | Docker Compose: PostgreSQL, RabbitMQ, MinIO, Keycloak; dịch vụ của module chạy trực tiếp từ IDE; module khác chạy bằng image đã phát hành hoặc mock |
+| Phát triển | Mỗi thành viên phát triển module của mình | Máy cá nhân (Linux, macOS, Windows) | Docker Compose: PostgreSQL, RabbitMQ, SeaweedFS, Keycloak; dịch vụ của module chạy trực tiếp từ IDE; module khác chạy bằng image đã phát hành hoặc mock |
 | CI | Kiểm tra mỗi pull request | GitHub Actions | Kiểm tra hợp đồng, build, kiểm thử đơn vị, kiểm thử tích hợp với Testcontainers, kiểm thử cụm trên k3d |
 | Cụm chuẩn | Chạy tích hợp, demo, kiểm thử tải, chaos, đo yêu cầu chất lượng | Máy ảo KVM trên máy của trưởng nhóm | k3s, toàn bộ thành phần tại CR-DOC-02 mục 4 |
 
@@ -39,13 +39,13 @@ Cụm chuẩn là môi trường duy nhất có gVisor và đo được yêu c�
 
 | Máy ảo | vCPU | Bộ nhớ | Đĩa | Vai trò k3s | Nhãn, taint | Thành phần |
 |---|---|---|---|---|---|---|
-| `cr-server` | 4 | 10 GB | 60 GB | server | `crucible.dev/role=platform` | Control plane, PostgreSQL, RabbitMQ, MinIO, Keycloak, Argo CD, giám sát, dịch vụ M1–M3, giao diện |
+| `cr-server` | 4 | 10 GB | 60 GB | server | `crucible.dev/role=platform` | Control plane, PostgreSQL, RabbitMQ, SeaweedFS, Keycloak, Argo CD, giám sát, dịch vụ M1–M3, giao diện |
 | `cr-lab-1` | 4 | 6 GB | 40 GB | agent | `crucible.dev/role=lab`, taint `crucible.dev/role=lab:NoSchedule`, `crucible.dev/gvisor=true` | Pod phiên, máy chủ gói nội bộ |
 | `cr-lab-2` | 4 | 6 GB | 40 GB | agent | Như `cr-lab-1` | Pod phiên |
 | `cr-lab-3` | 4 | 6 GB | 40 GB | agent | Như `cr-lab-1` | Pod phiên |
 
 Ngân sách bộ nhớ ước tính của `cr-server`: k3s 1,0 GB; PostgreSQL 1,0 GB; Keycloak 0,8 GB; giám sát 2,3 GB;
-Argo CD 0,7 GB; RabbitMQ, MinIO 0,7 GB; dịch vụ M1–M3 và giao diện 1,6 GB; thành phần nền 0,3 GB; tổng khoảng 8,4 GB.
+Argo CD 0,7 GB; RabbitMQ, SeaweedFS 0,7 GB; dịch vụ M1–M3 và giao diện 1,6 GB; thành phần nền 0,3 GB; tổng khoảng 8,4 GB.
 Trên node phiên, hệ điều hành, k3s agent, thu thập log và metric chiếm khoảng 1 GB.
 
 Tổng 28 GB bộ nhớ cho máy ảo, máy vật lý giữ khoảng 10 GB. Ba node phiên là số tối thiểu để khi mất một node, hai node
@@ -85,7 +85,7 @@ cd infra/terraform && terraform apply          # dựng máy ảo; cloud-init c�
 
 | Namespace | Nội dung | Node |
 |---|---|---|
-| `crucible-platform` | PostgreSQL (CloudNativePG), RabbitMQ, MinIO, Keycloak | platform |
+| `crucible-platform` | PostgreSQL (CloudNativePG), RabbitMQ, SeaweedFS, Keycloak | platform |
 | `crucible-runtime` | `runtime-api`, `runtime-gateway`, `runtime-operator` | platform |
 | `crucible-content` | `content-service` | platform |
 | `crucible-learning` | `learning-service` | platform |
@@ -157,7 +157,7 @@ flowchart LR
 | Mục | Quy định |
 |---|---|
 | Phiên bản | Đánh số theo SemVer `MAJOR.MINOR.PATCH`; tag `vX.Y.Z` trên `main` kích hoạt phát hành |
-| Sản phẩm phát hành | Image của mọi dịch vụ với tag `X.Y.Z`; Helm chart tổng `crucible` (gồm chart các dịch vụ và tùy chọn cài kèm PostgreSQL, RabbitMQ, MinIO, Keycloak) đẩy lên GHCR dạng OCI; mã dựng hạ tầng tham chiếu (`infra/`); ghi chú phát hành |
+| Sản phẩm phát hành | Image của mọi dịch vụ với tag `X.Y.Z`; Helm chart tổng `crucible` (gồm chart các dịch vụ và tùy chọn cài kèm PostgreSQL, RabbitMQ, SeaweedFS, Keycloak) đẩy lên GHCR dạng OCI; mã dựng hạ tầng tham chiếu (`infra/`); ghi chú phát hành |
 | Yêu cầu của nơi cài đặt | Kubernetes từ 1.30; ít nhất một node chạy phiên có gVisor; StorageClass; Ingress controller; tùy chọn dùng PostgreSQL, RabbitMQ, S3, OIDC sẵn có của đơn vị thay cho bản cài kèm |
 | Hướng dẫn | `docs/install/cai-dat.md` (cài mới trên cụm có sẵn và trên máy ảo theo `infra/`), `docs/install/nang-cap.md`, `docs/install/cau-hinh.md` (bảng tham số của chart) |
 | Nâng cấp | Hỗ trợ nâng cấp tuần tự giữa các phiên bản MINOR liên tiếp; migration theo nguyên tắc mở rộng rồi thu hẹp; CRD được nâng cấp trước dịch vụ |
@@ -226,8 +226,8 @@ flowchart LR
 
 | Dữ liệu | Cách sao lưu | Nơi lưu | Mục tiêu |
 |---|---|---|---|
-| PostgreSQL | CloudNativePG: lưu WAL liên tục (`archive_timeout` 5 phút) và sao lưu nền hằng ngày, giữ 7 ngày | MinIO ngoài cụm, chạy bằng Docker trên máy vật lý | RPO ≤ 15 phút, RTO ≤ 30 phút (Q11) |
-| Bản ghi phiên | Đồng bộ hằng ngày sang kho ngoài cụm; giữ 30 ngày | MinIO ngoài cụm | Mất tối đa 1 ngày bản ghi |
+| PostgreSQL | CloudNativePG: lưu WAL liên tục (`archive_timeout` 5 phút) và sao lưu nền hằng ngày, giữ 7 ngày | SeaweedFS ngoài cụm (giao diện S3), chạy bằng Docker trên máy vật lý | RPO ≤ 15 phút, RTO ≤ 30 phút (Q11) |
+| Bản ghi phiên | Đồng bộ hằng ngày sang kho ngoài cụm; giữ 30 ngày | SeaweedFS ngoài cụm | Mất tối đa 1 ngày bản ghi |
 | Khóa Sealed Secrets | Xuất thủ công sau mỗi lần xoay vòng | Thư mục mã hóa ngoài cụm | Bắt buộc để dựng lại cụm |
 | Cấu hình hạ tầng, cụm, ứng dụng | Kho mã | GitHub | Dựng lại từ kho mã (Q12) |
 

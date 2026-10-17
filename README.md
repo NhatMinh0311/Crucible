@@ -14,7 +14,7 @@ Crucible là phần mềm mã nguồn mở theo giấy phép GNU AGPL-3.0; mỗi
 | M1 `runtime` | Phiên thực hành, cấp phát tài nguyên, terminal, ghi phiên | Go, Kubernetes operator, gVisor |
 | M2 `content` | Bài lab, biến thể, lượt làm bài, chấm điểm | Spring Boot |
 | M3 `learning` | Lớp học, lộ trình, bài tập, kỳ thi, bảng điểm | Spring Boot |
-| Nền tảng | Đăng nhập, sự kiện, lưu trữ, quan sát, triển khai | Keycloak, RabbitMQ, PostgreSQL, MinIO, Prometheus, Grafana, Argo CD, k3s |
+| Nền tảng | Đăng nhập, sự kiện, lưu trữ, quan sát, triển khai | Keycloak, RabbitMQ, PostgreSQL, SeaweedFS, Prometheus, Grafana, Argo CD, k3s |
 
 Chi tiết tại CR-DOC-02.
 
@@ -34,7 +34,7 @@ Chi tiết tại CR-DOC-02.
 | [CR-DOC-10](docs/10-phan-tich-nghiep-vu.md) | Phân tích nghiệp vụ: use case, đặc tả use case, biểu đồ hoạt động, mô hình miền |
 | [CR-DOC-11](docs/11-thiet-ke-giao-dien.md) | Thiết kế giao diện: nguyên tắc trải nghiệm, hệ thống thiết kế, sơ đồ và danh mục màn hình, bố cục, trạng thái, thông báo |
 | [CR-DOC-12](docs/12-ke-hoach-kiem-thu.md) | Kế hoạch kiểm thử: mức kiểm thử, bất biến hệ thống, truy vết, kịch bản đầu cuối |
-| [`docs/adr/`](docs/adr/) | Hồ sơ quyết định kiến trúc ADR-0001 đến ADR-0013 |
+| [`docs/adr/`](docs/adr/) | Hồ sơ quyết định kiến trúc ADR-0001 đến ADR-0014 |
 | [`docs/modules/`](docs/modules/) | Thiết kế bên trong từng module; mẫu tại `_mau.md` |
 
 ## Cấu trúc kho mã
@@ -53,7 +53,7 @@ Các thư mục mã nguồn được bổ sung theo lộ trình tại CR-DOC-06.
 
 ## Kiểm tra hợp đồng
 
-Yêu cầu: Node.js 22, Python 3.12.
+Yêu cầu: Node.js 24, Python 3.12.
 
 ```bash
 npx --yes @redocly/cli@1.34.5 lint contracts/runtime-api.yaml contracts/content-api.yaml

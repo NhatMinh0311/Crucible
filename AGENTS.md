@@ -45,7 +45,7 @@ Mục "điểm cần làm rõ" trong `spec.md` phải được người dùng tr
 | Phạm vi | Quy ước |
 |---|---|
 | Go (M1) | `gofmt`, `go vet`, `staticcheck`; lỗi được bọc bằng `fmt.Errorf("...: %w", err)`; không `panic` trong luồng xử lý yêu cầu |
-| Java (M2, M3) | Spring Boot 3, Java 21; tầng `api` (sinh từ OpenAPI), `application`, `domain`, `infrastructure`; không gọi repository từ controller |
+| Java (M2, M3) | Spring Boot 4, Java 25; tầng `api` (sinh từ OpenAPI), `application`, `domain`, `infrastructure`; không gọi repository từ controller |
 | Giao diện | React, TypeScript strict, shadcn/ui, Tailwind CSS; kiểu dữ liệu API sinh từ `contracts/`; văn bản hiển thị tiếng Việt |
 | Thiết kế giao diện | Dùng skill `frontend-design` khi tạo màn hình mới; theme chung tại `web/src/shell/theme`; phông Be Vietnam Pro; biểu tượng Lucide |
 | Log | JSON, có `trace_id`; không ghi token, vé terminal, nội dung lời giải |

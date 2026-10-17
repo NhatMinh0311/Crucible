@@ -5,7 +5,7 @@
 | Mã tài liệu | CR-DOC-02 |
 | Phiên bản | 1.0 |
 | Ngày ban hành | 17/10/2026 |
-| Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0013 |
+| Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0014 |
 
 ## 1. Phạm vi
 
@@ -75,7 +75,7 @@ flowchart TB
     subgraph data[Dữ liệu và tích hợp]
         pg[(PostgreSQL<br/>CloudNativePG<br/>CSDL runtime, content, learning, keycloak)]
         mq[[RabbitMQ<br/>exchange crucible.events]]
-        s3[(MinIO<br/>bản ghi phiên, tệp đính kèm)]
+        s3[(SeaweedFS S3<br/>bản ghi phiên, tệp đính kèm)]
     end
 
     kapi{{Kubernetes API}}
@@ -107,12 +107,12 @@ flowchart TB
 | `runtime-api` | M1 | Go | Tiếp nhận yêu cầu phiên, kiểm tra hạn mức và sức chứa, xếp hàng, cấp vé terminal, chạy lệnh kiểm tra, phát sự kiện | Nhiều bản sao, không trạng thái |
 | `runtime-gateway` | M1 | Go | Cầu nối WebSocket giữa trình duyệt và pod phiên; ghi bản ghi; trích dòng lệnh cho phiên thi | Nhiều bản sao; kết nối được phân bổ lại khi khởi động lại |
 | `runtime-operator` | M1 | Go, controller-runtime | Đối soát `LabSession`, `WarmPool`, `CapacityReservation` với pod thực tế; phát hiện node mất kết nối; thu hồi tài nguyên mồ côi | Một bản chạy chính nhờ bầu chọn leader, một bản dự phòng |
-| `content-service` | M2 | Spring Boot 3, Java 21 | Bài lab, phiên bản, biến thể, lượt làm bài, chấm điểm, kiểm thử bài lab | Nhiều bản sao |
-| `learning-service` | M3 | Spring Boot 3, Java 21 | Lớp, lộ trình, bài tập, kỳ thi, bù giờ, giám sát, tín hiệu gian lận, bảng điểm | Nhiều bản sao; tác vụ định kỳ dùng khóa phân tán (ShedLock) |
+| `content-service` | M2 | Spring Boot 4, Java 25 | Bài lab, phiên bản, biến thể, lượt làm bài, chấm điểm, kiểm thử bài lab | Nhiều bản sao |
+| `learning-service` | M3 | Spring Boot 4, Java 25 | Lớp, lộ trình, bài tập, kỳ thi, bù giờ, giám sát, tín hiệu gian lận, bảng điểm | Nhiều bản sao; tác vụ định kỳ dùng khóa phân tán (ShedLock) |
 | Keycloak | Nền tảng | Keycloak | Đăng nhập, vai trò, tài khoản dịch vụ cho giao tiếp giữa module (ADR-0004) | Một bản sao |
 | PostgreSQL | Nền tảng | CloudNativePG | Mỗi module một CSDL và một tài khoản riêng (ADR-0001) | Một bản chính, sao lưu WAL liên tục |
 | RabbitMQ | Nền tảng | RabbitMQ, quorum queue | Phân phối sự kiện giữa các module (ADR-0005) | Một node |
-| MinIO | Nền tảng | MinIO | Bản ghi phiên, tệp đính kèm bài lab | Một node |
+| Lưu trữ đối tượng | Nền tảng | SeaweedFS (giao diện S3) | Bản ghi phiên, tệp đính kèm bài lab | Một node (ADR-0014) |
 
 ### 4.2. Tài nguyên Kubernetes do M1 định nghĩa
 
@@ -187,7 +187,7 @@ kiểm thử được độc lập từ đầu.
 
 Trình duyệt kết nối WebSocket tới `runtime-gateway` bằng vé dùng một lần do `runtime-api` cấp. Gateway mở luồng exec
 tới container của phiên qua Kubernetes API, chuyển tiếp dữ liệu hai chiều, đồng thời ghi luồng ra định dạng asciicast v2
-vào MinIO theo từng đoạn. Kết nối xem trực tiếp dùng vé loại `VIEW`, gateway chỉ chuyển dữ liệu từ pod ra trình duyệt.
+vào SeaweedFS theo từng đoạn. Kết nối xem trực tiếp dùng vé loại `VIEW`, gateway chỉ chuyển dữ liệu từ pod ra trình duyệt.
 Chi tiết tại ADR-0006.
 
 ## 7. Vòng đời đối tượng
@@ -397,7 +397,7 @@ sequenceDiagram
 | Giới hạn | Lý do chấp nhận |
 |---|---|
 | Toàn bộ cụm chạy trên một máy vật lý; hỏng máy vật lý làm dừng hệ thống | Phù hợp phạm vi học phần; kịch bản mất node được kiểm chứng bằng tắt máy ảo |
-| PostgreSQL, RabbitMQ, MinIO chạy một bản | Sức chứa của cụm không đủ cho bản sao; dữ liệu được bảo vệ bằng sao lưu liên tục |
+| PostgreSQL, RabbitMQ, SeaweedFS chạy một bản | Sức chứa của cụm không đủ cho bản sao; dữ liệu được bảo vệ bằng sao lưu liên tục |
 | Môi trường học viên là container, không phải máy ảo | gVisor cung cấp lớp nhân riêng ở mức đủ cho bài thực hành Linux cơ bản; một số lệnh nhân hệ điều hành không khả dụng |
 | Dòng lệnh dùng cho phân tích gian lận được tái dựng từ luồng nhập, không chính xác tuyệt đối | Chỉ dùng làm tín hiệu cho giảng viên xem xét, không tự động trừ điểm |
 
