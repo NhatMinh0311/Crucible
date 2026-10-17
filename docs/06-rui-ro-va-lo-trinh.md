@@ -47,30 +47,23 @@ S1–S5 do người phụ trách M1 thực hiện trong tuần 1–2, song song 
 
 Tuần 1 là tuần đề tài được duyệt.
 
-```mermaid
-gantt
-    dateFormat  X
-    axisFormat  %s
-    section Chung
-    Hợp đồng v1, kho mã, CI              :c1, 0, 1
-    section M1 và nền tảng
-    Thử nghiệm S1–S5                     :m1a, 0, 2
-    Chế độ docker của runtime-api        :m1b, 1, 3
-    Cụm chuẩn, GitOps, giám sát          :m1c, 2, 5
-    Operator, nhóm ấm, gateway, ghi phiên :m1d, 3, 6
-    Đặt trước, mất node, xem trực tiếp   :m1e, 6, 9
-    Tải, chaos, bảo mật, khôi phục       :m1f, 9, 11
-    section M2
-    Bài lab, phiên bản, biến thể          :m2a, 0, 3
-    Lượt làm bài, chấm bước, gợi ý        :m2b, 2, 6
-    Kiểm thử bài lab, chấm cuối, tiếp tục :m2c, 6, 9
-    Hoàn thiện, kiểm thử                  :m2d, 9, 11
-    section M3
-    Lớp, ghi danh, lộ trình               :m3a, 0, 3
-    Bài tập, bắt đầu bài, bảng điểm       :m3b, 2, 6
-    Kỳ thi, bù giờ, giám sát, gian lận    :m3c, 6, 9
-    Hoàn thiện, kiểm thử                  :m3d, 9, 11
-```
+| Hạng mục | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | T10 | T11 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Chung: hợp đồng v1, kho mã, CI | ■ | | | | | | | | | | |
+| M1: thử nghiệm S1–S5 | ■ | ■ | | | | | | | | | |
+| M1: chế độ `docker` của `runtime-api` | | ■ | ■ | | | | | | | | |
+| M1: cụm chuẩn, GitOps, giám sát | | | ■ | ■ | ■ | | | | | | |
+| M1: operator, nhóm ấm, gateway, ghi phiên | | | | ■ | ■ | ■ | | | | | |
+| M1: đặt trước, mất node, xem trực tiếp | | | | | | | ■ | ■ | ■ | | |
+| M1: tải, chaos, bảo mật, khôi phục, phát hành | | | | | | | | | | ■ | ■ |
+| M2: bài lab, phiên bản, biến thể, form soạn bài | ■ | ■ | ■ | | | | | | | | |
+| M2: lượt làm bài, chấm bước, gợi ý | | | ■ | ■ | ■ | ■ | | | | | |
+| M2: kiểm thử bài lab, chấm cuối, khôi phục, chấm ngầm | | | | | | | ■ | ■ | ■ | | |
+| M2: bài lab mẫu, hoàn thiện, kiểm thử | | | | | | | | | | ■ | ■ |
+| M3: lớp, nhập danh sách, lộ trình | ■ | ■ | ■ | | | | | | | | |
+| M3: bài tập, bắt đầu bài, bảng điểm | | | ■ | ■ | ■ | ■ | | | | | |
+| M3: kỳ thi, bù giờ, giám sát, gian lận, phúc khảo | | | | | | | ■ | ■ | ■ | | |
+| M3: hoàn thiện, kiểm thử | | | | | | | | | | ■ | ■ |
 
 | Mốc | Cuối tuần | Tiêu chí |
 |---|---|---|
