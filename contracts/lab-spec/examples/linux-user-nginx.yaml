@@ -1,0 +1,93 @@
+apiVersion: crucible.dev/v1
+kind: Lab
+metadata:
+  slug: linux-user-nginx
+  title: Tạo người dùng dịch vụ và cấu hình nginx
+  summary: Tạo tài khoản vận hành, phân quyền thư mục, cấu hình nginx lắng nghe cổng riêng và phục vụ một trang tĩnh.
+  tags: [linux, users, nginx]
+  difficulty: BEGINNER
+  estimatedMinutes: 30
+
+params:
+  username:
+    pick: [devops, deploy, operator, release, builder]
+  group:
+    pick: [webadmin, sre, platform]
+  port:
+    range: { min: 8000, max: 8999 }
+  token:
+    pattern: { charset: lower-digit, length: 10, prefix: page }
+
+environment:
+  image: ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0
+  profile: small
+  ttlMinutes: 60
+  idleMinutes: 15
+  network: none
+  files:
+    - path: /root/NHIEM-VU.txt
+      content: |
+        Máy chủ web cần một tài khoản vận hành riêng tên {{username}}.
+        Trang chủ phải trả về nội dung {{token}} tại cổng {{port}}.
+  setup: |
+    rm -f /etc/nginx/sites-enabled/default
+
+steps:
+  - id: createUser
+    title: Tạo người dùng
+    description: Tạo người dùng `{{username}}` có thư mục home `/home/{{username}}` và shell `/bin/bash`.
+    points: 20
+    check:
+      run: grep -q '^{{username}}:[^:]*:[0-9]*:[0-9]*:[^:]*:/home/{{username}}:/bin/bash$' /etc/passwd
+      failureMessage: Chưa có người dùng {{username}} với đúng thư mục home và shell.
+    hints:
+      - text: Xem tùy chọn `-m` và `-s` của lệnh `useradd`.
+        penalty: 0.25
+
+  - id: addGroup
+    title: Thêm vào nhóm quản trị web
+    description: Tạo nhóm `{{group}}` và thêm `{{username}}` vào nhóm này.
+    points: 20
+    check:
+      run: id -Gn {{username}} | tr ' ' '\n' | grep -qx '{{group}}'
+    hints:
+      - text: Dùng `groupadd` rồi `usermod -aG`.
+        penalty: 0.25
+
+  - id: siteContent
+    title: Chuẩn bị nội dung trang
+    description: Tạo `/srv/site/index.html` chứa đúng chuỗi `{{token}}`, thuộc sở hữu của `{{username}}:{{group}}`.
+    points: 20
+    check:
+      run: |
+        test "$(stat -c '%U:%G' /srv/site/index.html)" = '{{username}}:{{group}}' &&
+        grep -qx '{{token}}' /srv/site/index.html
+
+  - id: nginxPort
+    title: Cấu hình nginx
+    description: Cấu hình nginx phục vụ thư mục `/srv/site` tại cổng `{{port}}` và khởi động dịch vụ.
+    points: 40
+    check:
+      run: test "$(curl -sf http://127.0.0.1:{{port}}/)" = '{{token}}'
+      timeoutSeconds: 8
+      failureMessage: Cổng {{port}} chưa trả về đúng nội dung.
+    hints:
+      - text: Tạo tệp trong `/etc/nginx/sites-enabled/` với `listen {{port}};` và `root /srv/site;`.
+        penalty: 0.2
+      - text: Kiểm tra cấu hình bằng `nginx -t` rồi chạy `service nginx restart`.
+        penalty: 0.1
+
+solution:
+  - step: createUser
+    run: useradd -m -s /bin/bash {{username}}
+  - step: addGroup
+    run: groupadd {{group}} && usermod -aG {{group}} {{username}}
+  - step: siteContent
+    run: |
+      mkdir -p /srv/site
+      echo '{{token}}' > /srv/site/index.html
+      chown -R {{username}}:{{group}} /srv/site
+  - step: nginxPort
+    run: |
+      printf 'server {\n  listen {{port}};\n  root /srv/site;\n}\n' > /etc/nginx/sites-enabled/lab
+      service nginx restart

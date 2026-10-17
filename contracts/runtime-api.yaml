@@ -1,0 +1,723 @@
+openapi: 3.1.0
+info:
+  title: Crucible Runtime API (M1)
+  version: 1.0.0
+  description: |
+    API của module M1 (phiên thực hành và tài nguyên) dành cho module M2, M3 và giao diện.
+    Quy ước chung (xác thực, lỗi, lặp lại an toàn, phiên bản) tại CR-DOC-03.
+
+    Terminal không mô tả được bằng OpenAPI; giao thức WebSocket tại CR-DOC-03 mục 6.
+  license:
+    name: AGPL-3.0-only
+    identifier: AGPL-3.0-only
+servers:
+  - url: https://crucible.local/api/runtime
+    description: Cụm chuẩn
+security:
+  - oidc: []
+tags:
+  - name: sessions
+    description: Phiên thực hành
+  - name: terminal
+    description: Vé truy cập terminal
+  - name: reservations
+    description: Đặt trước tài nguyên cho kỳ thi
+  - name: quota
+    description: Hạn mức giờ máy
+  - name: capacity
+    description: Sức chứa của cụm
+
+paths:
+  /v1/sessions:
+    post:
+      tags: [sessions]
+      operationId: createSession
+      summary: Tạo phiên
+      description: |
+        Nhận yêu cầu và trả về ngay với pha `PENDING`. Trạng thái tiếp theo được thông báo qua sự kiện
+        `runtime.session.*` và đọc được bằng `getSession`. Scope yêu cầu: `runtime.sessions.write`.
+      security:
+        - oidc: [runtime.sessions.write]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionCreate'
+      responses:
+        '202':
+          description: Đã tiếp nhận
+          headers:
+            Location:
+              description: Đường dẫn của phiên
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '402':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    get:
+      tags: [sessions]
+      operationId: getSession
+      summary: Đọc trạng thái phiên
+      description: Chủ phiên hoặc tài khoản dịch vụ có scope `runtime.sessions.read`.
+      responses:
+        '200':
+          description: Phiên
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}/extend:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [sessions]
+      operationId: extendSession
+      summary: Gia hạn phiên
+      description: Không áp dụng cho phiên `EXAM`. Tổng thời gian gia hạn không vượt `maxExtensionMinutes`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [minutes]
+              properties:
+                minutes:
+                  type: integer
+                  minimum: 5
+                  maximum: 60
+      responses:
+        '200':
+          description: Phiên sau khi gia hạn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}/terminate:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [sessions]
+      operationId: terminateSession
+      summary: Kết thúc phiên
+      description: Idempotent; kết thúc phiên đã kết thúc trả về trạng thái hiện tại.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  enum: [COMPLETED, CANCELLED, ADMIN]
+      responses:
+        '200':
+          description: Phiên
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}/exec:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [sessions]
+      operationId: execInSession
+      summary: Chạy lệnh kiểm tra hoặc script khôi phục trong phiên
+      description: |
+        Chỉ tài khoản dịch vụ có scope `runtime.exec` (cấp cho M2). Với `purpose = CHECK`, script chạy bằng
+        `/opt/crucible/bin/sh`, `PATH=/opt/crucible/bin`, không nạp tệp cấu hình shell, môi trường biến rỗng (ADR-0011).
+      security:
+        - oidc: [runtime.exec]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecRequest'
+      responses:
+        '200':
+          description: Kết quả chạy, kể cả khi mã thoát khác 0 hoặc hết thời gian
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecResult'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}/terminal-tickets:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [terminal]
+      operationId: createTerminalTicket
+      summary: Cấp vé terminal tương tác
+      description: Chỉ chủ phiên (người dùng có `sub` trùng `ownerRef.userId`). Vé dùng một lần, hết hạn sau 30 giây.
+      responses:
+        '201':
+          description: Vé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TerminalTicket'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}/view-tickets:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [terminal]
+      operationId: createViewTicket
+      summary: Cấp vé xem chỉ đọc
+      description: |
+        Tài khoản dịch vụ có scope `runtime.view` (cấp cho M3). M3 kiểm tra quyền của giảng viên đối với lớp
+        trước khi gọi; M1 ghi nhận `viewerUserId` vào nhật ký truy cập.
+      security:
+        - oidc: [runtime.view]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [viewerUserId]
+              properties:
+                viewerUserId:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Vé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TerminalTicket'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/sessions/{sessionId}/recording:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    get:
+      tags: [sessions]
+      operationId: getRecording
+      summary: Lấy đường dẫn tải bản ghi phiên
+      description: Tài khoản dịch vụ có scope `runtime.recordings.read`. Đường dẫn ký sẵn, hết hạn sau 5 phút.
+      security:
+        - oidc: [runtime.recordings.read]
+      responses:
+        '200':
+          description: Đường dẫn bản ghi
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, expiresAt, durationSeconds]
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  durationSeconds:
+                    type: integer
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/reservations:
+    post:
+      tags: [reservations]
+      operationId: createReservation
+      summary: Đặt trước tài nguyên
+      description: Scope `runtime.reservations.write`. Từ chối khi sức chứa khả dụng trong khung giờ không đủ.
+      security:
+        - oidc: [runtime.reservations.write]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationCreate'
+      responses:
+        '201':
+          description: Đã đặt trước
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/reservations/{reservationId}:
+    parameters:
+      - name: reservationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [reservations]
+      operationId: getReservation
+      summary: Đọc đặt trước
+      responses:
+        '200':
+          description: Đặt trước
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '404':
+          $ref: '#/components/responses/Problem'
+    delete:
+      tags: [reservations]
+      operationId: cancelReservation
+      summary: Hủy đặt trước
+      description: Phiên đang chạy thuộc đặt trước không bị ảnh hưởng.
+      responses:
+        '204':
+          description: Đã hủy
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/capacity:
+    get:
+      tags: [capacity]
+      operationId: getCapacity
+      summary: Sức chứa khả dụng trong khung giờ
+      parameters:
+        - name: profile
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Profile'
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Sức chứa
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [profile, totalSlots, reservedSlots, availableSlots]
+                properties:
+                  profile:
+                    $ref: '#/components/schemas/Profile'
+                  totalSlots:
+                    type: integer
+                  reservedSlots:
+                    type: integer
+                  availableSlots:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/Problem'
+
+  /v1/quota-accounts/{quotaAccountRef}:
+    parameters:
+      - name: quotaAccountRef
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Ref'
+    get:
+      tags: [quota]
+      operationId: getQuotaAccount
+      summary: Đọc hạn mức và mức sử dụng
+      responses:
+        '200':
+          description: Tài khoản hạn mức
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaAccount'
+        '404':
+          $ref: '#/components/responses/Problem'
+    put:
+      tags: [quota]
+      operationId: putQuotaAccount
+      summary: Tạo hoặc cập nhật hạn mức
+      description: Scope `runtime.quota.write` (cấp cho M3) hoặc vai trò `ADMIN`.
+      security:
+        - oidc: [runtime.quota.write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [weeklyMinutes, maxConcurrentSessions]
+              properties:
+                weeklyMinutes:
+                  type: integer
+                  minimum: 0
+                  maximum: 100000
+                maxConcurrentSessions:
+                  type: integer
+                  minimum: 0
+                  maximum: 500
+      responses:
+        '200':
+          description: Tài khoản hạn mức
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaAccount'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://crucible.local/auth/realms/crucible/.well-known/openid-configuration
+
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Khóa do bên gọi sinh (UUID). Gửi lại cùng khóa trong 24 giờ trả về cùng kết quả.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    Problem:
+      description: Lỗi theo RFC 9457; mã lỗi trong trường `code` (CR-DOC-03 mục 3)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    Ref:
+      description: Mã tham chiếu mờ do module gọi đặt, dạng `<loại>:<mã>`, ví dụ `class:42`, `exam:7`.
+      type: string
+      pattern: '^[a-z]+:[A-Za-z0-9-]{1,64}$'
+
+    Profile:
+      type: string
+      enum: [small, medium]
+
+    Priority:
+      type: string
+      enum: [EXAM, PRACTICE, LAB_CI]
+
+    Phase:
+      type: string
+      enum: [PENDING, PROVISIONING, READY, EXPIRING, TERMINATED, FAILED, LOST]
+
+    EndReason:
+      type: string
+      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST]
+
+    RenderedEnvironment:
+      description: Phần `environment` của đặc tả bài lab sau khi kết xuất tham số, kèm script lỗi cài sẵn đã chọn. M1 không nhận tham số hay bước. Tổng kích thước tệp và setup không vượt 256 KiB.
+      type: object
+      additionalProperties: false
+      required: [image, profile, ttlMinutes, idleMinutes, maxExtensionMinutes, network]
+      properties:
+        image:
+          type: string
+        profile:
+          $ref: '#/components/schemas/Profile'
+        ttlMinutes:
+          type: integer
+          minimum: 10
+          maximum: 180
+        idleMinutes:
+          type: integer
+          minimum: 5
+          maximum: 60
+        maxExtensionMinutes:
+          type: integer
+          minimum: 0
+          maximum: 60
+        network:
+          type: string
+          enum: [none, mirror]
+        files:
+          type: array
+          maxItems: 20
+          items:
+            type: object
+            additionalProperties: false
+            required: [path, content, mode]
+            properties:
+              path:
+                type: string
+              content:
+                type: string
+              mode:
+                type: string
+        setup:
+          description: Script chạy sau khi ghi tệp; gồm setup và script lỗi cài sẵn đã nối theo thứ tự.
+          type: string
+          maxLength: 65536
+
+    SessionCreate:
+      type: object
+      additionalProperties: false
+      required: [ownerUserId, priority, quotaAccountRef, environment]
+      properties:
+        ownerUserId:
+          type: string
+          format: uuid
+        priority:
+          $ref: '#/components/schemas/Priority'
+        quotaAccountRef:
+          $ref: '#/components/schemas/Ref'
+        reservationRef:
+          $ref: '#/components/schemas/Ref'
+        recordInput:
+          description: Phát sự kiện dòng lệnh đã nhập (chỉ dùng cho phiên thi).
+          type: boolean
+          default: false
+        labels:
+          description: Nhãn tự do của bên gọi, trả lại nguyên vẹn trong sự kiện (ví dụ `attemptId`).
+          type: object
+          maxProperties: 10
+          additionalProperties:
+            type: string
+            maxLength: 128
+        environment:
+          $ref: '#/components/schemas/RenderedEnvironment'
+
+    Session:
+      type: object
+      required: [id, phase, priority, ownerUserId, createdAt, labels]
+      properties:
+        id:
+          type: string
+          format: uuid
+        phase:
+          $ref: '#/components/schemas/Phase'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        ownerUserId:
+          type: string
+          format: uuid
+        queuePosition:
+          description: Chỉ có khi pha là `PENDING` và yêu cầu đang chờ sức chứa.
+          type: integer
+          minimum: 1
+        createdAt:
+          type: string
+          format: date-time
+        readyAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+        endReason:
+          $ref: '#/components/schemas/EndReason'
+        failureDetail:
+          type: string
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+
+    ExecRequest:
+      type: object
+      additionalProperties: false
+      required: [script, timeoutSeconds, purpose]
+      properties:
+        purpose:
+          description: CHECK chạy lệnh kiểm tra bằng bộ công cụ chỉ đọc, thời hạn tối đa 15 giây; RESTORE chạy lời giải mẫu bằng /bin/sh và PATH chuẩn của môi trường để khôi phục tiến độ hoặc kiểm thử bài lab, tối đa 60 giây.
+          type: string
+          enum: [CHECK, RESTORE]
+        script:
+          type: string
+          minLength: 1
+          maxLength: 16384
+        timeoutSeconds:
+          type: integer
+          minimum: 1
+          maximum: 60
+
+    ExecResult:
+      type: object
+      required: [exitCode, timedOut, stdout, stderr, durationMs]
+      properties:
+        exitCode:
+          description: -1 khi hết thời gian.
+          type: integer
+        timedOut:
+          type: boolean
+        stdout:
+          description: Tối đa 4096 byte đầu.
+          type: string
+        stderr:
+          description: Tối đa 4096 byte đầu.
+          type: string
+        durationMs:
+          type: integer
+
+    TerminalTicket:
+      type: object
+      required: [ticket, mode, url, expiresAt]
+      properties:
+        ticket:
+          type: string
+        mode:
+          type: string
+          enum: [INTERACTIVE, VIEW]
+        url:
+          description: Địa chỉ WebSocket kèm vé
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+
+    ReservationCreate:
+      type: object
+      additionalProperties: false
+      required: [reservationRef, profile, slots, startsAt, endsAt, warmImages]
+      properties:
+        reservationRef:
+          $ref: '#/components/schemas/Ref'
+        profile:
+          $ref: '#/components/schemas/Profile'
+        slots:
+          type: integer
+          minimum: 1
+          maximum: 200
+        warmImages:
+          description: Image của các bài lab trong kỳ thi; nhóm ấm của mỗi image được nâng lên ceil(slots / số image) trước giờ bắt đầu.
+          type: array
+          minItems: 1
+          maxItems: 5
+          uniqueItems: true
+          items:
+            type: string
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+
+    Reservation:
+      type: object
+      required: [id, reservationRef, profile, slots, startsAt, endsAt, slotsInUse]
+      properties:
+        id:
+          type: string
+          format: uuid
+        reservationRef:
+          $ref: '#/components/schemas/Ref'
+        profile:
+          $ref: '#/components/schemas/Profile'
+        slots:
+          type: integer
+        slotsInUse:
+          type: integer
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+
+    QuotaAccount:
+      type: object
+      required: [quotaAccountRef, weeklyMinutes, maxConcurrentSessions, usedMinutesThisWeek, activeSessions, weekStartsAt]
+      properties:
+        quotaAccountRef:
+          $ref: '#/components/schemas/Ref'
+        weeklyMinutes:
+          type: integer
+        maxConcurrentSessions:
+          type: integer
+        usedMinutesThisWeek:
+          type: integer
+        activeSessions:
+          type: integer
+        weekStartsAt:
+          type: string
+          format: date-time
+
+    Problem:
+      type: object
+      required: [type, title, status, code]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          examples: [SESSION_LIMIT, QUOTA_EXHAUSTED]
+        traceId:
+          type: string

@@ -1,0 +1,633 @@
+asyncapi: 3.0.0
+info:
+  title: Crucible Events
+  version: 1.0.0
+  license:
+    name: AGPL-3.0-only
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+  description: |
+    Danh mục sự kiện trao đổi giữa các module qua RabbitMQ. Mọi sự kiện được phát lên topic exchange
+    `crucible.events` với routing key bằng kiểu sự kiện, theo định dạng CloudEvents 1.0 dạng JSON có cấu trúc.
+    Quy tắc phát, nhận, thứ tự và tiến hóa phiên bản tại CR-DOC-03 mục 5.
+
+    Thuộc tính `x-producer` và `x-consumers` của mỗi kênh ghi module phát và các module nhận.
+defaultContentType: application/cloudevents+json
+
+servers:
+  cluster:
+    host: rabbitmq.crucible-platform.svc.cluster.local:5672
+    protocol: amqp
+    protocolVersion: 0.9.1
+    description: RabbitMQ trong cụm chuẩn
+
+channels:
+  runtimeSessionReady:
+    address: runtime.session.ready
+    x-producer: M1
+    x-consumers: [M2]
+    messages:
+      sessionReady:
+        $ref: '#/components/messages/SessionReady'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeSessionExpiring:
+    address: runtime.session.expiring
+    x-producer: M1
+    x-consumers: [M2]
+    messages:
+      sessionExpiring:
+        $ref: '#/components/messages/SessionExpiring'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeSessionTerminated:
+    address: runtime.session.terminated
+    x-producer: M1
+    x-consumers: [M2, M3]
+    messages:
+      sessionTerminated:
+        $ref: '#/components/messages/SessionTerminated'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeSessionFailed:
+    address: runtime.session.failed
+    x-producer: M1
+    x-consumers: [M2]
+    messages:
+      sessionFailed:
+        $ref: '#/components/messages/SessionFailed'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeSessionLost:
+    address: runtime.session.lost
+    x-producer: M1
+    x-consumers: [M2, M3]
+    messages:
+      sessionLost:
+        $ref: '#/components/messages/SessionLost'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeTerminalConnected:
+    address: runtime.terminal.connected
+    x-producer: M1
+    x-consumers: [M3]
+    messages:
+      terminalConnected:
+        $ref: '#/components/messages/TerminalConnected'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeTerminalInputLine:
+    address: runtime.terminal.input-line
+    x-producer: M1
+    x-consumers: [M3]
+    messages:
+      terminalInputLine:
+        $ref: '#/components/messages/TerminalInputLine'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  runtimeRecordingAvailable:
+    address: runtime.recording.available
+    x-producer: M1
+    x-consumers: [M3]
+    messages:
+      recordingAvailable:
+        $ref: '#/components/messages/RecordingAvailable'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  contentLabPublished:
+    address: content.lab.published
+    x-producer: M2
+    x-consumers: [M1, M3]
+    messages:
+      labPublished:
+        $ref: '#/components/messages/LabPublished'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  contentAttemptStepChecked:
+    address: content.attempt.step-checked
+    x-producer: M2
+    x-consumers: [M3]
+    messages:
+      attemptStepChecked:
+        $ref: '#/components/messages/AttemptStepChecked'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  contentAttemptResumed:
+    address: content.attempt.resumed
+    x-producer: M2
+    x-consumers: [M3]
+    messages:
+      attemptResumed:
+        $ref: '#/components/messages/AttemptResumed'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  contentAttemptGraded:
+    address: content.attempt.graded
+    x-producer: M2
+    x-consumers: [M3]
+    messages:
+      attemptGraded:
+        $ref: '#/components/messages/AttemptGraded'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+  learningExamClosed:
+    address: learning.exam.closed
+    x-producer: M3
+    x-consumers: [M1]
+    messages:
+      examClosed:
+        $ref: '#/components/messages/ExamClosed'
+    bindings:
+      $ref: '#/components/channelBindings/eventsExchange'
+
+operations:
+  publishSessionReady:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeSessionReady'
+  publishSessionExpiring:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeSessionExpiring'
+  publishSessionTerminated:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeSessionTerminated'
+  publishSessionFailed:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeSessionFailed'
+  publishSessionLost:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeSessionLost'
+  publishTerminalConnected:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeTerminalConnected'
+  publishTerminalInputLine:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeTerminalInputLine'
+  publishRecordingAvailable:
+    action: send
+    channel:
+      $ref: '#/channels/runtimeRecordingAvailable'
+  publishLabPublished:
+    action: send
+    channel:
+      $ref: '#/channels/contentLabPublished'
+  publishAttemptStepChecked:
+    action: send
+    channel:
+      $ref: '#/channels/contentAttemptStepChecked'
+  publishAttemptResumed:
+    action: send
+    channel:
+      $ref: '#/channels/contentAttemptResumed'
+  publishAttemptGraded:
+    action: send
+    channel:
+      $ref: '#/channels/contentAttemptGraded'
+  publishExamClosed:
+    action: send
+    channel:
+      $ref: '#/channels/learningExamClosed'
+
+components:
+  channelBindings:
+    eventsExchange:
+      amqp:
+        is: routingKey
+        exchange:
+          name: crucible.events
+          type: topic
+          durable: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.3.0
+
+  messages:
+    SessionReady:
+      name: runtime.session.ready
+      summary: Phiên đã sẵn sàng cho học viên kết nối terminal
+      payload:
+        $ref: '#/components/schemas/SessionReadyEvent'
+    SessionExpiring:
+      name: runtime.session.expiring
+      summary: Phiên còn 5 phút trước khi hết hạn
+      payload:
+        $ref: '#/components/schemas/SessionExpiringEvent'
+    SessionTerminated:
+      name: runtime.session.terminated
+      summary: Phiên đã kết thúc và tài nguyên đã được thu hồi
+      payload:
+        $ref: '#/components/schemas/SessionTerminatedEvent'
+    SessionFailed:
+      name: runtime.session.failed
+      summary: Phiên không được cấp (hết thời gian chờ hoặc lỗi dựng môi trường)
+      payload:
+        $ref: '#/components/schemas/SessionFailedEvent'
+    SessionLost:
+      name: runtime.session.lost
+      summary: Node chạy phiên mất kết nối; môi trường không còn sử dụng được
+      payload:
+        $ref: '#/components/schemas/SessionLostEvent'
+    TerminalConnected:
+      name: runtime.terminal.connected
+      summary: Một kết nối terminal được mở
+      payload:
+        $ref: '#/components/schemas/TerminalConnectedEvent'
+    TerminalInputLine:
+      name: runtime.terminal.input-line
+      summary: Một dòng lệnh tái dựng từ luồng nhập; chỉ phát cho phiên có recordInput
+      payload:
+        $ref: '#/components/schemas/TerminalInputLineEvent'
+    RecordingAvailable:
+      name: runtime.recording.available
+      summary: Bản ghi phiên đã hoàn tất
+      payload:
+        $ref: '#/components/schemas/RecordingAvailableEvent'
+    LabPublished:
+      name: content.lab.published
+      summary: Một phiên bản bài lab được xuất bản
+      payload:
+        $ref: '#/components/schemas/LabPublishedEvent'
+    AttemptStepChecked:
+      name: content.attempt.step-checked
+      summary: Một bước của lượt làm bài được kiểm tra
+      payload:
+        $ref: '#/components/schemas/AttemptStepCheckedEvent'
+    AttemptResumed:
+      name: content.attempt.resumed
+      summary: Lượt làm bài được tiếp tục bằng phiên mới
+      payload:
+        $ref: '#/components/schemas/AttemptResumedEvent'
+    AttemptGraded:
+      name: content.attempt.graded
+      summary: Lượt làm bài có điểm cuối (sau chấm cuối hoặc điều chỉnh)
+      payload:
+        $ref: '#/components/schemas/AttemptGradedEvent'
+    ExamClosed:
+      name: learning.exam.closed
+      summary: Kỳ thi đã đóng; phần đặt trước tài nguyên có thể được giải phóng
+      payload:
+        $ref: '#/components/schemas/ExamClosedEvent'
+
+  schemas:
+    CloudEvent:
+      type: object
+      required: [specversion, id, source, type, time, subject, sequence, datacontenttype, data]
+      properties:
+        specversion:
+          const: '1.0'
+        id:
+          description: Mã duy nhất của sự kiện (UUID); bên nhận dùng để loại trùng.
+          type: string
+          format: uuid
+        source:
+          description: Dịch vụ phát, ví dụ `/crucible/runtime-api`.
+          type: string
+        type:
+          description: Kiểu sự kiện, trùng routing key.
+          type: string
+        time:
+          type: string
+          format: date-time
+        subject:
+          description: Mã đối tượng mà sự kiện nói về (phiên, lượt làm bài, bài lab, kỳ thi).
+          type: string
+        sequence:
+          description: Số thứ tự tăng dần theo `subject`; bên nhận bỏ qua sự kiện cũ hơn bản đã xử lý.
+          type: integer
+          minimum: 1
+        traceparent:
+          description: W3C Trace Context của thao tác gây ra sự kiện.
+          type: string
+        datacontenttype:
+          const: application/json
+
+    Labels:
+      description: Nhãn bên tạo phiên gửi kèm, trả lại nguyên vẹn (ví dụ `attemptId`).
+      type: object
+      additionalProperties:
+        type: string
+
+    AttemptContext:
+      type: object
+      required: [type, ref]
+      properties:
+        type:
+          type: string
+          enum: [PRACTICE, ASSIGNMENT, EXAM]
+        ref:
+          type: string
+
+    SessionReadyEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, ownerUserId, readyAt, expiresAt, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                ownerUserId:
+                  type: string
+                  format: uuid
+                readyAt:
+                  type: string
+                  format: date-time
+                expiresAt:
+                  type: string
+                  format: date-time
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    SessionExpiringEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, expiresAt, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                expiresAt:
+                  type: string
+                  format: date-time
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    SessionTerminatedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, endReason, endedAt, usedMinutes, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                endReason:
+                  type: string
+                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST]
+                endedAt:
+                  type: string
+                  format: date-time
+                usedMinutes:
+                  type: integer
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    SessionFailedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, endReason, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                endReason:
+                  type: string
+                  enum: [QUEUE_TIMEOUT, PROVISION_FAILED]
+                detail:
+                  type: string
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    SessionLostEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, lostAt, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                lostAt:
+                  description: Thời điểm node được xác định mất kết nối.
+                  type: string
+                  format: date-time
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    TerminalConnectedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, mode, userId, clientIp, connectedAt, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                mode:
+                  type: string
+                  enum: [INTERACTIVE, VIEW]
+                userId:
+                  type: string
+                  format: uuid
+                clientIp:
+                  type: string
+                connectedAt:
+                  type: string
+                  format: date-time
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    TerminalInputLineEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, line, enteredAt, pasted, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                line:
+                  description: Dòng lệnh, cắt ở 1024 ký tự.
+                  type: string
+                  maxLength: 1024
+                enteredAt:
+                  type: string
+                  format: date-time
+                pasted:
+                  description: Dòng chứa đoạn nhập vào trong một khung dữ liệu dài hơn 200 ký tự.
+                  type: boolean
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    RecordingAvailableEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [sessionId, durationSeconds, labels]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                durationSeconds:
+                  type: integer
+                labels:
+                  $ref: '#/components/schemas/Labels'
+
+    LabPublishedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [labId, versionId, version, slug, title, maxScore, stepCount, image, profile]
+              properties:
+                labId:
+                  type: string
+                  format: uuid
+                versionId:
+                  type: string
+                  format: uuid
+                version:
+                  type: integer
+                slug:
+                  type: string
+                title:
+                  type: string
+                maxScore:
+                  type: number
+                stepCount:
+                  type: integer
+                image:
+                  description: M1 dùng để kéo sẵn image lên node phiên.
+                  type: string
+                profile:
+                  type: string
+                  enum: [small, medium]
+
+    AttemptStepCheckedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [attemptId, userId, context, stepId, passed, pointsAwarded, score, trigger]
+              properties:
+                attemptId:
+                  type: string
+                  format: uuid
+                userId:
+                  type: string
+                  format: uuid
+                context:
+                  $ref: '#/components/schemas/AttemptContext'
+                stepId:
+                  type: string
+                passed:
+                  type: boolean
+                pointsAwarded:
+                  type: number
+                score:
+                  description: Điểm tạm thời của lượt làm bài sau lần kiểm tra.
+                  type: number
+                trigger:
+                  description: LEARNER do học viên bấm kiểm tra; PERIODIC do chấm ngầm định kỳ; RESTORE sau khi khôi phục; FINAL khi chấm cuối.
+                  type: string
+                  enum: [LEARNER, PERIODIC, RESTORE, FINAL]
+
+    AttemptResumedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [attemptId, userId, context, sessionId, previousSessionId]
+              properties:
+                attemptId:
+                  type: string
+                  format: uuid
+                userId:
+                  type: string
+                  format: uuid
+                context:
+                  $ref: '#/components/schemas/AttemptContext'
+                sessionId:
+                  type: string
+                  format: uuid
+                previousSessionId:
+                  type: string
+                  format: uuid
+
+    AttemptGradedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [attemptId, userId, context, labId, versionId, score, maxScore, gradedAt, adjusted]
+              properties:
+                attemptId:
+                  type: string
+                  format: uuid
+                userId:
+                  type: string
+                  format: uuid
+                context:
+                  $ref: '#/components/schemas/AttemptContext'
+                labId:
+                  type: string
+                  format: uuid
+                versionId:
+                  type: string
+                  format: uuid
+                score:
+                  type: number
+                maxScore:
+                  type: number
+                gradedAt:
+                  type: string
+                  format: date-time
+                adjusted:
+                  description: true khi điểm đến từ điều chỉnh sau phúc khảo.
+                  type: boolean
+
+    ExamClosedEvent:
+      allOf:
+        - $ref: '#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [examId, reservationRef, closedAt]
+              properties:
+                examId:
+                  type: string
+                reservationRef:
+                  type: string
+                closedAt:
+                  type: string
+                  format: date-time

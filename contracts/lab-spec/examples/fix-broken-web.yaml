@@ -1,0 +1,90 @@
+apiVersion: crucible.dev/v1
+kind: Lab
+metadata:
+  slug: fix-broken-web
+  title: Khắc phục sự cố máy chủ web
+  summary: Máy chủ web ngừng phục vụ. Tìm nguyên nhân, khắc phục và bảo đảm dịch vụ hoạt động lại.
+  tags: [linux, troubleshooting, nginx]
+  difficulty: INTERMEDIATE
+  estimatedMinutes: 40
+
+params:
+  port:
+    range: { min: 8100, max: 8199 }
+  marker:
+    pattern: { charset: hex, length: 12 }
+
+environment:
+  image: ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0
+  profile: small
+  ttlMinutes: 60
+  network: none
+  files:
+    - path: /etc/nginx/sites-enabled/app
+      content: |
+        server {
+          listen {{port}};
+          root /var/www/app;
+        }
+    - path: /var/www/app/index.html
+      content: |
+        {{marker}}
+    - path: /root/SU-CO.txt
+      content: |
+        Người dùng báo trang http://127.0.0.1:{{port}}/ không truy cập được.
+        Hãy khắc phục mà không thay đổi cổng và nội dung trang.
+  setup: |
+    rm -f /etc/nginx/sites-enabled/default
+    service nginx start
+
+faults:
+  pick: 2
+  from:
+    - id: serviceStopped
+      description: Dịch vụ nginx bị dừng.
+      inject: service nginx stop
+    - id: badPermission
+      description: Thư mục web bị bỏ quyền đọc với người dùng www-data.
+      inject: chmod 700 /var/www/app
+    - id: syntaxError
+      description: Tệp cấu hình thiếu dấu chấm phẩy, nginx không nạp được cấu hình mới.
+      inject: |
+        sed -i 's/root \/var\/www\/app;/root \/var\/www\/app/' /etc/nginx/sites-enabled/app
+        service nginx stop
+    - id: portConflict
+      description: Một tiến trình khác chiếm cổng của ứng dụng và trả về nội dung sai; nginx không khởi động được.
+      inject: |
+        service nginx stop
+        mkdir -p /tmp/legacy && echo maintenance > /tmp/legacy/index.html
+        setsid busybox httpd -p {{port}} -h /tmp/legacy
+
+steps:
+  - id: nginxListening
+    title: nginx lắng nghe đúng cổng
+    description: Tiến trình đang lắng nghe cổng `{{port}}` phải là nginx.
+    points: 30
+    expectInitially: any
+    check:
+      run: netstat -ltnp | grep ':{{port}} ' | grep -q nginx
+      failureMessage: Cổng {{port}} chưa do nginx lắng nghe.
+  - id: serving
+    title: Trang hoạt động trở lại
+    description: Trang `http://127.0.0.1:{{port}}/` trả về nội dung ban đầu.
+    points: 70
+    check:
+      run: test "$(curl -sf http://127.0.0.1:{{port}}/)" = '{{marker}}'
+      timeoutSeconds: 8
+      failureMessage: Trang chưa trả về đúng nội dung tại cổng {{port}}.
+    hints:
+      - text: Bắt đầu từ `service nginx status`, `nginx -t`, `ss -ltnp` và `tail /var/log/nginx/error.log`.
+        penalty: 0.15
+
+solution:
+  - step: nginxListening
+    run: |
+      sed -i 's/root \/var\/www\/app$/root \/var\/www\/app;/' /etc/nginx/sites-enabled/app
+  - step: serving
+    run: |
+      pkill -f 'busybox httpd' || true
+      chmod 755 /var/www/app
+      service nginx restart
