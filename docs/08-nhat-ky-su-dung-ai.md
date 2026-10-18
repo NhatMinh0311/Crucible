@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.10 |
+| Phiên bản | 1.11 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -245,6 +245,7 @@ thành viên.
 | 24 | Yêu cầu xóa dòng đồng tác giả của công cụ khỏi lịch sử commit; hỏi lại vai trò quản trị cấp cao | Viết lại lịch sử, kiểm tra nội dung từng commit không đổi, nêu ảnh hưởng của việc ghi đè nhánh trên GitHub trước khi đẩy; đổi quy ước commit; phân tích chi phí và lợi ích của vai trò quản trị cấp cao | Đồng ý ghi đè nhánh; giữ một vai trò `ADMIN` |
 | 25 | Chọn cách xử lý sĩ số tăng sau khi lên lịch thi; yêu cầu hỏi bằng hộp chọn thay cho văn bản | Thêm thao tác đổi số chỗ đặt trước vào hợp đồng M1, cập nhật yêu cầu, ca sử dụng, giao diện, thiết kế M1 | Chọn tự tăng số chỗ, cảnh báo khi thiếu |
 | 26 | Hỏi M2, M3 kiểm thử thế nào trên máy Windows 16 GB; yêu cầu làm chế độ `docker`; yêu cầu giao diện hai ngôn ngữ | Phân tích ba giai đoạn kiểm thử (mock, chế độ `docker`, cụm qua Tailscale); đặc tả, kế hoạch, danh sách việc `specs/001-runtime-docker-mode`; image bộ công cụ và image nền bài lab; cập nhật yêu cầu, hợp đồng, thiết kế giao diện cho hai ngôn ngữ | Duyệt đặc tả; chọn phương án cho 6 câu hỏi |
+| 27 | Triển khai chế độ `docker` theo đặc tả đã duyệt | Viết `services/runtime` (API sinh từ hợp đồng, CSDL, outbox, xác thực, trình điều khiển Docker, vòng đời phiên, terminal WebSocket), kiểm thử tích hợp với PostgreSQL, RabbitMQ, Docker thật; job CI; profile `runtime` cho thành viên không cài Go; chạy Schemathesis, phát hiện và sửa 4 chỗ lệch giữa hợp đồng và dịch vụ | Chờ thành viên đọc lại mã |
 
 ## Lịch sử thay đổi
 
@@ -261,3 +262,4 @@ thành viên.
 | 1.8 | 18/10/2026 | Vòng 24: lịch sử commit, vai trò quản trị |
 | 1.9 | 18/10/2026 | Vòng 25: sĩ số lớp và đặt trước |
 | 1.10 | 18/10/2026 | Vòng 26: chế độ docker, hai ngôn ngữ |
+| 1.11 | 18/10/2026 | Vòng 27: chế độ docker của runtime-api |

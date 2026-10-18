@@ -5,7 +5,7 @@
 | Mã | 001-runtime-docker-mode |
 | Module | M1 |
 | Mốc | MA |
-| Trạng thái | Đã duyệt (18/10/2026) |
+| Trạng thái | Hoàn thành (18/10/2026) |
 | Tài liệu liên quan | CR-DOC-03 mục 2.3, 3, 5, 6, 7; CR-MOD-M1 mục 2, 4, 6; ADR-0011; backlog: "runtime-api chế độ docker", "Image nền bài lab ubuntu-nginx và image bộ công cụ kiểm tra" |
 
 ## 1. Mục tiêu
