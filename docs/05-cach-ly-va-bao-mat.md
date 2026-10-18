@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-05 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc, CR-DOC-03 Hợp đồng, CR-DOC-04 Vận hành, ADR-0003, ADR-0004, ADR-0011, ADR-0016 |
 
@@ -64,7 +64,7 @@ flowchart LR
 | T1 | Thoát container, chiếm node | gVisor (`RuntimeClass gvisor`): lời gọi hệ thống được xử lý bởi nhân riêng trong không gian người dùng; không cấp `privileged`, không thêm capability ngoài mặc định trừ `NET_ADMIN` cho bài lab khai báo (ADR-0016; capability chỉ có hiệu lực với nhân của sandbox), `allowPrivilegeEscalation: false`, seccomp mặc định của runtime; không gắn `hostPath`, không dùng `hostNetwork`, `hostPID` |
 | T2 | Gọi Kubernetes API bằng token của pod | `automountServiceAccountToken: false`; tài khoản dịch vụ của pod phiên không có Role nào; NetworkPolicy chặn địa chỉ API server |
 | T3 | Truy cập dịch vụ nền tảng, pod khác, dịch vụ metadata | NetworkPolicy mặc định chặn mọi chiều vào và ra trong `crucible-sessions`; bài lab `network: mirror` chỉ được ra tới máy chủ gói nội bộ cổng 3142; không có DNS nội bộ cụm cho pod phiên ngoại trừ tên máy chủ gói. Máy chủ gói không được dùng làm proxy ra Internet: chỉ phục vụ các kho gói đã khai báo (`ForceManaged: 1`), không chuyển tiếp yêu cầu `CONNECT` (`PassThroughPattern` không khớp địa chỉ nào) |
-| T4 | Chiếm tài nguyên (fork bomb, đầy bộ nhớ, đầy đĩa) | Giới hạn bộ nhớ, CPU, `pids` theo mức tài nguyên; ephemeral storage giới hạn 2 GiB; vượt giới hạn chỉ ảnh hưởng phiên đó |
+| T4 | Chiếm tài nguyên (fork bomb, đầy bộ nhớ, đầy đĩa) | Giới hạn bộ nhớ, CPU theo mức tài nguyên; giới hạn số tiến trình của mỗi pod đặt chung cho node phiên bằng kubelet `pod-max-pids` (CR-DOC-04 mục 3.4); ephemeral storage giới hạn 2 GiB; vượt giới hạn bộ nhớ hoặc số tiến trình làm dừng cả sandbox của phiên đó, không ảnh hưởng phiên khác (S1) |
 | T4a | Dùng CPU kéo dài (đào tiền ảo, vòng lặp vô hạn) làm chậm phiên khác trên cùng node | Không có đường ra Internet nên không gửi được kết quả đào tới bên ngoài (T3, T5); giám sát CPU theo phiên: phiên luyện tập bị cảnh báo rồi kết thúc, phiên thi được báo giám thị, mọi lần phát hiện được ghi nhận (CR-MOD-M1 BR-M1.22–BR-M1.25) |
 | T5 | Tấn công từ chối dịch vụ ra ngoài Internet | Mặc định không có đường ra Internet |
 | T6 | Làm sai lệch kết quả chấm | Lệnh kiểm tra chạy bằng công cụ liên kết tĩnh từ volume chỉ đọc, môi trường biến sạch (ADR-0011); học viên không có `CAP_SYS_ADMIN` nên không gắn đè được volume |
@@ -120,7 +120,7 @@ chứng Q6.
 | I5 | Kết nối tới địa chỉ Internet | Thất bại (bài lab `network: none`) |
 | I6 | Kiểm tra môi trường đang chạy trong gVisor (`dmesg`, `/proc/version`) | Nhận diện nhân của gVisor |
 | I7 | Gắn hệ thống tệp, nạp mô-đun nhân, thay đổi `/opt/crucible/bin` | Thất bại |
-| I8 | Fork bomb, cấp phát vượt bộ nhớ | Chỉ phiên đó bị ảnh hưởng; phiên khác trên cùng node vẫn đạt Q1 |
+| I8 | Fork bomb, cấp phát vượt bộ nhớ | Chỉ phiên đó bị ảnh hưởng (môi trường của phiên bị dừng); phiên khác trên cùng node vẫn đạt Q1 |
 | I9 | Tạo pod thiếu `runtimeClassName` hoặc có `hostPath` trong `crucible-sessions` bằng tài khoản có quyền tạo pod | Bị chính sách từ chối |
 | I10 | Chạy tiến trình dùng hết CPU trong phiên luyện tập 16 phút | Cảnh báo sau 10 phút, phiên kết thúc với `RESOURCE_ABUSE` sau 15 phút; phiên khác trên cùng node giữ độ trễ terminal p95 ≤ 150 ms |
 | I11 | Qua máy chủ gói nội bộ, tải một địa chỉ ngoài danh sách kho gói (`http_proxy=http://mirror:3142 curl http://example.com`) và mở đường hầm `CONNECT` tới cổng 443 | Bị từ chối (bài lab `network: mirror`) |
@@ -151,3 +151,4 @@ chứng Q6.
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | T4a dùng CPU kéo dài, T12 trần theo giảng viên, máy chủ gói không làm proxy, kiểm thử I10, I11 |
 | 1.2 | 18/10/2026 | `NET_ADMIN` cho bài lab khai báo (T1, chính sách `session-pod-hardening`), kiểm thử I12 |
+| 1.3 | 18/10/2026 | T4, I8 theo thử nghiệm S1: giới hạn số tiến trình đặt theo node, vượt giới hạn dừng cả sandbox |

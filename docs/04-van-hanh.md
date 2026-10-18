@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-04 |
-| Phiên bản | 1.1 |
-| Ngày ban hành | 17/10/2026 |
+| Phiên bản | 1.2 |
+| Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 8 (yêu cầu chất lượng), CR-DOC-02 Kiến trúc, CR-DOC-05 Cách ly và bảo mật, ADR-0007, ADR-0008, ADR-0009, ADR-0012 |
 
 ## 1. Phạm vi
@@ -80,6 +80,20 @@ cd infra/terraform && terraform apply          # dựng máy ảo; cloud-init c�
 ./infra/scripts/fetch-kubeconfig.sh            # lấy kubeconfig từ cr-server
 ./deploy/bootstrap/install.sh                  # cài Argo CD, khôi phục khóa Sealed Secrets, tạo ứng dụng gốc
 ```
+
+Cấu hình node phiên do cloud-init ghi (kiểm chứng ở thử nghiệm S1, `docs/spikes/S1.md`):
+
+| Tệp | Nội dung |
+|---|---|
+| `/etc/containerd/runsc.toml` | `platform = "systrap"` |
+| `/var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl` | Giữ cấu hình sinh sẵn của k3s (`{{ template "base" . }}`) và khai báo runtime `runsc` (`io.containerd.runsc.v1`, `ConfigPath` trỏ tới `runsc.toml`); k3s không tự nhận runsc |
+| `/etc/rancher/k3s/config.yaml` | `kubelet-arg: ["pod-max-pids=2048"]`. Agent k3s không tạo sẵn thư mục `/etc/rancher/k3s/`, cloud-init tạo trước khi ghi |
+
+`RuntimeClass gvisor` gồm handler `runsc`, chi phí `64Mi`, `50m`, `nodeSelector` `crucible.dev/gvisor=true` và
+toleration cho taint `crucible.dev/role=lab:NoSchedule`. Giới hạn `pod-max-pids` chỉ áp dụng cho pod tạo sau khi
+kubelet khởi động lại. Với gVisor, mỗi tiến trình trong sandbox tốn khoảng hai tiến trình trên node cộng phần cố định
+khoảng 45; vượt giới hạn làm dừng cả sandbox. Giá trị 2048 được kiểm tra lại với các bài mẫu ở thử nghiệm S4.
+Lệnh cài gói trong cloud-init chạy với `DEBIAN_FRONTEND=noninteractive`.
 
 ### 3.5. Namespace
 
@@ -301,3 +315,4 @@ Chaos Mesh chỉ được cài trong thời gian thí nghiệm. Sự cố mức 
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Chỉ số và cảnh báo CPU của phiên; cấu hình máy chủ gói |
+| 1.2 | 18/10/2026 | Cấu hình gVisor và giới hạn số tiến trình của node phiên theo thử nghiệm S1 |
