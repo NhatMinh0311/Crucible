@@ -9,7 +9,7 @@ trình điều khiển `docker`; chế độ `kubernetes` sau này thay trình �
 services/runtime/
 ├── go.mod                      module github.com/NhatMinh0311/crucible/services/runtime, go 1.26
 ├── cmd/runtime-api/main.go     đọc cấu hình, nối các thành phần, dừng có kiểm soát
-├── api/                        cấu hình oapi-codegen; mã sinh từ contracts/runtime-api.yaml (không commit)
+├── internal/api/               cấu hình oapi-codegen; mã sinh từ contracts/runtime-api.yaml (commit kèm, CI kiểm tra không lệch)
 ├── internal/
 │   ├── config/                 biến môi trường (CR-MOD-M1 mục 12)
 │   ├── auth/                   kiểm tra JWT Keycloak (go-oidc), scope, vai trò, chủ phiên

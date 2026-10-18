@@ -1,0 +1,10 @@
+# Sinh kiểu dữ liệu và interface máy chủ từ hợp đồng: go generate ./internal/api
+package: api
+output: api.gen.go
+generate:
+  std-http-server: true
+  strict-server: true
+  models: true
+  embedded-spec: true
+output-options:
+  nullable-type: true
