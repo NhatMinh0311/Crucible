@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.6 |
+| Phiên bản | 1.7 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -124,6 +124,10 @@ Quy định:
 | Cộng giờ thi thủ công | Cộng trong lúc thi cho từng sinh viên | Thêm thời gian ưu tiên khai báo trước; chỉ khai báo trước |
 | Người được cộng giờ | Giảng viên phụ trách; trợ giảng đề xuất | Cả trợ giảng; thêm quản trị viên |
 | Giới hạn cộng giờ | Tối đa 30 phút mỗi sinh viên mỗi kỳ thi, riêng với bù tự động; lý do bắt buộc, ghi nhật ký, thông báo sinh viên | Chung trần 15 phút; không giới hạn |
+| Tham số nghiệp vụ cố định trong thiết kế | Quản trị viên chỉnh qua chức năng tham số hệ thống, không cố định trong mã | Giữ cố định; biến môi trường khi triển khai |
+| Phạm vi tham số trên giao diện | Tham số nghiệp vụ; tham số kỹ thuật, bảo mật giữ ở cấu hình triển khai | Chỉ nhóm kỳ thi và hạn mức; mọi tham số |
+| Thời điểm có hiệu lực | Kỳ thi chốt tham số khi lên lịch; tham số khác có hiệu lực ngay | Mọi thay đổi có hiệu lực ngay |
+| Mức đặt tham số | Một giá trị cho toàn bản cài đặt | Giảng viên chỉnh trong giới hạn của quản trị viên |
 
 ### 3.3. Phần việc của công cụ
 
@@ -228,6 +232,7 @@ thành viên.
 |---|---|---|---|
 | 21 | Thực hiện S1 | Script dựng cụm thử, cài gVisor, kiểm thử I1–I8, gắn bộ công cụ, giới hạn số tiến trình, attach; phân tích kết quả từng bước; tổng hợp kết luận và cập nhật thiết kế | S1 đạt; xác nhận exec và attach tương tác bằng tay |
 | 22 | Chọn lý do kết thúc và cách xử lý phiên thi khi môi trường bị dừng; hỏi cơ chế cộng giờ thủ công | Đề xuất phương án; rà thiết kế, chỉ ra thiếu cơ chế cộng giờ và thời hạn phiên thi không vượt hạn nộp ban đầu nên bù giờ không có hiệu lực; cập nhật hợp đồng, yêu cầu, ca sử dụng, giao diện, kiểm thử | Chọn `ENVIRONMENT_FAILED`; mở môi trường mới không bù giờ; giảng viên cộng giờ tối đa 30 phút, trợ giảng đề xuất |
+| 23 | Yêu cầu tham số như trần cộng giờ do quản trị viên chỉnh, không cố định | Kiểm kê 18 tham số nghiệp vụ của ba module; tách tham số kỹ thuật, bảo mật; đề xuất mỗi module giữ tham số của mình với cùng khuôn API; kỳ thi chép tham số khi lên lịch; thay mức cộng cố định của thời hạn phiên thi bằng `sessionUntil` | Chọn phương án đề xuất cho 3 câu hỏi; hỏi có nên thêm vai trò quản trị cấp cao |
 
 ## Lịch sử thay đổi
 
@@ -240,3 +245,4 @@ thành viên.
 | 1.4 | 18/10/2026 | Vòng 20: bài định tuyến, thử nghiệm S7 |
 | 1.5 | 18/10/2026 | Giai đoạn 2, vòng 21: thử nghiệm S1 |
 | 1.6 | 18/10/2026 | Vòng 22: môi trường bị dừng, cộng giờ thi |
+| 1.7 | 18/10/2026 | Vòng 23: tham số hệ thống |

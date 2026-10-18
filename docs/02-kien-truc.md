@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-02 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0016 |
 
@@ -334,8 +334,9 @@ sequenceDiagram
     Note over O: Phiên EXAM được cấp từ phần đặt trước
 ```
 
-Đặt trước của kỳ thi kết thúc tại giờ kết thúc chung. Phiên thi có thời hạn bằng giờ kết thúc chung cộng 45 phút
-(bù giờ tự động tối đa 15 phút, cộng giờ tối đa 30 phút); lượt thi kết thúc khi M3 nộp bài theo giờ của từng sinh viên.
+Khi lên lịch, M3 chép các tham số `exam.*` hiện hành vào kỳ thi (CR-DOC-01 mục 5.6). Đặt trước của kỳ thi kết thúc tại
+giờ kết thúc chung. Phiên thi có thời hạn tới `sessionUntil` = giờ kết thúc chung + trần bù giờ tự động + trần cộng giờ
+đã chốt; lượt thi kết thúc khi M3 nộp bài theo giờ của từng sinh viên.
 Phiên đang chạy không bị ảnh hưởng khi đặt trước kết thúc; phiên thi tạo sau thời điểm đó (tiếp tục sau sự cố, sinh viên
 được cộng giờ) được cấp từ sức chứa chung với ưu tiên `EXAM` (BR-M1.4).
 
@@ -381,7 +382,8 @@ sequenceDiagram
 | Toàn vẹn chấm điểm | Lệnh kiểm tra chạy bằng `exec` từ ngoài, dùng công cụ từ volume chỉ đọc, môi trường biến sạch | ADR-0011 |
 | Nhất quán dữ liệu | Outbox và inbox; mỗi thay đổi nghiệp vụ và sự kiện của nó nằm trong một transaction | ADR-0005 |
 | Quan sát | OpenTelemetry cho trace và metric; log JSON có `trace_id`; Prometheus, Loki, Tempo, Grafana | ADR-0012, CR-DOC-04 |
-| Cấu hình, bí mật | Cấu hình qua ConfigMap trong kho mã; bí mật mã hóa bằng Sealed Secrets trong kho mã | CR-DOC-04 |
+| Cấu hình, bí mật | Cấu hình triển khai qua ConfigMap trong kho mã; bí mật mã hóa bằng Sealed Secrets trong kho mã | CR-DOC-04 |
+| Tham số hệ thống | Tham số nghiệp vụ lưu trong CSDL của module sở hữu, quản trị viên sửa qua `/v1/settings` của từng module, có lịch sử; đối tượng cần giá trị cố định chép tham số khi tạo | CR-DOC-01 mục 5.6, CR-DOC-03 mục 3.6 |
 | Thời gian | Lưu UTC (`timestamptz`), hiển thị theo `Asia/Ho_Chi_Minh`; đồng hồ các node đồng bộ NTP | |
 
 ## 10. Đáp ứng yêu cầu chất lượng
@@ -417,3 +419,4 @@ sequenceDiagram
 | 1.1 | 17/10/2026 | Trình tự lên lịch kỳ thi có ngân sách đặt trước và gợi ý khung giờ; lý do kết thúc phiên mới |
 | 1.2 | 18/10/2026 | Tham chiếu ADR-0015, ADR-0016 |
 | 1.3 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; lượt thi tiếp tục sau khi môi trường bị dừng; thời hạn phiên thi và đặt trước khi có bù giờ, cộng giờ |
+| 1.4 | 18/10/2026 | Kỳ thi chốt tham số khi lên lịch; tham số hệ thống theo module (mục 9) |

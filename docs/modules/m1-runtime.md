@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.5 |
+| Phiên bản | 0.6 |
 | Ngày ban hành | 18/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
@@ -76,9 +76,9 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.3 | Giờ máy của một phiên = số phút làm tròn lên từ `readyAt` tới `endedAt` (hoặc `lostAt`), bằng 0 nếu phiên chưa từng sẵn sàng; ghi một lần vào sổ khi phiên kết thúc. Tuần bắt đầu lúc 00:00 thứ Hai giờ Việt Nam | AC-R2.5 |
 | BR-M1.4 | Phiên chờ được cấp theo thứ tự ưu tiên `EXAM` > `PRACTICE` > `LAB_CI`, cùng ưu tiên thì theo thời điểm tạo | AC-R2.1 |
 | BR-M1.5 | Không dừng phiên đang chạy để lấy chỗ. Được xóa pod ấm không khớp image để lấy chỗ cho phiên đang chờ | AC-R2.1 |
-| BR-M1.6 | Chỗ đặt trước được giữ từ `startsAt − 15 phút` tới `endsAt`; trong khoảng này, phần chỗ đặt trước chưa dùng chỉ cấp cho phiên `EXAM` có cùng `reservationRef` | AC-R2.2 |
-| BR-M1.7 | Tổng chỗ đặt trước của các đặt trước chồng lấn thời gian không vượt 80% sức chứa của mức tài nguyên; 20% còn lại dành cho luyện tập | AC-L2.1 |
-| BR-M1.8 | Phiên ở `PENDING` quá 10 phút chuyển `FAILED` với lý do `QUEUE_TIMEOUT` | AC-R2.3 |
+| BR-M1.6 | Chỗ đặt trước được giữ từ `startsAt` − `reservation.leadMinutes` tới `endsAt`; trong khoảng này, phần chỗ đặt trước chưa dùng chỉ cấp cho phiên `EXAM` có cùng `reservationRef` | AC-R2.2 |
+| BR-M1.7 | Đặt trước mới bị từ chối nếu làm tổng chỗ đặt trước của các đặt trước chồng lấn thời gian vượt `reservation.maxCapacityRatio` × sức chứa của mức tài nguyên; phần còn lại dành cho luyện tập. Đặt trước đã tạo được giữ khi tham số giảm | AC-L2.1 |
+| BR-M1.8 | Phiên ở `PENDING` quá `queue.timeoutMinutes` chuyển `FAILED` với lý do `QUEUE_TIMEOUT` | AC-R2.3 |
 | BR-M1.9 | Phiên `PRACTICE` không có dữ liệu nhập trong `idleMinutes` bị kết thúc với lý do `IDLE`; cảnh báo gửi qua terminal trước 2 phút. Không áp dụng cho `EXAM` | AC-R1.4 |
 | BR-M1.10 | Chỉ phiên `PRACTICE` ở pha `READY`, `EXPIRING` được gia hạn; tổng gia hạn không vượt `maxExtensionMinutes` | AC-R1.5 |
 | BR-M1.11 | Khi node có điều kiện `Ready` là `False` hoặc `Unknown`, mọi phiên chưa kết thúc trên node chuyển `LOST`; pod được xóa cưỡng bức | AC-R4.1 |
@@ -91,12 +91,13 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.18 | Tổng `weekly_minutes` của các tài khoản con không vượt `weekly_minutes` của tài khoản cha; phần chưa chia dùng cho phiên tính trực tiếp vào tài khoản cha. Kiểm tra trong transaction có khóa dòng tài khoản cha | AC-R2.6 |
 | BR-M1.19 | Phiên `PRACTICE` bị từ chối khi tổng phiên đang chạy của tài khoản cha và mọi tài khoản con đạt `max_concurrent_sessions` của tài khoản cha | AC-R2.6 |
 | BR-M1.20 | Chỗ × giờ của đặt trước = `slots` × thời lượng tính theo giờ, làm tròn lên theo nửa giờ; tính vào tháng dương lịch (giờ Việt Nam) chứa `startsAt` của tài khoản gốc. Tổng trong tháng không vượt `monthly_reservation_slot_hours`. Hủy trước `startsAt` hoàn lại; kết thúc sớm do kỳ thi đóng không hoàn lại | AC-R2.7 |
-| BR-M1.21 | Scope `runtime.quota.write` chỉ ghi tài khoản có `parent_ref`; tài khoản không có cha chỉ vai trò `ADMIN` ghi. Tài khoản cha chưa tồn tại được tạo với giá trị `QUOTA_DEFAULT_*` | AC-R2.8 |
-| BR-M1.22 | Phiên `PRACTICE`, `EXAM` có CPU dùng trung bình trong 10 phút từ `CPU_ABUSE_RATIO` (0,9) lần giới hạn CPU trở lên bị coi là dùng CPU bất thường. Không áp dụng cho phiên `LAB_CI` và phiên có `environment.cpuIntensive` | AC-R5.1, AC-R5.4 |
-| BR-M1.23 | Phiên `PRACTICE` dùng CPU bất thường nhận khung `warning` mã `CPU_ABUSE` với `terminateAt` = thời điểm phát hiện + 5 phút và sự kiện `resource-alert` (`WARNED`). Tới `terminateAt`, nếu CPU trung bình 5 phút vừa qua vẫn từ ngưỡng trở lên, phiên chuyển `TERMINATED` với lý do `RESOURCE_ABUSE`; nếu không, cảnh báo được gỡ và lần phát hiện ghi `WARNED` | AC-R5.1 |
+| BR-M1.21 | Scope `runtime.quota.write` chỉ ghi tài khoản có `parent_ref`; tài khoản không có cha chỉ vai trò `ADMIN` ghi. Tài khoản cha chưa tồn tại được tạo với giá trị `quota.default*` hiện hành | AC-R2.8 |
+| BR-M1.22 | Phiên `PRACTICE`, `EXAM` có CPU dùng trung bình trong `cpuAbuse.windowMinutes` từ `cpuAbuse.ratio` lần giới hạn CPU trở lên bị coi là dùng CPU bất thường. Không áp dụng cho phiên `LAB_CI` và phiên có `environment.cpuIntensive` | AC-R5.1, AC-R5.4 |
+| BR-M1.23 | Phiên `PRACTICE` dùng CPU bất thường nhận khung `warning` mã `CPU_ABUSE` với `terminateAt` = thời điểm phát hiện + `cpuAbuse.graceMinutes` và sự kiện `resource-alert` (`WARNED`). Tới `terminateAt`, nếu CPU trung bình trong `cpuAbuse.graceMinutes` vừa qua vẫn từ ngưỡng trở lên, phiên chuyển `TERMINATED` với lý do `RESOURCE_ABUSE`; nếu không, cảnh báo được gỡ và lần phát hiện ghi `WARNED` | AC-R5.1 |
 | BR-M1.24 | Phiên `EXAM` dùng CPU bất thường không bị kết thúc; phát `runtime.session.resource-alert` (`REPORTED`), tối đa một lần mỗi 10 phút cho một phiên | AC-R5.2, AC-L2.10 |
 | BR-M1.25 | Mỗi lần phát hiện được ghi vào `resource_violations` với cách xử lý cuối cùng; không có biện pháp tự động theo số lần vi phạm | AC-R5.3 |
 | BR-M1.26 | `environment.capabilities` chỉ chứa giá trị có trong `SESSION_ALLOWED_CAPABILITIES`, nếu không từ chối tạo phiên với 422 `ENVIRONMENT_NOT_ALLOWED`. Capability được thêm vào `securityContext.capabilities.add` của container phiên; phiên không khai báo không có capability bổ sung. Pod ấm chỉ được nhận khi tập capability bằng đúng tập của phiên (ADR-0016) | AC-C1.9 |
+| BR-M1.27 | Tham số hệ thống của M1 (CR-DOC-01 mục 5.6) đọc từ bảng `settings` qua bộ nhớ đệm làm mới mỗi 30 giây; chỉ `ADMIN` sửa, giá trị ngoài khoảng hợp lệ trả 422 `SETTING_OUT_OF_RANGE`; mỗi lần sửa ghi `settings_history` trong cùng transaction | AC-P1.1–AC-P1.4 |
 
 ## 5. Cấp phát
 
@@ -199,6 +200,7 @@ erDiagram
     sessions ||--o{ view_access_log : ""
     sessions ||--o{ resource_violations : ""
     reservations ||--o{ sessions : "reservation_ref"
+    settings ||--o{ settings_history : ""
 
     sessions {
         uuid id PK
@@ -270,7 +272,23 @@ erDiagram
         numeric cpu_ratio
         text action
     }
+    settings {
+        text key PK
+        numeric value
+        timestamptz updated_at
+        uuid updated_by
+    }
+    settings_history {
+        bigint id PK
+        text key FK
+        numeric old_value
+        numeric new_value
+        timestamptz changed_at
+        uuid changed_by
+    }
 ```
+
+Bảng `settings` chỉ chứa tham số đã được sửa; tham số chưa sửa dùng mặc định trong mã, cùng với khoảng hợp lệ và mô tả.
 
 Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 5.2).
 
@@ -325,8 +343,12 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | AC-R4.2, BR-M1.12 | envtest và chaos CH2, CH3 |
 | AC-R5.1–AC-R5.4, BR-M1.22–BR-M1.25 | Đơn vị: trung bình trượt và chuyển trạng thái cảnh báo với chuỗi mẫu giả lập; cụm chuẩn: kiểm thử cách ly I10 |
 | AC-C1.9, BR-M1.26 | Đơn vị: dựng pod spec theo capability, khớp pod ấm; tích hợp: capability ngoài danh sách bị từ chối; cụm chuẩn: `iptables` chạy được khi khai báo, kiểm thử cách ly I12 |
+| AC-P1.1–AC-P1.4, BR-M1.27 | Tích hợp: sửa tham số bằng vai trò khác `ADMIN` bị từ chối; giá trị ngoài khoảng bị từ chối; sau khi giảm `queue.timeoutMinutes`, phiên chờ mới bị hủy theo giá trị mới trong vòng 60 giây; lịch sử ghi đủ giá trị cũ và mới |
 
 ## 12. Cấu hình
+
+Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`queue.*`, `reservation.*`, `quota.default*`,
+`cpuAbuse.*`) là tham số hệ thống do quản trị viên sửa qua `/v1/settings` (BR-M1.27, CR-DOC-01 mục 5.6).
 
 | Biến | Ý nghĩa | Mặc định |
 |---|---|---|
@@ -336,16 +358,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | `OIDC_ISSUER`, `OIDC_AUDIENCE` | Xác thực token | |
 | `S3_ENDPOINT`, `S3_BUCKET` | Lưu bản ghi | `recordings` |
 | `SESSION_NAMESPACE` | Namespace của phiên | `crucible-sessions` |
-| `QUEUE_TIMEOUT` | BR-M1.8 | `10m` |
-| `RESERVATION_MAX_RATIO` | BR-M1.7 | `0.8` |
-| `RESERVATION_LEAD_TIME` | BR-M1.6 | `15m` |
 | `SETUP_TIMEOUT` | Thời hạn setup | `60s` |
-| `QUOTA_DEFAULT_WEEKLY_MINUTES` | Trần giờ máy mỗi tuần của giảng viên mới (BR-M1.21) | `6000` |
-| `QUOTA_DEFAULT_MAX_CONCURRENT` | Trần phiên đồng thời của giảng viên mới | `60` |
-| `QUOTA_DEFAULT_RESERVATION_SLOT_HOURS` | Ngân sách chỗ × giờ đặt trước mỗi tháng của giảng viên mới | `300` |
-| `CPU_ABUSE_RATIO` | Ngưỡng BR-M1.22 | `0.9` |
-| `CPU_ABUSE_WINDOW` | Cửa sổ phát hiện BR-M1.22 | `10m` |
-| `CPU_ABUSE_GRACE` | Thời gian chờ trước khi kết thúc BR-M1.23 | `5m` |
 | `SESSION_ALLOWED_CAPABILITIES` | Capability được cấp cho bài lab khai báo (BR-M1.26); để rỗng khi cụm không chạy gVisor | `NET_ADMIN` |
 
 ## Lịch sử thay đổi
@@ -357,3 +370,4 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | 0.3 | 18/10/2026 | BR-M1.26: capability `NET_ADMIN` theo bài lab, pod ấm khớp theo tập capability |
 | 0.4 | 18/10/2026 | Cập nhật theo thử nghiệm S1: `restartPolicy: Never`, bộ công cụ gắn bằng image volume |
 | 0.5 | 18/10/2026 | BR-M1.17: lý do `ENVIRONMENT_FAILED` khi môi trường dừng không do hết bộ nhớ |
+| 0.6 | 18/10/2026 | BR-M1.27 tham số hệ thống; bảng `settings`, `settings_history`; BR-M1.6–BR-M1.8, BR-M1.21–BR-M1.23 dùng tham số thay biến môi trường |

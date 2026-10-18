@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-12 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 7, 8; CR-DOC-04 mục 9, 11; CR-DOC-05 mục 6; CR-DOC-06 mục 6; tài liệu module |
 
@@ -42,8 +42,8 @@ và được kiểm tra lại sau mỗi thí nghiệm chaos bằng script đối
 | INV8 | Từ pod phiên không kết nối được tới thành phần nền tảng, pod khác, Kubernetes API, Internet (kể cả qua máy chủ gói) | Bộ kiểm thử cách ly I1–I12 |
 | INV9 | Kết quả lệnh kiểm tra không phụ thuộc công cụ, biến môi trường, cấu hình shell trong môi trường | Tích hợp M2 với M1 (AC-C2.4) |
 | INV10 | Sinh viên chỉ đọc được dữ liệu của mình; điểm và bản ghi thi chỉ hiển thị sau khi công bố | Ma trận phân quyền API |
-| INV11 | Tổng chỗ đặt trước chồng lấn thời gian không vượt 80% sức chứa | Đơn vị M1 |
-| INV12 | Tổng bù giờ tự động của một sinh viên trong một kỳ thi không vượt 15 phút; tổng thời gian được cộng không vượt 30 phút | Đơn vị M3 |
+| INV11 | Tổng chỗ đặt trước chồng lấn thời gian không vượt `reservation.maxCapacityRatio` × sức chứa tại thời điểm tạo đặt trước | Đơn vị M1 |
+| INV12 | Tổng bù giờ tự động và tổng thời gian được cộng của một sinh viên trong một kỳ thi không vượt hai trần đã chốt của kỳ thi | Đơn vị M3 |
 | INV13 | Tổng hạn mức của các lớp không vượt trần của giảng viên; tổng chỗ × giờ đặt trước trong tháng không vượt ngân sách | Tích hợp M1 (yêu cầu đồng thời) |
 
 ## 4. Truy vết tiêu chí chấp nhận
@@ -59,6 +59,7 @@ và được kiểm tra lại sau mỗi thí nghiệm chaos bằng script đối
 | AC-L1.x Lớp, lộ trình, bài tập | M3 | | E2E-01 | |
 | AC-L2.x Kỳ thi | M3 | Sự kiện | E2E-02 | Q2, CH1 |
 | AC-L3.x Gian lận, phúc khảo | M3 | `content-api` | E2E-04 | |
+| AC-P1.x Tham số hệ thống | M1, M2, M3 | `runtime-api`, `content-api` | | Ma trận phân quyền API |
 
 Mỗi kiểm thử mang mã tiêu chí trong tên hoặc chú thích (AGENTS.md mục 2). Trước mỗi mốc, script `tests/trace/report`
 quét mã kiểm thử và liệt kê tiêu chí chưa có kiểm thử.
@@ -122,3 +123,4 @@ kiểm thử phi chức năng hoặc chaos kèm biên bản thí nghiệm.
 | 1.2 | 18/10/2026 | Bộ bài mẫu theo dạng bài và mẫu kịch bản |
 | 1.3 | 18/10/2026 | INV8 gồm kiểm thử I12 (`NET_ADMIN`) |
 | 1.4 | 18/10/2026 | INV12 gồm cộng giờ; E2E-02 gồm phiên thi hết bộ nhớ và cộng giờ |
+| 1.5 | 18/10/2026 | INV11, INV12 theo tham số hệ thống; truy vết AC-P1.x |

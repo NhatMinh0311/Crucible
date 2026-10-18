@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
@@ -115,8 +115,9 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `ASSIGNMENT_CLOSED` | 409 | M3 | Bài tập đã quá hạn |
 | `EXAM_NOT_OPEN` | 409 | M3 | Kỳ thi chưa mở hoặc đã đóng |
 | `EXAM_ENTRY_CLOSED` | 409 | M3 | Đã qua hạn chót được vào thi |
-| `EXTRA_TIME_LIMIT` | 409 | M3 | Cộng giờ làm tổng thời gian cộng của sinh viên trong kỳ thi vượt 30 phút, hoặc sinh viên đã nộp |
+| `EXTRA_TIME_LIMIT` | 409 | M3 | Cộng giờ làm tổng thời gian cộng của sinh viên vượt trần `exam.extraTimeMaxMinutes` đã chốt của kỳ thi, hoặc sinh viên đã nộp |
 | `REGRADE_NOT_ALLOWED` | 409 | M3 | Quá thời hạn phúc khảo hoặc đã gửi yêu cầu cho bài này |
+| `SETTING_OUT_OF_RANGE` | 422 | M1, M2, M3 | Giá trị tham số hệ thống ngoài khoảng hợp lệ |
 
 Lỗi `QUOTA_EXHAUSTED`, `QUOTA_CEILING_EXCEEDED`, `RESERVATION_BUDGET_EXHAUSTED`, `SESSION_LIMIT`, `CAPACITY_UNAVAILABLE`
 của M1 được M2, M3 chuyển tiếp nguyên mã tới giao diện.
@@ -131,6 +132,23 @@ của M1 được M2, M3 chuyển tiếp nguyên mã tới giao diện.
 
 M3 tạo tài khoản của lớp khi tạo lớp và đổi tài khoản cha khi đổi giảng viên phụ trách chính. M2 tính phiên chạy thử vào
 tài khoản `instructor:` của giảng viên đang chạy thử.
+
+### 3.6. Tham số hệ thống
+
+Mỗi module giữ tham số nghiệp vụ của mình (CR-DOC-01 mục 5.6) trong CSDL riêng và cung cấp cùng một bộ API, chỉ cho
+vai trò `ADMIN`. M1, M2 mô tả trong `runtime-api.yaml`, `content-api.yaml`; M3 hiện thực đúng khuôn dạng này cho API của
+mình. Giao diện SCR-42 gọi API của ba module và hiển thị chung một màn hình.
+
+| Operation | Nội dung |
+|---|---|
+| `GET /v1/settings` | Danh sách tham số của module: khóa, giá trị, mặc định, khoảng hợp lệ, đơn vị, mô tả, lần sửa gần nhất |
+| `PUT /v1/settings/{key}` | Sửa giá trị; ngoài khoảng hợp lệ trả 422 `SETTING_OUT_OF_RANGE` |
+| `GET /v1/settings/{key}/history` | Lịch sử sửa: giá trị cũ, giá trị mới, người sửa, thời điểm |
+
+Mỗi bản dịch vụ đọc tham số qua bộ nhớ đệm làm mới không quá 60 giây. Giá trị cần cố định cho một đối tượng được chép
+vào đối tượng đó khi tạo: kỳ thi chép các tham số `exam.*`, phiên bản bài lab chép `maxTries` mặc định khi xuất bản.
+Module khác không đọc tham số của nhau; giá trị cần chuyển qua ranh giới được truyền trong lời gọi, ví dụ M3 truyền
+`sessionUntil` (giờ kết thúc chung cộng hai trần đã chốt của kỳ thi) khi tạo lượt thi để M2 đặt thời hạn phiên.
 
 ## 4. Đặc tả bài lab
 
@@ -302,4 +320,5 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.1 | 17/10/2026 | Mã lỗi hạn mức mới, tài khoản hạn mức (mục 3.5), đo bộ nhớ khi kiểm thử bài lab, sự kiện `runtime.session.resource-alert`, khung `warning` của terminal |
 | 1.2 | 18/10/2026 | Bước trả lời (mục 4.6), trường `machine`, bốn bài mẫu, mã lỗi `ANSWER_TRIES_EXHAUSTED`; trắc nghiệm, biến `{{faults}}`, `answerFirst`, mã lỗi `CHECK_LOCKED` |
 | 1.3 | 18/10/2026 | Trường `environment.capabilities`, `warmCapabilities` của đặt trước (ADR-0016) |
-| 1.4 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; thời hạn phiên thi = `deadline` + 45 phút; mã lỗi `EXTRA_TIME_LIMIT` |
+| 1.4 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; thời hạn phiên thi; mã lỗi `EXTRA_TIME_LIMIT` |
+| 1.5 | 18/10/2026 | Tham số hệ thống (mục 3.6), mã lỗi `SETTING_OUT_OF_RANGE`; `sessionUntil` của lượt thi |
