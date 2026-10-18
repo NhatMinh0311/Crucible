@@ -323,6 +323,42 @@ paths:
                 $ref: '#/components/schemas/Reservation'
         '404':
           $ref: '#/components/responses/Problem'
+    patch:
+      tags: [reservations]
+      operationId: resizeReservation
+      summary: Đổi số chỗ của đặt trước
+      description: >-
+        Scope `runtime.reservations.write`. Dùng khi sĩ số lớp thay đổi sau khi kỳ thi được lên lịch. Tăng chỗ được kiểm
+        tra như tạo đặt trước: sức chứa khả dụng trong khung giờ (409 `CAPACITY_UNAVAILABLE`) và ngân sách chỗ × giờ của
+        tài khoản gốc cho phần tăng thêm (402 `RESERVATION_BUDGET_EXHAUSTED`); khi bị từ chối, số chỗ giữ nguyên. Giảm chỗ
+        không xuống dưới `slotsInUse` (409 `RESERVATION_SLOTS_IN_USE`); giảm trước `startsAt` hoàn lại ngân sách của phần
+        giảm. Đặt trước đã hủy hoặc đã qua `endsAt` trả 409 `RESERVATION_CLOSED`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [slots]
+              properties:
+                slots:
+                  type: integer
+                  minimum: 1
+                  maximum: 200
+      responses:
+        '200':
+          description: Đặt trước sau khi đổi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '402':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
     delete:
       tags: [reservations]
       operationId: cancelReservation
