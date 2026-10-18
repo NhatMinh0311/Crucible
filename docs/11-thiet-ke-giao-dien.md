@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-11 |
-| Phiên bản | 1.5 |
+| Phiên bản | 1.6 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01, CR-DOC-10 (use case), CR-DOC-03 mục 6 (giao thức terminal), AGENTS.md mục 4 |
 
@@ -20,7 +20,7 @@ chính và cách hiển thị trạng thái. Chi tiết từng màn hình thuộ
 | UX2 | Không làm mất công sức của sinh viên | Mất kết nối tự kết nối lại; sự cố hạ tầng có nút "Tiếp tục" và khôi phục tiến độ; cảnh báo trước khi phiên hết hạn hoặc bị thu hồi do không hoạt động |
 | UX3 | Thao tác không đảo ngược được phải xác nhận | Nộp bài thi (xác nhận hai lần), mở gợi ý có trừ điểm (hiển thị mức trừ), kết luận hủy kết quả, công bố điểm |
 | UX4 | Thời gian rõ ràng | Đồng hồ còn lại luôn hiển thị trên trang làm bài; giờ hiển thị theo giờ Việt Nam; thời gian bù giờ hiển thị riêng |
-| UX5 | Lỗi nói được cách khắc phục | Thông điệp lỗi theo mã lỗi (CR-DOC-03 mục 3.4) bằng tiếng Việt, kèm việc người dùng có thể làm tiếp |
+| UX5 | Lỗi nói được cách khắc phục | Thông điệp lỗi theo mã lỗi (CR-DOC-03 mục 3.4) bằng ngôn ngữ của người dùng, kèm việc người dùng có thể làm tiếp |
 | UX6 | Bàn phím là chính trên trang làm bài | Terminal nhận mọi phím; phím tắt của trang không xung đột với phím của shell; có phím tắt chuyển tiêu điểm giữa hướng dẫn và terminal |
 | UX7 | Khả năng tiếp cận | Độ tương phản đạt WCAG 2.1 mức AA; trạng thái không chỉ biểu đạt bằng màu (kèm biểu tượng và chữ); điều hướng được bằng bàn phím |
 
@@ -42,6 +42,20 @@ chính và cách hiển thị trạng thái. Chi tiết từng màn hình thuộ
 | Chế độ màu | Sáng và tối; terminal luôn nền tối |
 | Màu trạng thái | Đạt, chưa đạt, đang kiểm tra, đã ghi nhận, gián đoạn, đã nộp; mỗi trạng thái có màu, biểu tượng và nhãn chữ |
 | Biểu đồ | Recharts cho tiến độ lớp, kết quả kỳ thi, sức chứa cụm |
+
+### 4.1. Ngôn ngữ giao diện
+
+| Mục | Thiết kế |
+|---|---|
+| Ngôn ngữ | Tiếng Việt (`vi`, mặc định) và tiếng Anh (`en`) cho mọi văn bản của giao diện (CR-DOC-01 US-P2) |
+| Thư viện | i18next và react-i18next; định dạng ngày giờ, số bằng `Intl` theo ngôn ngữ đang chọn, múi giờ `Asia/Ho_Chi_Minh` |
+| Tệp dịch | `web/src/locales/<ngôn ngữ>/<không gian>.json`; không gian `shell` cho khung chung và `runtime`, `content`, `learning` cho thành phần của từng module; mỗi module chỉ sửa không gian của mình |
+| Khóa dịch | Viết trong mã thay cho văn bản; không đặt văn bản hiển thị trực tiếp trong JSX. Kiểm tra trong CI: hai ngôn ngữ có cùng tập khóa |
+| Lỗi từ API | Dịch theo `code` của RFC 9457 tại không gian `shell` (mã dùng chung) hoặc của module trả lỗi; `detail` dành cho nhà phát triển, không hiển thị |
+| Chọn ngôn ngữ | Lần đầu theo `navigator.languages`; đổi ở menu tài khoản; lưu vào thuộc tính `locale` của người dùng trong Keycloak qua Account API, token mang claim `locale` để các dịch vụ biết ngôn ngữ người dùng |
+| Trang đăng nhập | Theme Keycloak bật hai ngôn ngữ, cùng giá trị `locale` |
+| Nội dung bài lab | Hiển thị nguyên văn theo `metadata.language`; trang làm bài đặt thuộc tính `lang` của vùng nội dung theo ngôn ngữ bài lab |
+| Phông chữ | Be Vietnam Pro hỗ trợ cả hai ngôn ngữ |
 
 ## 5. Sơ đồ màn hình
 
@@ -86,8 +100,8 @@ flowchart LR
 | SCR-20 | Trang chủ giảng viên: lớp, kỳ thi sắp tới, tín hiệu và phúc khảo chờ xử lý | Giảng viên, trợ giảng | M3 | |
 | SCR-21 | Quản lý lớp: danh sách, nhập CSV có xem trước lỗi, thành viên giảng dạy, hạn mức giờ máy của lớp kèm trần của giảng viên và phần đã chia | Giảng viên | M3 | UC11 |
 | SCR-22 | Lộ trình, bài tập, chính sách quá hạn, gia hạn riêng, tiến độ lớp; cảnh báo tải gần hạn nộp khi giao bài tập | Giảng viên | M3 | UC12, UC13 |
-| SCR-23 | Thư viện bài lab: của tôi, được chia sẻ; nhân bản | Giảng viên | M2 | UC10 |
-| SCR-24 | Soạn bài lab: form theo phần, tab YAML, xem trước với biến thể | Giảng viên | M2 | UC07 |
+| SCR-23 | Thư viện bài lab: của tôi, được chia sẻ; lọc theo ngôn ngữ; nhân bản | Giảng viên | M2 | UC10 |
+| SCR-24 | Soạn bài lab: form theo phần (chọn ngôn ngữ nội dung), tab YAML, xem trước với biến thể | Giảng viên | M2 | UC07 |
 | SCR-25 | Chạy thử (terminal, chạy từng lệnh kiểm tra, chạy lời giải), kết quả kiểm thử khi xuất bản kèm bộ nhớ cao nhất của từng seed so với giới hạn | Giảng viên | M2 | UC08, UC09 |
 | SCR-26 | Lên lịch kỳ thi: bài lab, giờ, hạn vào thi, phản hồi, gợi ý; sức chứa khả dụng theo khung giờ; khi không đủ chỗ: phần thiếu và khung giờ gợi ý | Giảng viên | M3 | UC14 |
 | SCR-27 | Giám sát kỳ thi: bảng sinh viên, trạng thái, tiến độ, bù giờ, tín hiệu | Giảng viên, trợ giảng | M3 | UC15 |
@@ -271,7 +285,8 @@ vẫn dùng được.
 ### 8.2. Thông báo
 
 Thông báo trong ứng dụng cho mọi sự kiện dưới đây; email cho sự kiện đánh dấu ✉. Thông báo do M3 phát, email gửi qua
-outbox (CR-DOC-01 L15).
+outbox (CR-DOC-01 L15). Mỗi mẫu thông báo và email có bản tiếng Việt và tiếng Anh; M3 lưu claim `locale` của người dùng
+mỗi lần đăng nhập và gửi theo ngôn ngữ đó (mặc định tiếng Việt).
 
 | Sự kiện | Người nhận | Email |
 |---|---|---|
@@ -306,3 +321,4 @@ outbox (CR-DOC-01 L15).
 | 1.3 | 18/10/2026 | Cộng giờ trên SCR-27; thông báo cộng giờ; trạng thái `SUSPENDED` của kỳ thi |
 | 1.4 | 18/10/2026 | SCR-42 Tham số hệ thống |
 | 1.5 | 18/10/2026 | Cảnh báo thiếu chỗ đặt trước khi sĩ số lớp tăng (mục 7.5, 8.2) |
+| 1.6 | 18/10/2026 | Ngôn ngữ giao diện (mục 4.1); UX5 theo ngôn ngữ người dùng |

@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.8 |
+| Phiên bản | 1.9 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
@@ -70,7 +70,7 @@ của từng đơn vị; bản tự cài chỉ có vai trò `ADMIN`, gồm cả 
 | Hạ tầng | Một máy vật lý 16 luồng CPU, 38 GB bộ nhớ chạy toàn bộ cụm chuẩn; không có ngân sách cloud |
 | Chi phí | Chỉ dùng phần mềm mã nguồn mở và dịch vụ miễn phí (GitHub, GHCR, Tailscale gói miễn phí) |
 | Công nghệ | Go cho M1; Spring Boot cho M2, M3; React cho giao diện; Kubernetes (k3s) |
-| Ngôn ngữ | Giao diện và tài liệu tiếng Việt |
+| Ngôn ngữ | Giao diện, trang đăng nhập, email và thông báo có tiếng Việt và tiếng Anh, người dùng chọn; tài liệu dự án bằng tiếng Việt |
 | Giấy phép | Mã nguồn phát hành theo AGPL-3.0; phụ thuộc phải có giấy phép tương thích |
 | Học phần | Đánh giá theo module của từng thành viên; tài liệu và nhật ký sử dụng AI phục vụ báo cáo |
 
@@ -204,6 +204,7 @@ Các mẫu kịch bản dưới đây dùng cơ chế sẵn có, được khuy�
 | P01 | Đăng nhập qua Keycloak; liên kết nhà cung cấp định danh của trường (ví dụ Microsoft Entra ID của tài khoản email trường) khi đơn vị cấu hình, tài khoản cục bộ khi không có; vai trò `STUDENT`, `INSTRUCTOR`, `ADMIN` | Nền tảng (trưởng nhóm) |
 | P02 | Khung giao diện chung: điều hướng, đăng nhập, thông báo | Nền tảng |
 | P03 | Phát hành phiên bản: image, Helm chart tổng, ghi chú phát hành; hướng dẫn cài đặt và nâng cấp cho người vận hành | Nền tảng |
+| P05 | Giao diện hai ngôn ngữ tiếng Việt và tiếng Anh; ngôn ngữ lưu theo tài khoản; email, thông báo theo ngôn ngữ người nhận; bài lab có ngôn ngữ nội dung do giảng viên chọn | Nền tảng; M2 (ngôn ngữ bài lab); M3 (email, thông báo) |
 | P04 | Tham số hệ thống: quản trị viên xem, sửa và xem lịch sử các tham số nghiệp vụ (mục 5.6) trên một màn hình, không cần khởi động lại dịch vụ | Mỗi module giữ tham số của mình; giao diện chung: nền tảng |
 
 ### 5.6. Tham số hệ thống
@@ -252,7 +253,8 @@ Thời điểm có hiệu lực:
 - Người tự học không thuộc lớp nào; khóa học công khai.
 - Chấm bài lập trình theo đầu vào và đầu ra.
 - Bài mạng tầng liên kết dữ liệu và định tuyến giữa các máy (VLAN, DHCP, router là máy riêng, định tuyến động): mạng của cụm chỉ kết nối các pod ở tầng IP (ADR-0015). Định tuyến giữa các mạng con mô phỏng trong một môi trường là phạm vi mở rộng (mục 5.4).
-- Ứng dụng di động, đa ngôn ngữ.
+- Ứng dụng di động.
+- Ngôn ngữ giao diện ngoài tiếng Việt và tiếng Anh; dịch nội dung bài lab.
 
 ## 7. User story và tiêu chí chấp nhận
 
@@ -365,6 +367,17 @@ hình triển khai.
 - AC-P1.4: Giá trị mới có hiệu lực theo bảng tại mục 5.6 mà không khởi động lại dịch vụ; kỳ thi đã lên lịch giữ giá trị
   `exam.*` đã chốt.
 
+**US-P2 (P05)** — Là người dùng, tôi muốn dùng hệ thống bằng tiếng Việt hoặc tiếng Anh.
+- AC-P2.1: Mọi văn bản của giao diện, trang đăng nhập, email và thông báo có bản tiếng Việt và tiếng Anh; CI báo lỗi khi
+  một khóa dịch thiếu ở một trong hai ngôn ngữ.
+- AC-P2.2: Lần đầu sử dụng, ngôn ngữ theo trình duyệt (tiếng Anh nếu trình duyệt ưu tiên tiếng Anh, còn lại tiếng Việt);
+  người dùng đổi ngôn ngữ ở menu tài khoản, lựa chọn lưu vào thuộc tính `locale` của tài khoản và áp dụng trên máy khác.
+- AC-P2.3: Lỗi từ API hiển thị theo `code` bằng ngôn ngữ của người dùng; ngày giờ và số định dạng theo ngôn ngữ đó, giờ
+  luôn theo giờ Việt Nam.
+- AC-P2.4: Email và thông báo trong ứng dụng dùng ngôn ngữ của người nhận.
+- AC-P2.5: Nội dung bài lab hiển thị đúng ngôn ngữ giảng viên khai báo (`metadata.language`), không dịch; thư viện bài lab
+  lọc được theo ngôn ngữ.
+
 ## 8. Yêu cầu chất lượng
 
 Yêu cầu chất lượng được viết dưới dạng kịch bản có số đo. Mỗi kịch bản là căn cứ cho một quyết định kiến trúc
@@ -401,3 +414,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 | 1.6 | 18/10/2026 | Tham số hệ thống (P04, mục 5.6, US-P1) |
 | 1.7 | 18/10/2026 | Hai cấp quản trị chỉ có ở bản dịch vụ nhiều đơn vị (mục 1.2) |
 | 1.8 | 18/10/2026 | Cập nhật số chỗ đặt trước theo sĩ số lớp (L05, AC-L2.13) |
+| 1.9 | 18/10/2026 | Giao diện hai ngôn ngữ (P05, US-P2), ràng buộc ngôn ngữ, thu hẹp mục ngoài phạm vi |

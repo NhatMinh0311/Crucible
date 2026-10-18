@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.6 |
+| Phiên bản | 1.7 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
@@ -121,6 +121,9 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `REGRADE_NOT_ALLOWED` | 409 | M3 | Quá thời hạn phúc khảo hoặc đã gửi yêu cầu cho bài này |
 | `SETTING_OUT_OF_RANGE` | 422 | M1, M2, M3 | Giá trị tham số hệ thống ngoài khoảng hợp lệ |
 
+Giao diện hiển thị lỗi theo `code` bằng ngôn ngữ của người dùng; `detail` dành cho nhà phát triển và không được hiển thị
+cho người dùng (CR-DOC-11 mục 4.1).
+
 Lỗi `QUOTA_EXHAUSTED`, `QUOTA_CEILING_EXCEEDED`, `RESERVATION_BUDGET_EXHAUSTED`, `SESSION_LIMIT`, `CAPACITY_UNAVAILABLE`
 của M1 được M2, M3 chuyển tiếp nguyên mã tới giao diện.
 
@@ -158,7 +161,7 @@ Module khác không đọc tham số của nhau; giá trị cần chuyển qua r
 
 | Phần | Nội dung |
 |---|---|
-| `metadata` | Mã định danh (`slug`), tiêu đề, độ khó, thời lượng ước tính, thẻ |
+| `metadata` | Mã định danh (`slug`), tiêu đề, ngôn ngữ nội dung (`language`: `vi`, `en`), độ khó, thời lượng ước tính, thẻ |
 | `params` | Tham số và bộ sinh: `pick`, `range`, `pattern`, `subnet` |
 | `constraints.distinct` | Nhóm tham số phải nhận giá trị khác nhau |
 | `environment` | Image, mức tài nguyên, thời hạn, mạng, khai báo dùng CPU cao, tệp ghi sẵn, script dựng |
@@ -325,3 +328,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.4 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; thời hạn phiên thi; mã lỗi `EXTRA_TIME_LIMIT` |
 | 1.5 | 18/10/2026 | Tham số hệ thống (mục 3.6), mã lỗi `SETTING_OUT_OF_RANGE`; `sessionUntil` của lượt thi |
 | 1.6 | 18/10/2026 | Đổi số chỗ đặt trước; mã lỗi `RESERVATION_SLOTS_IN_USE`, `RESERVATION_CLOSED` |
+| 1.7 | 18/10/2026 | Ngôn ngữ nội dung của bài lab; `detail` của lỗi không hiển thị cho người dùng |

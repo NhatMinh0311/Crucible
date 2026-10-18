@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.9 |
+| Phiên bản | 1.10 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -130,6 +130,13 @@ Quy định:
 | Mức đặt tham số | Một giá trị cho toàn bản cài đặt | Giảng viên chỉnh trong giới hạn của quản trị viên |
 | Vai trò quản trị cấp cao cho tham số hệ thống | Giữ một vai trò `ADMIN`; tách quản trị nền tảng và quản trị đơn vị ở bản dịch vụ nhiều đơn vị | Quyền riêng cho sửa tham số; thêm `SUPER_ADMIN` |
 | Thêm sinh viên sau khi kỳ thi đã lên lịch | Tự tăng số chỗ đặt trước theo sĩ số; không tăng được thì vẫn thêm sinh viên và cảnh báo giảng viên kèm số chỗ thiếu | Không tự tăng; chặn thêm sinh viên khi không đủ chỗ |
+| Phạm vi lần giao đầu của chế độ `docker` | Phiên, exec, terminal, sự kiện; đặt trước, hạn mức, tham số trả 501 | Thêm hạn mức và đặt trước |
+| Xác thực ở chế độ `docker` | Token Keycloak phát triển | Tắt xác thực khi phát triển |
+| Mạng của bài `network: mirror` ở chế độ `docker` | Ra Internet qua mạng `bridge` | Không có mạng |
+| Ngôn ngữ giao diện | Tiếng Việt và tiếng Anh cho giao diện, trang đăng nhập, email, thông báo | Chỉ tiếng Việt |
+| Ngôn ngữ nội dung bài lab | Một ngôn ngữ do giảng viên chọn, không dịch | Soạn song ngữ |
+| Lưu ngôn ngữ người dùng | Thuộc tính `locale` của tài khoản Keycloak | Chỉ lưu trên trình duyệt |
+| Ngôn ngữ email, thông báo | Theo ngôn ngữ người nhận | Song ngữ trong một email |
 
 ### 3.3. Phần việc của công cụ
 
@@ -237,6 +244,7 @@ thành viên.
 | 23 | Yêu cầu tham số như trần cộng giờ do quản trị viên chỉnh, không cố định | Kiểm kê 18 tham số nghiệp vụ của ba module; tách tham số kỹ thuật, bảo mật; đề xuất mỗi module giữ tham số của mình với cùng khuôn API; kỳ thi chép tham số khi lên lịch; thay mức cộng cố định của thời hạn phiên thi bằng `sessionUntil` | Chọn phương án đề xuất cho 3 câu hỏi; hỏi có nên thêm vai trò quản trị cấp cao |
 | 24 | Yêu cầu xóa dòng đồng tác giả của công cụ khỏi lịch sử commit; hỏi lại vai trò quản trị cấp cao | Viết lại lịch sử, kiểm tra nội dung từng commit không đổi, nêu ảnh hưởng của việc ghi đè nhánh trên GitHub trước khi đẩy; đổi quy ước commit; phân tích chi phí và lợi ích của vai trò quản trị cấp cao | Đồng ý ghi đè nhánh; giữ một vai trò `ADMIN` |
 | 25 | Chọn cách xử lý sĩ số tăng sau khi lên lịch thi; yêu cầu hỏi bằng hộp chọn thay cho văn bản | Thêm thao tác đổi số chỗ đặt trước vào hợp đồng M1, cập nhật yêu cầu, ca sử dụng, giao diện, thiết kế M1 | Chọn tự tăng số chỗ, cảnh báo khi thiếu |
+| 26 | Hỏi M2, M3 kiểm thử thế nào trên máy Windows 16 GB; yêu cầu làm chế độ `docker`; yêu cầu giao diện hai ngôn ngữ | Phân tích ba giai đoạn kiểm thử (mock, chế độ `docker`, cụm qua Tailscale); đặc tả, kế hoạch, danh sách việc `specs/001-runtime-docker-mode`; image bộ công cụ và image nền bài lab; cập nhật yêu cầu, hợp đồng, thiết kế giao diện cho hai ngôn ngữ | Duyệt đặc tả; chọn phương án cho 6 câu hỏi |
 
 ## Lịch sử thay đổi
 
@@ -252,3 +260,4 @@ thành viên.
 | 1.7 | 18/10/2026 | Vòng 23: tham số hệ thống |
 | 1.8 | 18/10/2026 | Vòng 24: lịch sử commit, vai trò quản trị |
 | 1.9 | 18/10/2026 | Vòng 25: sĩ số lớp và đặt trước |
+| 1.10 | 18/10/2026 | Vòng 26: chế độ docker, hai ngôn ngữ |

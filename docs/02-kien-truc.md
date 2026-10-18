@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-02 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0016 |
 
@@ -385,6 +385,7 @@ sequenceDiagram
 | Cấu hình, bí mật | Cấu hình triển khai qua ConfigMap trong kho mã; bí mật mã hóa bằng Sealed Secrets trong kho mã | CR-DOC-04 |
 | Tham số hệ thống | Tham số nghiệp vụ lưu trong CSDL của module sở hữu, quản trị viên sửa qua `/v1/settings` của từng module, có lịch sử; đối tượng cần giá trị cố định chép tham số khi tạo | CR-DOC-01 mục 5.6, CR-DOC-03 mục 3.6 |
 | Thời gian | Lưu UTC (`timestamptz`), hiển thị theo `Asia/Ho_Chi_Minh`; đồng hồ các node đồng bộ NTP | |
+| Ngôn ngữ | Giao diện dịch theo khóa (i18next), lỗi API dịch theo `code`; ngôn ngữ người dùng là thuộc tính `locale` trong Keycloak, có trong token; nội dung bài lab giữ ngôn ngữ giảng viên khai báo | CR-DOC-11 mục 4.1 |
 
 ## 10. Đáp ứng yêu cầu chất lượng
 
@@ -420,3 +421,4 @@ sequenceDiagram
 | 1.2 | 18/10/2026 | Tham chiếu ADR-0015, ADR-0016 |
 | 1.3 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; lượt thi tiếp tục sau khi môi trường bị dừng; thời hạn phiên thi và đặt trước khi có bù giờ, cộng giờ |
 | 1.4 | 18/10/2026 | Kỳ thi chốt tham số khi lên lịch; tham số hệ thống theo module (mục 9) |
+| 1.5 | 18/10/2026 | Ngôn ngữ giao diện trong các vấn đề xuyên suốt (mục 9) |
