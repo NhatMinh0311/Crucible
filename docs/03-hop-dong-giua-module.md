@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.7 |
+| Phiên bản | 1.8 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
@@ -95,6 +95,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `NOT_FOUND` | 404 | Mọi module | Không tồn tại hoặc không có quyền xem |
 | `RATE_LIMITED` | 429 | Mọi module | Vượt giới hạn tần suất |
 | `IDEMPOTENCY_KEY_REUSED` | 422 | Mọi module | Khóa lặp lại an toàn dùng cho nội dung khác |
+| `NOT_IMPLEMENTED` | 501 | M1 | Operation chưa có ở chế độ đang chạy (chế độ `docker` của `runtime-api`) |
 | `SESSION_LIMIT` | 409 | M1 | Học viên đã có phiên cùng loại đang hoạt động |
 | `QUOTA_EXHAUSTED` | 402 | M1 | Tài khoản hạn mức hết giờ máy hoặc hết số phiên đồng thời |
 | `QUOTA_CEILING_EXCEEDED` | 422 | M1 | Tổng hạn mức chia cho các lớp vượt trần của giảng viên |
@@ -329,3 +330,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.5 | 18/10/2026 | Tham số hệ thống (mục 3.6), mã lỗi `SETTING_OUT_OF_RANGE`; `sessionUntil` của lượt thi |
 | 1.6 | 18/10/2026 | Đổi số chỗ đặt trước; mã lỗi `RESERVATION_SLOTS_IN_USE`, `RESERVATION_CLOSED` |
 | 1.7 | 18/10/2026 | Ngôn ngữ nội dung của bài lab; `detail` của lỗi không hiển thị cho người dùng |
+| 1.8 | 18/10/2026 | Mã lỗi `NOT_IMPLEMENTED` |

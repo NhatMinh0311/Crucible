@@ -7,6 +7,9 @@ info:
     Quy ước chung (xác thực, lỗi, lặp lại an toàn, phiên bản) tại CR-DOC-03.
 
     Terminal không mô tả được bằng OpenAPI; giao thức WebSocket tại CR-DOC-03 mục 6.
+
+    Chế độ `docker` (môi trường phát triển, CR-DOC-03 mục 2.3) chỉ có phiên, exec, vé và terminal; operation khác trả
+    501 `NOT_IMPLEMENTED`.
   license:
     name: AGPL-3.0-only
     identifier: AGPL-3.0-only
