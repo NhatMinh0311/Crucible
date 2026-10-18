@@ -24,6 +24,7 @@ type Config struct {
 	ProvisionTimeout    time.Duration
 	AllowedCapabilities []string
 	ToolsImage          string
+	AllowedOrigins      []string
 }
 
 // Load đọc cấu hình; trả lỗi khi giá trị không hợp lệ.
@@ -57,6 +58,12 @@ func Load() (Config, error) {
 	for _, v := range strings.Split(env("SESSION_ALLOWED_CAPABILITIES", defaultCaps), ",") {
 		if v = strings.TrimSpace(v); v != "" {
 			c.AllowedCapabilities = append(c.AllowedCapabilities, v)
+		}
+	}
+	// Origin của giao diện được mở terminal WebSocket; mặc định cho máy phát triển.
+	for _, v := range strings.Split(env("TERMINAL_ALLOWED_ORIGINS", "localhost:*,127.0.0.1:*"), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			c.AllowedOrigins = append(c.AllowedOrigins, v)
 		}
 	}
 	if c.Driver != "docker" && c.Driver != "kubernetes" {
