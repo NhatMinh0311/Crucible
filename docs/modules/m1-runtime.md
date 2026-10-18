@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.4 |
+| Phiên bản | 0.5 |
 | Ngày ban hành | 18/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
@@ -87,7 +87,7 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.14 | Mỗi phiên có tối đa một kết nối tương tác; kết nối mới đóng kết nối cũ với mã 4009 | CR-DOC-03 mục 6 |
 | BR-M1.15 | Phiên `EXAM` không được xếp lên node `crucible.dev/node-class=volatile` | CR-DOC-04 mục 4 |
 | BR-M1.16 | Mỗi phiên chạy tối đa một lệnh exec (`CHECK` hoặc `RESTORE`) tại một thời điểm (`EXEC_BUSY`); chỉ ở pha `READY`, `EXPIRING`. `RESTORE` chạy bằng shell và `PATH` của môi trường, `CHECK` chạy bằng bộ công cụ chỉ đọc | CR-DOC-03 mục 7 |
-| BR-M1.17 | Môi trường bị dừng vì vượt giới hạn bộ nhớ làm phiên chuyển `TERMINATED` với lý do `OUT_OF_MEMORY`; pod không được khởi động lại | AC-C1.8 |
+| BR-M1.17 | Container của pod phiên kết thúc khi phiên chưa được yêu cầu kết thúc làm phiên chuyển `TERMINATED`: lý do `OUT_OF_MEMORY` khi trạng thái kết thúc là `OOMKilled`, `ENVIRONMENT_FAILED` với mọi trạng thái khác (vượt giới hạn số tiến trình, tiến trình chính kết thúc, lỗi sandbox). Pod không được khởi động lại | AC-C1.8, AC-L2.11 |
 | BR-M1.18 | Tổng `weekly_minutes` của các tài khoản con không vượt `weekly_minutes` của tài khoản cha; phần chưa chia dùng cho phiên tính trực tiếp vào tài khoản cha. Kiểm tra trong transaction có khóa dòng tài khoản cha | AC-R2.6 |
 | BR-M1.19 | Phiên `PRACTICE` bị từ chối khi tổng phiên đang chạy của tài khoản cha và mọi tài khoản con đạt `max_concurrent_sessions` của tài khoản cha | AC-R2.6 |
 | BR-M1.20 | Chỗ × giờ của đặt trước = `slots` × thời lượng tính theo giờ, làm tròn lên theo nửa giờ; tính vào tháng dương lịch (giờ Việt Nam) chứa `startsAt` của tài khoản gốc. Tổng trong tháng không vượt `monthly_reservation_slot_hours`. Hủy trước `startsAt` hoàn lại; kết thúc sớm do kỳ thi đóng không hoàn lại | AC-R2.7 |
@@ -165,7 +165,7 @@ soát sau phát hiện pha trong CSDL khác pha trong `LabSession` và ghi bù; 
 
 Operator lấy mẫu bộ nhớ làm việc của pod phiên mỗi 15 giây từ resource metrics của kubelet và giữ giá trị cao nhất
 trong `status.memoryPeakBytes`. Trạng thái kết thúc của container có lý do `OOMKilled` được ghi thành `oomKilled`
-(BR-M1.17). Khi phiên kết thúc, giá trị được ghi vào bảng `sessions`, trả trong `resourceUsage` của `getSession` và
+(BR-M1.17); trạng thái kết thúc khác được ghi lý do và mã thoát vào lịch sử phiên. Khi phiên kết thúc, giá trị được ghi vào bảng `sessions`, trả trong `resourceUsage` của `getSession` và
 sự kiện `runtime.session.terminated`. Độ chính xác của số đo dưới gVisor (phần chi phí của sandbox có bị tính vào hay
 không) được xác định ở thử nghiệm S5.
 
@@ -356,3 +356,4 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | 0.2 | 17/10/2026 | Gợi ý khung giờ còn đủ chỗ; đo tài nguyên phiên (mục 5.5); BR-M1.17–BR-M1.25: hết bộ nhớ, trần hạn mức theo giảng viên, ngân sách đặt trước, phát hiện dùng CPU bất thường |
 | 0.3 | 18/10/2026 | BR-M1.26: capability `NET_ADMIN` theo bài lab, pod ấm khớp theo tập capability |
 | 0.4 | 18/10/2026 | Cập nhật theo thử nghiệm S1: `restartPolicy: Never`, bộ công cụ gắn bằng image volume |
+| 0.5 | 18/10/2026 | BR-M1.17: lý do `ENVIRONMENT_FAILED` khi môi trường dừng không do hết bộ nhớ |
