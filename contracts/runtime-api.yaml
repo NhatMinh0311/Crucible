@@ -658,6 +658,15 @@ components:
       type: string
       enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST, OUT_OF_MEMORY, RESOURCE_ABUSE]
 
+    Capabilities:
+      description: Capability Linux bổ sung cho pod phiên, chỉ cấp khi phiên chạy trong gVisor (ADR-0016). Capability không có trong `SESSION_ALLOWED_CAPABILITIES` của cụm bị từ chối với 422 `ENVIRONMENT_NOT_ALLOWED`.
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+        enum: [NET_ADMIN]
+      default: []
+
     RenderedEnvironment:
       description: Phần `environment` của đặc tả bài lab sau khi kết xuất tham số, kèm script lỗi cài sẵn đã chọn. M1 không nhận tham số hay bước. Tổng kích thước tệp và setup không vượt 256 KiB.
       type: object
@@ -687,6 +696,8 @@ components:
           description: Bài lab khai báo dùng CPU cao kéo dài có chủ đích; phiên không bị giám sát CPU bất thường.
           type: boolean
           default: false
+        capabilities:
+          $ref: '#/components/schemas/Capabilities'
         files:
           type: array
           maxItems: 20
@@ -896,6 +907,10 @@ components:
           uniqueItems: true
           items:
             type: string
+        warmCapabilities:
+          description: Capability bổ sung của bài lab trong kỳ thi (`capabilities` của LabSummary); pod ấm được tạo với đúng các capability này để khớp phiên của kỳ thi.
+          allOf:
+            - $ref: '#/components/schemas/Capabilities'
         startsAt:
           type: string
           format: date-time

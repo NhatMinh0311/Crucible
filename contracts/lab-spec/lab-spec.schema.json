@@ -177,6 +177,13 @@
           "type": "boolean",
           "default": false
         },
+        "capabilities": {
+          "description": "Capability Linux bổ sung cho môi trường, chỉ cấp khi phiên chạy trong gVisor (ADR-0016). NET_ADMIN: cấu hình tường lửa, địa chỉ và định tuyến bên trong môi trường.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["NET_ADMIN"] },
+          "default": []
+        },
         "files": {
           "type": "array",
           "maxItems": 20,

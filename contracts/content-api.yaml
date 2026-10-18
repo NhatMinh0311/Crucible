@@ -329,6 +329,12 @@ components:
         profile:
           type: string
           enum: [small, medium]
+        capabilities:
+          description: Capability bổ sung của môi trường (`environment.capabilities`); M3 chuyển vào `warmCapabilities` khi đặt trước tài nguyên cho kỳ thi.
+          type: array
+          items:
+            type: string
+            enum: [NET_ADMIN]
 
     AttemptContext:
       type: object
