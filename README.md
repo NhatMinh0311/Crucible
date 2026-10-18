@@ -73,6 +73,26 @@ npx @stoplight/prism-cli@5.14.2 mock contracts/runtime-api.yaml -p 4011
 npx @stoplight/prism-cli@5.14.2 mock contracts/content-api.yaml -p 4012
 ```
 
+## Hướng phát triển
+
+Các hạng mục sau nằm ngoài MVP. Thiết kế hiện tại đã chừa chỗ để bổ sung mà không thay đổi hợp đồng theo cách phá vỡ
+tương thích.
+
+- [ ] **Môi trường nhiều máy (R14, ADR-0015).** Một phiên gồm 2–3 máy, mỗi máy là một pod gVisor, các máy cùng phiên
+  chỉ liên lạc được với nhau. Mở ra dạng bài mạng giữa nhiều máy: DNS server cho máy client, ứng dụng gọi cơ sở dữ liệu ở
+  máy khác, reverse proxy, tường lửa giữa hai máy, SSH bằng khóa.
+  - Hợp đồng đã có trường `machine` (đặc tả bài lab, `ExecRequest`, vé terminal, vé xem), hiện chỉ nhận `main`.
+  - Cần bổ sung: khai báo `environment.machines`; operator tạo các pod của một phiên theo nguyên tắc đủ cả hoặc không
+    tạo, chạy setup theo thứ tự máy; NetworkPolicy và tên DNS theo phiên; sức chứa, hạn mức và đặt trước tính theo tổng
+    chỗ của các máy; kho phiên dựng sẵn theo cấu hình máy; terminal nhiều tab.
+  - Không bao gồm bài tầng liên kết dữ liệu và định tuyến (VLAN, DHCP, định tuyến giữa mạng con).
+- [ ] **Bài lab Docker (R15).** Chạy Docker Engine trong môi trường học viên, phụ thuộc kết quả thử nghiệm S6.
+- [ ] **Bài lab có bước phụ thuộc (C12).** Bước sau chỉ mở khi bước trước đạt.
+- [ ] **Dạng bài viết script.** Học viên viết script, hệ thống chạy script để chấm trong điều kiện kiểm soát.
+- [ ] **Kỳ thi nhiều bài lab.**
+- [ ] **Bản dịch vụ cho nhiều đơn vị đào tạo** trên một bản cài đặt, dựa trên mã tham chiếu mờ và tài khoản hạn mức
+  (ADR-0013).
+
 ## Đóng góp
 
 Quy trình tại CR-DOC-07; lệnh và thao tác chi tiết tại [`CONTRIBUTING.md`](CONTRIBUTING.md).
