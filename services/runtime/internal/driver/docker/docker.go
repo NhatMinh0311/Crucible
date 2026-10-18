@@ -49,7 +49,7 @@ type Driver struct {
 
 // New kết nối Docker Engine theo biến môi trường DOCKER_HOST (mặc định socket cục bộ).
 func New(ctx context.Context, toolsImage string, log *slog.Logger) (*Driver, error) {
-	cli, err := client.New(client.FromEnv, client.WithAPIVersionNegotiation())
+	cli, err := client.New(client.FromEnv)
 	if err != nil {
 		return nil, fmt.Errorf("tạo Docker client: %w", err)
 	}

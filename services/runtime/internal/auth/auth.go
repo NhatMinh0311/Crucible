@@ -74,8 +74,8 @@ type Verifier struct {
 
 // NewVerifier tạo bộ kiểm tra lấy khóa công khai từ JWKS của realm. Không gọi discovery khi khởi động để dịch vụ chạy
 // được khi Keycloak chưa sẵn sàng.
-func NewVerifier(ctx context.Context, issuer, audience string) *Verifier {
-	keys := oidc.NewRemoteKeySet(ctx, strings.TrimSuffix(issuer, "/")+"/protocol/openid-connect/certs")
+func NewVerifier(ctx context.Context, issuer, jwksURL, audience string) *Verifier {
+	keys := oidc.NewRemoteKeySet(ctx, jwksURL)
 	return &Verifier{v: oidc.NewVerifier(issuer, keys, &oidc.Config{ClientID: audience})}
 }
 

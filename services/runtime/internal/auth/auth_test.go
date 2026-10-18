@@ -50,7 +50,7 @@ func (i *issuer) token(t *testing.T, claims map[string]any) string {
 
 func TestMiddleware(t *testing.T) {
 	is := newIssuer(t)
-	v := auth.NewVerifier(context.Background(), is.srv.URL, "runtime-api")
+	v := auth.NewVerifier(context.Background(), is.srv.URL, is.srv.URL, "runtime-api")
 	var got auth.Principal
 	h := auth.Middleware(v)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		got, _ = auth.FromContext(r.Context())

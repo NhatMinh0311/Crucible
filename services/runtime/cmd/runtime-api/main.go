@@ -24,12 +24,29 @@ import (
 )
 
 func main() {
+	// Image distroless không có shell hay curl; healthcheck của compose gọi chính chương trình.
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		os.Exit(healthcheck())
+	}
 	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(log)
 	if err := run(log); err != nil {
 		log.Error("runtime-api dừng vì lỗi", "err", err)
 		os.Exit(1)
 	}
+}
+
+func healthcheck() int {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+	c := http.Client{Timeout: 2 * time.Second}
+	res, err := c.Get("http://127.0.0.1:" + port + "/healthz")
+	if err != nil || res.StatusCode != http.StatusOK {
+		return 1
+	}
+	return 0
 }
 
 func run(log *slog.Logger) error {
@@ -64,7 +81,7 @@ func run(log *slog.Logger) error {
 	sessions.SetNotifier(term)
 
 	handler, err := httpapi.NewHandler(&httpapi.Server{Sessions: sessions, TerminalURL: cfg.TerminalPublicURL}, httpapi.Options{
-		Authenticate: auth.Middleware(auth.NewVerifier(ctx, cfg.OIDCIssuer, cfg.OIDCAudience)),
+		Authenticate: auth.Middleware(auth.NewVerifier(ctx, cfg.OIDCIssuer, cfg.OIDCJWKSURL, cfg.OIDCAudience)),
 		Terminal:     term,
 		Log:          log,
 	})

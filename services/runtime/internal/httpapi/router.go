@@ -29,7 +29,7 @@ type Options struct {
 
 // NewHandler trả http.Handler của runtime-api.
 func NewHandler(server api.StrictServerInterface, opts Options) (http.Handler, error) {
-	spec, err := api.GetSwagger()
+	spec, err := api.GetSpec()
 	if err != nil {
 		return nil, fmt.Errorf("nạp hợp đồng: %w", err)
 	}

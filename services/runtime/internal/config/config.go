@@ -19,6 +19,7 @@ type Config struct {
 	EventsSource        string
 	OIDCIssuer          string
 	OIDCAudience        string
+	OIDCJWKSURL         string
 	TerminalPublicURL   string
 	SetupTimeout        time.Duration
 	ProvisionTimeout    time.Duration
@@ -30,13 +31,16 @@ type Config struct {
 // Load đọc cấu hình; trả lỗi khi giá trị không hợp lệ.
 func Load() (Config, error) {
 	c := Config{
-		Driver:            env("RUNTIME_DRIVER", "kubernetes"),
-		DBURL:             env("DB_URL", "postgres://runtime:runtime-dev@localhost:5432/runtime?sslmode=disable"),
-		AMQPURL:           env("AMQP_URL", "amqp://crucible:rabbitmq-dev@localhost:5672/"),
-		EventsExchange:    env("EVENTS_EXCHANGE", "crucible.events"),
-		EventsSource:      env("EVENTS_SOURCE", "/crucible/runtime-api"),
-		OIDCIssuer:        env("OIDC_ISSUER", "http://localhost:8180/realms/crucible"),
-		OIDCAudience:      env("OIDC_AUDIENCE", "runtime-api"),
+		Driver:         env("RUNTIME_DRIVER", "kubernetes"),
+		DBURL:          env("DB_URL", "postgres://runtime:runtime-dev@localhost:5432/runtime?sslmode=disable"),
+		AMQPURL:        env("AMQP_URL", "amqp://crucible:rabbitmq-dev@localhost:5672/"),
+		EventsExchange: env("EVENTS_EXCHANGE", "crucible.events"),
+		EventsSource:   env("EVENTS_SOURCE", "/crucible/runtime-api"),
+		OIDCIssuer:     env("OIDC_ISSUER", "http://localhost:8180/realms/crucible"),
+		OIDCAudience:   env("OIDC_AUDIENCE", "runtime-api"),
+		// Địa chỉ JWKS khi dịch vụ chạy trong container không tới được Keycloak qua địa chỉ issuer (localhost).
+		OIDCJWKSURL: env("OIDC_JWKS_URL", strings.TrimSuffix(env("OIDC_ISSUER", "http://localhost:8180/realms/crucible"), "/")+
+			"/protocol/openid-connect/certs"),
 		TerminalPublicURL: env("TERMINAL_PUBLIC_URL", "ws://localhost:8081/v1/terminal"),
 		ToolsImage:        env("TOOLS_IMAGE", "ghcr.io/crucible-project/crucible/tools:1.0.0"),
 	}
