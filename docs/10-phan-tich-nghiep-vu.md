@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-10 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 (chức năng, tiêu chí chấp nhận), CR-DOC-02 (vòng đời đối tượng, luồng kỹ thuật) |
 
@@ -185,12 +185,14 @@ Luồng chính:
 | 2a | Chế độ `RECORDED_ONLY` | "Kiểm tra" chỉ báo đã ghi nhận |
 | 2b | Chế độ `DISABLED` | Không có nút "Kiểm tra" |
 | 3a | Node chạy phiên gặp sự cố | Giao diện báo sự cố hạ tầng, đồng hồ tạm dừng; sinh viên bấm "Tiếp tục"; môi trường mới được khôi phục tới các bước đã đạt theo lần chấm ngầm gần nhất; hệ thống bù đúng thời gian gián đoạn, tổng tối đa 15 phút (AC-L2.4) |
+| 3b | Môi trường bị dừng vì vượt giới hạn bộ nhớ hoặc lỗi môi trường (`OUT_OF_MEMORY`, `ENVIRONMENT_FAILED`) | Giao diện báo môi trường đã dừng, đồng hồ vẫn chạy; sinh viên bấm "Tiếp tục"; môi trường mới được khôi phục tới các bước đã đạt theo lần chấm ngầm gần nhất; không bù giờ tự động (AC-L2.11) |
+| 3c | Giảng viên cộng giờ cho sinh viên | Đồng hồ cập nhật theo thời gian mới; sinh viên nhận thông báo kèm số phút được cộng (AC-L2.12) |
 | 4a | Hết giờ khi sinh viên chưa nộp | Hệ thống nộp tự động và chấm cuối (AC-L2.3) |
 
 | Mục | Nội dung |
 |---|---|
 | Hậu điều kiện | Lượt làm bài có điểm cuối, chưa hiển thị cho sinh viên tới khi công bố |
-| Tiêu chí liên quan | AC-L2.2–AC-L2.9, AC-C2.5, AC-C2.9 |
+| Tiêu chí liên quan | AC-L2.2–AC-L2.9, AC-L2.11, AC-L2.12, AC-C2.5, AC-C2.9 |
 
 ### 3.4. UC07, UC08, UC09 — Soạn, chạy thử và xuất bản bài lab
 
@@ -258,14 +260,21 @@ Luồng chính:
 1. Giảng viên hoặc trợ giảng mở màn hình giám sát: danh sách sinh viên với trạng thái (chưa vào, đang làm, gián đoạn,
    đã nộp), tiến độ theo lần chấm ngầm gần nhất, thời gian bù, số tín hiệu gian lận, cảnh báo dùng CPU bất thường.
 2. Chọn một sinh viên để xem trực tiếp terminal (chỉ đọc).
-3. Sau kỳ thi, hệ thống phân tích và tạo tín hiệu gian lận: lộ giá trị biến thể, chuỗi lệnh tương đồng, kết nối từ hai
+3. Khi cần, giảng viên phụ trách cộng giờ cho một sinh viên chưa nộp: nhập số phút và lý do. Trợ giảng gửi đề xuất cộng
+   giờ với số phút và lý do; giảng viên phụ trách duyệt hoặc từ chối trên cùng màn hình.
+4. Sau kỳ thi, hệ thống phân tích và tạo tín hiệu gian lận: lộ giá trị biến thể, chuỗi lệnh tương đồng, kết nối từ hai
    địa chỉ, dán khối lớn.
-4. Trợ giảng xem tín hiệu, xem bản ghi, đề xuất kết luận.
-5. Giảng viên phụ trách lập biên bản với kết luận bác bỏ, nhắc nhở hoặc hủy kết quả, kèm lý do; sinh viên được thông báo.
+5. Trợ giảng xem tín hiệu, xem bản ghi, đề xuất kết luận.
+6. Giảng viên phụ trách lập biên bản với kết luận bác bỏ, nhắc nhở hoặc hủy kết quả, kèm lý do; sinh viên được thông báo.
+
+| Mã | Điều kiện | Xử lý |
+|---|---|---|
+| 3a | Tổng thời gian cộng của sinh viên vượt 30 phút | Từ chối, hiển thị số phút còn được cộng (AC-L2.12) |
+| 3b | Sinh viên đã nộp trước khi đề xuất được duyệt | Đề xuất hết hiệu lực; giảng viên và trợ giảng thấy trạng thái này |
 
 | Mục | Nội dung |
 |---|---|
-| Tiêu chí liên quan | AC-L2.5, AC-L2.6, AC-L3.1, AC-L3.2, AC-L3.4 |
+| Tiêu chí liên quan | AC-L2.5, AC-L2.6, AC-L2.12, AC-L3.1, AC-L3.2, AC-L3.4 |
 
 ### 3.8. UC06, UC17 — Phúc khảo
 
@@ -498,3 +507,4 @@ Liên kết giữa các module (mũi tên đi qua ranh giới namespace) chỉ l
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | UC03 3d, UC09 5b và 6b, UC11 5a, UC13 (mục 3.9), UC14 2a và 2b; tài khoản hạn mức phân cấp trong mô hình miền |
 | 1.2 | 18/10/2026 | Bước trả lời trong UC03 và soạn bài lab; UC03 4c |
+| 1.3 | 18/10/2026 | UC05 3b, 3c; UC15 cộng giờ, 3a, 3b |

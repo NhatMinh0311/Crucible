@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-11 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01, CR-DOC-10 (use case), CR-DOC-03 mục 6 (giao thức terminal), AGENTS.md mục 4 |
 
@@ -178,6 +178,12 @@ thời hạn 5 phút), mở terminal, đo độ trễ khứ hồi rồi thu hồ
 Biểu tượng ⚡ là cảnh báo phiên dùng CPU bất thường (AC-L2.10); di chuột hiển thị thời điểm và mức dùng. Cảnh báo không
 phải tín hiệu gian lận; giám thị xem trực tiếp terminal để quyết định.
 
+Cột "Bù giờ" hiển thị tách bù giờ tự động và thời gian được cộng. Với sinh viên chưa nộp, giảng viên phụ trách có nút
+"Cộng giờ" mở hộp thoại nhập số phút (giới hạn bởi số phút còn được cộng, AC-L2.12) và lý do bắt buộc; trợ giảng có nút
+"Đề xuất cộng giờ" với cùng các trường. Đề xuất chờ duyệt hiện thành nhãn trên dòng của sinh viên và trong một danh sách
+ở đầu màn hình; giảng viên phụ trách duyệt hoặc từ chối tại đó. Lịch sử cộng giờ (thời điểm, số phút, lý do, người đề
+xuất, người duyệt) xem được trong chi tiết của sinh viên.
+
 Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiếp terminal chỉ có trên máy tính.
 
 ### 7.4. SCR-24 Soạn bài lab
@@ -230,7 +236,7 @@ Màn hình hiển thị thêm ngân sách chỗ × giờ đặt trước còn l�
 | `RESTORING` | "Đang khôi phục tiến độ (k/n bước)" |
 | `IN_PROGRESS` | Trang làm bài |
 | `ENV_LOST` | "Môi trường gặp sự cố hạ tầng. Tiến độ đã được lưu." + nút "Tiếp tục"; với kỳ thi: "Đồng hồ tạm dừng, thời gian gián đoạn được bù" |
-| `SUSPENDED` | "Phiên đã kết thúc do hết hạn, không hoạt động, vượt giới hạn bộ nhớ hoặc dùng CPU bất thường. Tiến độ đã được lưu." + nút "Tiếp tục"; lý do cụ thể hiển thị theo `endReason` |
+| `SUSPENDED` | "Phiên đã kết thúc do hết hạn, không hoạt động, vượt giới hạn bộ nhớ, lỗi môi trường hoặc dùng CPU bất thường. Tiến độ đã được lưu." + nút "Tiếp tục"; lý do cụ thể hiển thị theo `endReason`. Với kỳ thi: "Môi trường đã dừng do vượt giới hạn bộ nhớ hoặc lỗi môi trường. Tiến độ theo lần chấm gần nhất đã được lưu; thời gian làm bài vẫn tiếp tục." + nút "Tiếp tục" |
 | `GRADING` | "Đang chấm bài" |
 | `GRADED` | Kết quả (luyện tập, bài tập) hoặc "Đã nộp — điểm sẽ có khi giảng viên công bố" (kỳ thi) |
 
@@ -244,10 +250,11 @@ outbox (CR-DOC-01 L15).
 | Bài tập mới, bài tập sắp hết hạn (24 giờ) | Sinh viên | ✉ (bài tập mới) |
 | Kỳ thi được lên lịch, kỳ thi bắt đầu sau 24 giờ | Sinh viên | ✉ |
 | Gia hạn riêng | Sinh viên được gia hạn | ✉ |
+| Được cộng giờ thi | Sinh viên được cộng giờ | |
 | Điểm kỳ thi được công bố | Sinh viên | ✉ |
 | Biên bản gian lận | Sinh viên liên quan | ✉ |
 | Kết quả phúc khảo | Sinh viên | ✉ |
-| Yêu cầu phúc khảo mới, đề xuất biên bản của trợ giảng | Giảng viên phụ trách | |
+| Yêu cầu phúc khảo mới, đề xuất biên bản của trợ giảng, đề xuất cộng giờ của trợ giảng | Giảng viên phụ trách | |
 | Kiểm thử bài lab khi xuất bản hoàn tất | Giảng viên tác giả | |
 | Kỳ thi không đủ sức chứa khi đổi giờ | Giảng viên | ✉ |
 
@@ -267,3 +274,4 @@ outbox (CR-DOC-01 L15).
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Bố cục SCR-26 khi thiếu sức chứa; cảnh báo CPU trên SCR-12, SCR-27; SCR-21, SCR-22, SCR-25, SCR-40, SCR-41 |
 | 1.2 | 18/10/2026 | Ô trả lời trên SCR-12, chọn loại bước trên SCR-24; bước chẩn đoán trên SCR-12 |
+| 1.3 | 18/10/2026 | Cộng giờ trên SCR-27; thông báo cộng giờ; trạng thái `SUSPENDED` của kỳ thi |

@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
@@ -156,9 +156,9 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L01 | Lớp học: tạo lớp; nhập danh sách sinh viên từ tệp CSV (mã số sinh viên, họ tên, email trường); sinh viên đăng nhập lần đầu bằng email trùng được gắn vào lớp; thêm giảng viên phụ trách và trợ giảng |
 | L02 | Lộ trình: chuỗi bài lab luyện tập có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm; không giới hạn số lượt; không tính vào điểm học phần, giảng viên theo dõi tiến độ của lớp |
 | L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do; khi giao hoặc đổi hạn nộp, hệ thống ước tính tải cao nhất gần hạn nộp và cảnh báo nếu vượt sức chứa (không chặn) |
-| L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên, hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
+| L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên (thời lượng tối đa 180 phút), hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
 | L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
-| L06 | Bù giờ khi phiên thi bị gián đoạn do sự cố hạ tầng, có giới hạn và ghi nhật ký |
+| L06 | Bù giờ tự động khi phiên thi bị gián đoạn do sự cố hạ tầng; giảng viên phụ trách cộng giờ cho từng sinh viên trong lúc thi, trợ giảng đề xuất; mỗi loại có giới hạn riêng, ghi nhật ký |
 | L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal, cảnh báo phiên dùng CPU bất thường |
 | L08 | Xem lại bản ghi phiên: giảng viên phụ trách và trợ giảng xem mọi bản ghi của lớp; sinh viên xem bản ghi phiên thi của chính mình sau khi điểm được công bố |
 | L09 | Tín hiệu gian lận: lộ giá trị biến thể, chuỗi lệnh tương đồng, kết nối từ hai địa chỉ, dán khối lớn |
@@ -273,7 +273,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-C2.4: Thay thế hoặc sửa các công cụ hệ thống trong môi trường (`curl`, `id`, `grep`...) không làm thay đổi kết quả lệnh kiểm tra.
 - AC-C2.5: Với luyện tập, bước đã đạt được giữ điểm kể cả khi phiên kết thúc. Với kỳ thi, điểm lấy theo lần chấm cuối trên trạng thái môi trường lúc nộp.
 - AC-C2.6: Xem gợi ý trừ điểm của bước theo tỉ lệ khai báo; gợi ý bị tắt trong kỳ thi có cấu hình tắt gợi ý.
-- AC-C2.7: Lượt làm bài có phiên bị `LOST` hoặc đã hết hạn tiếp tục được bằng phiên mới; các bước đã đạt được giữ điểm.
+- AC-C2.7: Lượt làm bài có phiên bị `LOST`, đã hết hạn hoặc bị dừng (`OUT_OF_MEMORY`, `ENVIRONMENT_FAILED`) tiếp tục được bằng phiên mới; các bước đã đạt được giữ điểm.
 - AC-C2.8: Khi tiếp tục, môi trường mới được khôi phục bằng lời giải mẫu của các bước đã đạt trước khi học viên nhận terminal; học viên không thấy nội dung lời giải trong terminal. Bước khôi phục không thành công được báo cho học viên và không bị trừ điểm.
 - AC-C2.9: Trong ngữ cảnh `RECORDED_ONLY`, học viên chỉ nhận thông báo đã ghi nhận; trong ngữ cảnh `DISABLED`, nút kiểm tra không hiển thị và API từ chối (409 `CHECK_DISABLED`).
 - AC-C2.10: Ở chế độ `FULL`, bước trả lời nhận tối đa `maxTries` lần; hết lượt mà chưa đúng thì bước không đạt và API từ chối (409 `ANSWER_TRIES_EXHAUSTED`). Câu trả lời khác đáp án chỉ ở khoảng trắng đầu cuối hoặc hoa thường (khi không bật phân biệt) được chấp nhận.
@@ -302,6 +302,8 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-L2.9: Trước khi công bố, sinh viên không xem được điểm và bản ghi của kỳ thi; sau khi công bố, sinh viên xem được điểm từng bước và bản ghi của chính mình.
 - AC-L2.6: Màn hình giám sát hiển thị tiến độ từng học viên theo kết quả chấm ngầm gần nhất, kể cả khi học viên không được xem kết quả kiểm tra.
 - AC-L2.10: Sự kiện `runtime.session.resource-alert` của phiên thi hiển thị thành cảnh báo trên dòng của học viên tại màn hình giám sát trong ≤ 30 giây; cảnh báo không phải tín hiệu gian lận và không ảnh hưởng điểm.
+- AC-L2.11: Phiên thi bị dừng với lý do `OUT_OF_MEMORY` hoặc `ENVIRONMENT_FAILED` khi sinh viên chưa nộp: sinh viên tiếp tục được bằng phiên mới, khôi phục tới các bước đã đạt theo lần chấm ngầm gần nhất, trong thời gian còn lại; đồng hồ không tạm dừng và không được bù giờ tự động.
+- AC-L2.12: Trong lúc thi, giảng viên phụ trách cộng giờ cho từng sinh viên chưa nộp, bắt buộc nhập lý do; tổng thời gian cộng của một sinh viên trong một kỳ thi không vượt 30 phút, tính riêng với bù giờ tự động (409 `EXTRA_TIME_LIMIT`). Trợ giảng gửi đề xuất cộng giờ để giảng viên phụ trách duyệt hoặc từ chối; đề xuất chưa xử lý hết hiệu lực khi sinh viên đã nộp. Mỗi lần cộng được ghi nhật ký (người duyệt, người đề xuất, số phút, lý do) và thông báo cho sinh viên; đồng hồ trên trang làm bài cập nhật theo thời gian mới.
 
 **US-L3 (L08–L11, L13, L14)** — Là giảng viên, tôi muốn phát hiện dấu hiệu gian lận và xử lý khiếu nại.
 - AC-L3.1: Học viên nhập giá trị tham số thuộc biến thể của học viên khác trong cùng kỳ thi tạo tín hiệu `VARIANT_LEAK`.
@@ -342,3 +344,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 | 1.2 | 18/10/2026 | Dạng bài lab (mục 5.4), bước trả lời (C17, AC-C2.10, AC-C2.11), mạng tầng 2 ngoài phạm vi; mẫu kịch bản, chẩn đoán (AC-C2.12, AC-C2.13) |
 | 1.3 | 18/10/2026 | Capability `NET_ADMIN` cho bài lab mạng (mục 5.4, AC-C1.9) |
 | 1.4 | 18/10/2026 | Dạng bài định tuyến nhiều mạng con trong một môi trường (mục 5.4), thu hẹp mục ngoài phạm vi |
+| 1.5 | 18/10/2026 | Thời lượng kỳ thi tối đa (L04); cộng giờ của giảng viên (L06, AC-L2.12); tiếp tục phiên thi bị dừng do môi trường (AC-C2.7, AC-L2.11) |

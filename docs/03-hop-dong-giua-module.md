@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
@@ -115,6 +115,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `ASSIGNMENT_CLOSED` | 409 | M3 | Bài tập đã quá hạn |
 | `EXAM_NOT_OPEN` | 409 | M3 | Kỳ thi chưa mở hoặc đã đóng |
 | `EXAM_ENTRY_CLOSED` | 409 | M3 | Đã qua hạn chót được vào thi |
+| `EXTRA_TIME_LIMIT` | 409 | M3 | Cộng giờ làm tổng thời gian cộng của sinh viên trong kỳ thi vượt 30 phút, hoặc sinh viên đã nộp |
 | `REGRADE_NOT_ALLOWED` | 409 | M3 | Quá thời hạn phúc khảo hoặc đã gửi yêu cầu cho bài này |
 
 Lỗi `QUOTA_EXHAUSTED`, `QUOTA_CEILING_EXCEEDED`, `RESERVATION_BUDGET_EXHAUSTED`, `SESSION_LIMIT`, `CAPACITY_UNAVAILABLE`
@@ -301,3 +302,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.1 | 17/10/2026 | Mã lỗi hạn mức mới, tài khoản hạn mức (mục 3.5), đo bộ nhớ khi kiểm thử bài lab, sự kiện `runtime.session.resource-alert`, khung `warning` của terminal |
 | 1.2 | 18/10/2026 | Bước trả lời (mục 4.6), trường `machine`, bốn bài mẫu, mã lỗi `ANSWER_TRIES_EXHAUSTED`; trắc nghiệm, biến `{{faults}}`, `answerFirst`, mã lỗi `CHECK_LOCKED` |
 | 1.3 | 18/10/2026 | Trường `environment.capabilities`, `warmCapabilities` của đặt trước (ADR-0016) |
+| 1.4 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; thời hạn phiên thi = `deadline` + 45 phút; mã lỗi `EXTRA_TIME_LIMIT` |

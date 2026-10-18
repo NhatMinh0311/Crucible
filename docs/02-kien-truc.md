@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-02 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0016 |
 
@@ -203,7 +203,7 @@ stateDiagram-v2
     PROVISIONING --> FAILED: lỗi image, lỗi setup
     READY --> EXPIRING: còn ≤ 5 phút
     EXPIRING --> READY: gia hạn
-    READY --> TERMINATED: kết thúc, IDLE, ADMIN, OUT_OF_MEMORY, RESOURCE_ABUSE
+    READY --> TERMINATED: kết thúc, IDLE, ADMIN, OUT_OF_MEMORY, ENVIRONMENT_FAILED, RESOURCE_ABUSE
     EXPIRING --> TERMINATED: EXPIRED
     READY --> LOST: node mất kết nối
     EXPIRING --> LOST: node mất kết nối
@@ -222,7 +222,7 @@ stateDiagram-v2
     RESTORING --> IN_PROGRESS: chạy xong lời giải các bước đã đạt
     ENV_PENDING --> ENV_FAILED: runtime.session.failed
     IN_PROGRESS --> ENV_LOST: runtime.session.lost
-    IN_PROGRESS --> SUSPENDED: phiên kết thúc khi chưa nộp (chỉ luyện tập)
+    IN_PROGRESS --> SUSPENDED: phiên kết thúc khi chưa nộp (luyện tập; thi khi môi trường bị dừng)
     ENV_LOST --> ENV_PENDING: tiếp tục bằng phiên mới
     SUSPENDED --> ENV_PENDING: tiếp tục bằng phiên mới
     ENV_FAILED --> ENV_PENDING: thử lại
@@ -334,6 +334,11 @@ sequenceDiagram
     Note over O: Phiên EXAM được cấp từ phần đặt trước
 ```
 
+Đặt trước của kỳ thi kết thúc tại giờ kết thúc chung. Phiên thi có thời hạn bằng giờ kết thúc chung cộng 45 phút
+(bù giờ tự động tối đa 15 phút, cộng giờ tối đa 30 phút); lượt thi kết thúc khi M3 nộp bài theo giờ của từng sinh viên.
+Phiên đang chạy không bị ảnh hưởng khi đặt trước kết thúc; phiên thi tạo sau thời điểm đó (tiếp tục sau sự cố, sinh viên
+được cộng giờ) được cấp từ sức chứa chung với ưu tiên `EXAM` (BR-M1.4).
+
 ### 8.4. Mất node chạy phiên
 
 ```mermaid
@@ -362,7 +367,7 @@ sequenceDiagram
 
 | Bước | Thành phần | Hành động |
 |---|---|---|
-| 1 | M3 | Tác vụ định kỳ phát hiện lượt làm bài hết giờ (đã tính bù giờ), gọi `POST /attempts/{id}/submit` |
+| 1 | M3 | Tác vụ định kỳ phát hiện lượt làm bài hết giờ (đã tính bù giờ tự động và cộng giờ), gọi `POST /attempts/{id}/submit` |
 | 2 | M2 | Chạy lại toàn bộ lệnh kiểm tra trên phiên, ghi điểm cuối, phát `content.attempt.graded`, yêu cầu M1 kết thúc phiên |
 | 3 | M1 | Kết thúc phiên, hoàn tất bản ghi, phát `runtime.session.terminated` và `runtime.recording.available` |
 | 4 | M3 | Cập nhật bảng điểm; khi mọi lượt làm bài đã chấm, kỳ thi chuyển `CLOSED`; chạy phân tích tín hiệu gian lận |
@@ -411,3 +416,4 @@ sequenceDiagram
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Trình tự lên lịch kỳ thi có ngân sách đặt trước và gợi ý khung giờ; lý do kết thúc phiên mới |
 | 1.2 | 18/10/2026 | Tham chiếu ADR-0015, ADR-0016 |
+| 1.3 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; lượt thi tiếp tục sau khi môi trường bị dừng; thời hạn phiên thi và đặt trước khi có bù giờ, cộng giờ |

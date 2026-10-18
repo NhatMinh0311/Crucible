@@ -28,7 +28,7 @@ issues:
   - {title: "Bộ kiểm thử cách ly I1-I12 và chính sách khi tạo pod", owner: m1, milestone: MB, labels: [m1, security], refs: "CR-DOC-05 mục 4.1 (T1, T3), 5, 6.1; ADR-0016"}
   - {title: "Hàng đợi ưu tiên, hạn mức giờ máy, đặt trước tài nguyên cho kỳ thi", owner: m1, milestone: MC, labels: [m1, feature], refs: "R04, R05, R07; AC-R2.1-AC-R2.5"}
   - {title: "Trần hạn mức theo giảng viên, ngân sách đặt trước, gợi ý khung giờ còn đủ chỗ", owner: m1, milestone: MC, labels: [m1, feature], refs: "R05; AC-R2.6-AC-R2.8; BR-M1.18-BR-M1.21; CR-MOD-M1 mục 5.1; SCR-41"}
-  - {title: "Lấy mẫu tài nguyên phiên: bộ nhớ cao nhất, OUT_OF_MEMORY, phát hiện dùng CPU bất thường", owner: m1, milestone: MC, labels: [m1, feature], refs: "R16; US-R5; BR-M1.17, BR-M1.22-BR-M1.25; CR-MOD-M1 mục 5.5; SCR-40"}
+  - {title: "Lấy mẫu tài nguyên phiên: bộ nhớ cao nhất, OUT_OF_MEMORY, ENVIRONMENT_FAILED, phát hiện dùng CPU bất thường", owner: m1, milestone: MC, labels: [m1, feature], refs: "R16; US-R5; BR-M1.17, BR-M1.22-BR-M1.25; CR-MOD-M1 mục 5.5; SCR-40"}
   - {title: "Phát hiện mất node, xem trực tiếp terminal, dòng lệnh cho phân tích gian lận", owner: m1, milestone: MC, labels: [m1, feature], refs: "R09, R10, R12; AC-R4.1"}
   - {title: "Kiểm thử tải k6, thí nghiệm chaos CH1-CH7, diễn tập khôi phục, phát hành v1.0.0, cài đặt thử", owner: m1, milestone: MD, labels: [platform, test], refs: "CR-DOC-04 mục 9, 11; Q1-Q14"}
 
@@ -41,7 +41,7 @@ issues:
   - {title: "Bước trả lời: so khớp đáp án, giới hạn số lần, chế độ phản hồi, ô trả lời trên trang làm bài", owner: m2, milestone: MB, labels: [m2, feature], refs: "C17; AC-C2.10-AC-C2.13; CR-DOC-03 mục 4.3, 4.6; SCR-12"}
   - {title: "Form soạn bài lab đồng bộ YAML, xem trước biến thể, chạy thử", owner: m2, milestone: MB, labels: [m2, feature], refs: "C01, C13; AC-C1.5, AC-C1.6; SCR-24, SCR-25"}
   - {title: "Kiểm thử bài lab khi xuất bản với 5 seed", owner: m2, milestone: MC, labels: [m2, feature], refs: "C05; AC-C1.2, AC-C1.8; CR-DOC-03 mục 4.5"}
-  - {title: "Chấm cuối, tiếp tục và khôi phục tiến độ, chấm ngầm, chế độ phản hồi", owner: m2, milestone: MC, labels: [m2, feature], refs: "C10, C14-C16; AC-C2.5, AC-C2.7-AC-C2.9"}
+  - {title: "Chấm cuối, tiếp tục và khôi phục tiến độ, chấm ngầm, chế độ phản hồi", owner: m2, milestone: MC, labels: [m2, feature], refs: "C10, C14-C16; AC-C2.5, AC-C2.7-AC-C2.9, AC-L2.11"}
   - {title: "Thư viện bài lab: riêng tư, chia sẻ, nhân bản", owner: m2, milestone: MC, labels: [m2, feature], refs: "C11; AC-C1.7; SCR-23"}
   - {title: "Bộ 10 bài lab mẫu đủ các dạng và mẫu kịch bản", owner: m2, milestone: MD, labels: [m2, content], refs: "CR-DOC-01 mục 5.4; CR-DOC-12 mục 6"}
 
@@ -51,6 +51,6 @@ issues:
   - {title: "Lộ trình luyện tập, điều kiện tiên quyết, bắt đầu bài qua content-api", owner: m3, milestone: MA, labels: [m3, feature], refs: "L02; AC-L1.1; UC03; SCR-11"}
   - {title: "Bài tập: hạn nộp, số lượt, chính sách quá hạn, gia hạn riêng, điểm lượt cao nhất", owner: m3, milestone: MB, labels: [m3, feature], refs: "L03; AC-L1.2-AC-L1.4, AC-L1.6; UC13; SCR-22"}
   - {title: "Thông báo trong ứng dụng và email qua outbox", owner: m3, milestone: MB, labels: [m3, feature], refs: "L15; CR-DOC-11 mục 8.2"}
-  - {title: "Kỳ thi: lên lịch có đặt trước, phòng chờ, vào thi, nộp tự động, bù giờ", owner: m3, milestone: MC, labels: [m3, feature], refs: "L04-L06, L16; AC-L2.1-AC-L2.4, AC-L2.7, AC-L2.8, AC-R2.7; UC14; SCR-13, SCR-26; CR-DOC-03 mục 4.1 (warmCapabilities)"}
+  - {title: "Kỳ thi: lên lịch có đặt trước, phòng chờ, vào thi, nộp tự động, bù giờ, cộng giờ", owner: m3, milestone: MC, labels: [m3, feature], refs: "L04-L06, L16; AC-L2.1-AC-L2.4, AC-L2.7, AC-L2.8, AC-L2.11, AC-L2.12, AC-R2.7; UC14; SCR-13, SCR-26; CR-DOC-03 mục 4.1 (warmCapabilities)"}
   - {title: "Giám sát kỳ thi, xem trực tiếp, xem lại bản ghi", owner: m3, milestone: MC, labels: [m3, feature], refs: "L07, L08; AC-L2.5, AC-L2.6, AC-L2.10; SCR-27, SCR-28"}
   - {title: "Tín hiệu gian lận, biên bản, công bố điểm, phúc khảo, bảng điểm", owner: m3, milestone: MC, labels: [m3, feature], refs: "L09-L11, L13, L14; AC-L2.9, AC-L3.1-AC-L3.5; SCR-29, SCR-30"}

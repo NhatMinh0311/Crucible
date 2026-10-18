@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-12 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 7, 8; CR-DOC-04 mục 9, 11; CR-DOC-05 mục 6; CR-DOC-06 mục 6; tài liệu module |
 
@@ -43,7 +43,7 @@ và được kiểm tra lại sau mỗi thí nghiệm chaos bằng script đối
 | INV9 | Kết quả lệnh kiểm tra không phụ thuộc công cụ, biến môi trường, cấu hình shell trong môi trường | Tích hợp M2 với M1 (AC-C2.4) |
 | INV10 | Sinh viên chỉ đọc được dữ liệu của mình; điểm và bản ghi thi chỉ hiển thị sau khi công bố | Ma trận phân quyền API |
 | INV11 | Tổng chỗ đặt trước chồng lấn thời gian không vượt 80% sức chứa | Đơn vị M1 |
-| INV12 | Tổng thời gian bù giờ của một sinh viên trong một kỳ thi không vượt 15 phút | Đơn vị M3 |
+| INV12 | Tổng bù giờ tự động của một sinh viên trong một kỳ thi không vượt 15 phút; tổng thời gian được cộng không vượt 30 phút | Đơn vị M3 |
 | INV13 | Tổng hạn mức của các lớp không vượt trần của giảng viên; tổng chỗ × giờ đặt trước trong tháng không vượt ngân sách | Tích hợp M1 (yêu cầu đồng thời) |
 
 ## 4. Truy vết tiêu chí chấp nhận
@@ -68,7 +68,7 @@ quét mã kiểm thử và liệt kê tiêu chí chưa có kiểm thử.
 | Mã | Kịch bản | Bước chính |
 |---|---|---|
 | E2E-01 | Luyện tập theo lộ trình | Giảng viên tạo lớp, nhập CSV, tạo lộ trình 2 bài; sinh viên đăng nhập lần đầu được gắn vào lớp; làm bài 1 qua terminal, kiểm tra bước, mở gợi ý, nộp; bài 2 được mở; bỏ dở bài 2, phiên hết hạn, tiếp tục và thấy tiến độ được khôi phục |
-| E2E-02 | Kỳ thi | Lên lịch thi với chế độ `RECORDED_ONLY`; 5 sinh viên vào thi, 1 sinh viên vào sau hạn chót bị từ chối; giảng viên xem trực tiếp; một phiên bị xóa giả lập sự cố, sinh viên tiếp tục và được bù giờ; một sinh viên nộp sớm; hết giờ các sinh viên còn lại được nộp tự động; công bố điểm; sinh viên xem điểm từng bước và bản ghi |
+| E2E-02 | Kỳ thi | Lên lịch thi với chế độ `RECORDED_ONLY`; 5 sinh viên vào thi, 1 sinh viên vào sau hạn chót bị từ chối; giảng viên xem trực tiếp; một phiên bị xóa giả lập sự cố, sinh viên tiếp tục và được bù giờ; một phiên chạy vượt giới hạn bộ nhớ, sinh viên tiếp tục mà không được bù giờ; trợ giảng đề xuất cộng giờ cho một sinh viên, giảng viên duyệt, sinh viên nộp tự động theo giờ mới; một sinh viên nộp sớm; hết giờ các sinh viên còn lại được nộp tự động; công bố điểm; sinh viên xem điểm từng bước và bản ghi |
 | E2E-03 | Soạn và xuất bản bài lab | Giảng viên soạn bằng form, chuyển sang YAML và ngược lại; chạy thử; xuất bản thất bại do lời giải sai; sửa và xuất bản thành công; giảng viên khác nhân bản bài chia sẻ |
 | E2E-04 | Gian lận và phúc khảo | Hai sinh viên trong kỳ thi, sinh viên A nhập giá trị biến thể của B; tín hiệu `VARIANT_LEAK` xuất hiện; trợ giảng đề xuất, giảng viên lập biên bản hủy kết quả; sinh viên A gửi phúc khảo, giảng viên trả lời; gửi lần hai bị từ chối |
 
@@ -121,3 +121,4 @@ kiểm thử phi chức năng hoặc chaos kèm biên bản thí nghiệm.
 | 1.1 | 17/10/2026 | INV13; INV8 gồm kiểm thử I10, I11 |
 | 1.2 | 18/10/2026 | Bộ bài mẫu theo dạng bài và mẫu kịch bản |
 | 1.3 | 18/10/2026 | INV8 gồm kiểm thử I12 (`NET_ADMIN`) |
+| 1.4 | 18/10/2026 | INV12 gồm cộng giờ; E2E-02 gồm phiên thi hết bộ nhớ và cộng giờ |

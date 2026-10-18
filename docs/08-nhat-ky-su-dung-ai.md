@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.5 |
+| Phiên bản | 1.6 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -119,6 +119,11 @@ Quy định:
 | Kênh thông báo | Trong ứng dụng và email cho sự kiện quan trọng | Chỉ trong ứng dụng |
 | Thiết bị | Làm bài trên máy tính; trang khác dùng được trên điện thoại | Chỉ máy tính |
 | Trước giờ thi | Phòng chờ có kiểm tra kết nối | Phòng chờ đơn giản; không có phòng chờ |
+| Lý do kết thúc khi môi trường dừng không do hết bộ nhớ | Lý do chung `ENVIRONMENT_FAILED`, giữ `OUT_OF_MEMORY` riêng | Dùng `RESOURCE_ABUSE`; dùng chung `OUT_OF_MEMORY` |
+| Phiên thi bị dừng vì hết bộ nhớ hoặc lỗi môi trường | Mở môi trường mới trong thời gian còn lại, không bù giờ | Chỉ quy định không bù giờ; giảng viên quyết định |
+| Cộng giờ thi thủ công | Cộng trong lúc thi cho từng sinh viên | Thêm thời gian ưu tiên khai báo trước; chỉ khai báo trước |
+| Người được cộng giờ | Giảng viên phụ trách; trợ giảng đề xuất | Cả trợ giảng; thêm quản trị viên |
+| Giới hạn cộng giờ | Tối đa 30 phút mỗi sinh viên mỗi kỳ thi, riêng với bù tự động; lý do bắt buộc, ghi nhật ký, thông báo sinh viên | Chung trần 15 phút; không giới hạn |
 
 ### 3.3. Phần việc của công cụ
 
@@ -222,6 +227,7 @@ thành viên.
 | Vòng | Thành viên đặt ra | Công cụ thực hiện | Kết quả đánh giá của thành viên |
 |---|---|---|---|
 | 21 | Thực hiện S1 | Script dựng cụm thử, cài gVisor, kiểm thử I1–I8, gắn bộ công cụ, giới hạn số tiến trình, attach; phân tích kết quả từng bước; tổng hợp kết luận và cập nhật thiết kế | S1 đạt; xác nhận exec và attach tương tác bằng tay |
+| 22 | Chọn lý do kết thúc và cách xử lý phiên thi khi môi trường bị dừng; hỏi cơ chế cộng giờ thủ công | Đề xuất phương án; rà thiết kế, chỉ ra thiếu cơ chế cộng giờ và thời hạn phiên thi không vượt hạn nộp ban đầu nên bù giờ không có hiệu lực; cập nhật hợp đồng, yêu cầu, ca sử dụng, giao diện, kiểm thử | Chọn `ENVIRONMENT_FAILED`; mở môi trường mới không bù giờ; giảng viên cộng giờ tối đa 30 phút, trợ giảng đề xuất |
 
 ## Lịch sử thay đổi
 
@@ -233,3 +239,4 @@ thành viên.
 | 1.3 | 18/10/2026 | Vòng 19: hướng phát triển, capability `NET_ADMIN` |
 | 1.4 | 18/10/2026 | Vòng 20: bài định tuyến, thử nghiệm S7 |
 | 1.5 | 18/10/2026 | Giai đoạn 2, vòng 21: thử nghiệm S1 |
+| 1.6 | 18/10/2026 | Vòng 22: môi trường bị dừng, cộng giờ thi |
