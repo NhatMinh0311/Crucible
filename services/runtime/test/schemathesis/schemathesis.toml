@@ -1,0 +1,10 @@
+# Kiểm thử hợp đồng runtime-api chế độ docker bằng Schemathesis (specs/001-runtime-docker-mode, D12).
+# Chạy: services/runtime/test/schemathesis/run.sh
+
+[checks]
+enabled = true
+
+# Image ngoài danh sách cho phép bị từ chối theo quy tắc nghiệp vụ (422 ENVIRONMENT_NOT_ALLOWED), dù đúng lược đồ.
+[[operations]]
+include-operation-id = "createSession"
+checks.positive_data_acceptance.enabled = false

@@ -12,6 +12,7 @@ import (
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/getkin/kin-openapi/routers"
 	middleware "github.com/oapi-codegen/nethttp-middleware"
 
 	"github.com/NhatMinh0311/crucible/services/runtime/internal/api"
@@ -33,13 +34,19 @@ func NewHandler(server api.StrictServerInterface, opts Options) (http.Handler, e
 	if err != nil {
 		return nil, fmt.Errorf("nạp hợp đồng: %w", err)
 	}
+	allowed := newAllowIndex(spec)
 	validate := middleware.OapiRequestValidatorWithOptions(spec, &middleware.Options{
 		DoNotValidateServers: true,
 		Options: openapi3filter.Options{
 			// Xác thực do Authenticate đảm nhiệm; bộ kiểm tra chỉ kiểm tra cú pháp và lược đồ.
 			AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
 		},
-		ErrorHandlerWithOpts: func(_ context.Context, err error, w http.ResponseWriter, _ *http.Request, o middleware.ErrorHandlerOpts) {
+		ErrorHandlerWithOpts: func(_ context.Context, err error, w http.ResponseWriter, r *http.Request, o middleware.ErrorHandlerOpts) {
+			if errors.Is(err, routers.ErrMethodNotAllowed) {
+				w.Header().Set("Allow", allowed.methods(r.URL.Path))
+				problem.Write(w, problem.New(http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Phương thức không có ở đường dẫn này"))
+				return
+			}
 			if o.StatusCode == http.StatusNotFound || o.MatchedRoute == nil {
 				problem.Write(w, problem.ErrNotFound)
 				return
@@ -71,7 +78,7 @@ func NewHandler(server api.StrictServerInterface, opts Options) (http.Handler, e
 		}},
 	)
 
-	var protected http.Handler = validate(apiHandler)
+	var protected http.Handler = normalizeJSON(validate(apiHandler))
 	if opts.Authenticate != nil {
 		protected = opts.Authenticate(protected)
 	}
