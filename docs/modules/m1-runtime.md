@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.6 |
+| Phiên bản | 0.7 |
 | Ngày ban hành | 18/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
@@ -65,7 +65,7 @@ image của nhóm và `warmCapabilities` bằng tập capability của nhóm, gi
 ### 3.3. `CapacityReservation`
 
 Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`, `startsAt`, `endsAt`, `warmImages`), được
-`runtime-api` tạo; `status.inUse` do operator cập nhật.
+`runtime-api` tạo và cập nhật khi đổi số chỗ (BR-M1.28); `status.inUse` do operator cập nhật.
 
 ## 4. Quy tắc nghiệp vụ
 
@@ -98,6 +98,7 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.25 | Mỗi lần phát hiện được ghi vào `resource_violations` với cách xử lý cuối cùng; không có biện pháp tự động theo số lần vi phạm | AC-R5.3 |
 | BR-M1.26 | `environment.capabilities` chỉ chứa giá trị có trong `SESSION_ALLOWED_CAPABILITIES`, nếu không từ chối tạo phiên với 422 `ENVIRONMENT_NOT_ALLOWED`. Capability được thêm vào `securityContext.capabilities.add` của container phiên; phiên không khai báo không có capability bổ sung. Pod ấm chỉ được nhận khi tập capability bằng đúng tập của phiên (ADR-0016) | AC-C1.9 |
 | BR-M1.27 | Tham số hệ thống của M1 (CR-DOC-01 mục 5.6) đọc từ bảng `settings` qua bộ nhớ đệm làm mới mỗi 30 giây; chỉ `ADMIN` sửa, giá trị ngoài khoảng hợp lệ trả 422 `SETTING_OUT_OF_RANGE`; mỗi lần sửa ghi `settings_history` trong cùng transaction | AC-P1.1–AC-P1.4 |
+| BR-M1.28 | Đổi số chỗ của đặt trước chưa hủy và chưa qua `endsAt`: phần tăng được kiểm tra theo BR-M1.7 và BR-M1.20 như đặt trước mới, bị từ chối thì số chỗ giữ nguyên; giảm không xuống dưới số chỗ đang dùng; giảm trước `startsAt` hoàn lại chỗ × giờ của phần giảm. `CapacityReservation` và mục tiêu của nhóm ấm cập nhật theo số chỗ mới | AC-L2.13 |
 
 ## 5. Cấp phát
 
@@ -336,6 +337,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | AC-R1.3, BR-M1.1 | Tích hợp: 10 yêu cầu đồng thời của một học viên, đúng một thành công |
 | AC-R2.1, BR-M1.4, BR-M1.5 | Đơn vị và envtest: thứ tự cấp, không dừng phiên đang chạy |
 | AC-R2.2, BR-M1.6, BR-M1.7 | Đơn vị và envtest: đặt trước |
+| AC-L2.13, BR-M1.28 | Tích hợp: tăng chỗ vượt sức chứa hoặc ngân sách bị từ chối và giữ nguyên; giảm dưới số chỗ đang dùng bị từ chối; giảm trước giờ bắt đầu hoàn lại ngân sách |
 | AC-R2.4, AC-R2.5, BR-M1.2, BR-M1.3 | Tích hợp: sổ hạn mức |
 | AC-R2.6–AC-R2.8, BR-M1.18–BR-M1.21 | Tích hợp: chia hạn mức đồng thời cho hai lớp cùng giảng viên không vượt trần; ngân sách đặt trước theo tháng; quyền ghi theo scope |
 | AC-R3.1, BR-M1.13 | Tích hợp: dùng lại vé, vé hết hạn, vé của người khác |
@@ -371,3 +373,4 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | 0.4 | 18/10/2026 | Cập nhật theo thử nghiệm S1: `restartPolicy: Never`, bộ công cụ gắn bằng image volume |
 | 0.5 | 18/10/2026 | BR-M1.17: lý do `ENVIRONMENT_FAILED` khi môi trường dừng không do hết bộ nhớ |
 | 0.6 | 18/10/2026 | BR-M1.27 tham số hệ thống; bảng `settings`, `settings_history`; BR-M1.6–BR-M1.8, BR-M1.21–BR-M1.23 dùng tham số thay biến môi trường |
+| 0.7 | 18/10/2026 | BR-M1.28: đổi số chỗ của đặt trước |

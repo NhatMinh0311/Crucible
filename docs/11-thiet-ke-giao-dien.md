@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-11 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01, CR-DOC-10 (use case), CR-DOC-03 mục 6 (giao thức terminal), AGENTS.md mục 4 |
 
@@ -209,6 +209,10 @@ Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiế
 
 ### 7.5. SCR-26 Lên lịch kỳ thi khi không đủ sức chứa
 
+Với kỳ thi đã lên lịch, khi sĩ số lớp tăng mà không tăng được số chỗ đặt trước (AC-L2.13), trang kỳ thi hiển thị dải
+cảnh báo "Thiếu n chỗ đặt trước" kèm nguyên nhân (thiếu sức chứa hoặc hết ngân sách chỗ × giờ), nút "Thử lại" và gợi ý
+khung giờ còn đủ chỗ như bố cục dưới đây.
+
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │ Lên lịch kỳ thi · Lớp IT3070 (45 sinh viên) · Bài lab: Khắc phục máy chủ web  │
@@ -274,6 +278,7 @@ outbox (CR-DOC-01 L15).
 | Bài tập mới, bài tập sắp hết hạn (24 giờ) | Sinh viên | ✉ (bài tập mới) |
 | Kỳ thi được lên lịch, kỳ thi bắt đầu sau 24 giờ | Sinh viên | ✉ |
 | Gia hạn riêng | Sinh viên được gia hạn | ✉ |
+| Kỳ thi thiếu chỗ sau khi sĩ số lớp tăng | Giảng viên phụ trách | ✉ |
 | Được cộng giờ thi | Sinh viên được cộng giờ | |
 | Điểm kỳ thi được công bố | Sinh viên | ✉ |
 | Biên bản gian lận | Sinh viên liên quan | ✉ |
@@ -300,3 +305,4 @@ outbox (CR-DOC-01 L15).
 | 1.2 | 18/10/2026 | Ô trả lời trên SCR-12, chọn loại bước trên SCR-24; bước chẩn đoán trên SCR-12 |
 | 1.3 | 18/10/2026 | Cộng giờ trên SCR-27; thông báo cộng giờ; trạng thái `SUSPENDED` của kỳ thi |
 | 1.4 | 18/10/2026 | SCR-42 Tham số hệ thống |
+| 1.5 | 18/10/2026 | Cảnh báo thiếu chỗ đặt trước khi sĩ số lớp tăng (mục 7.5, 8.2) |

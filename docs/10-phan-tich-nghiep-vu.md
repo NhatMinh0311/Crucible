@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-10 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 (chức năng, tiêu chí chấp nhận), CR-DOC-02 (vòng đời đối tượng, luồng kỹ thuật) |
 
@@ -239,6 +239,7 @@ Luồng chính:
 |---|---|---|
 | 2a | Tệp có dòng lỗi | Chỉ nhập khi giảng viên chọn bỏ qua các dòng lỗi hoặc sửa tệp; báo lỗi theo dòng (AC-L1.5) |
 | 3a | Nhập lại danh sách đã có sinh viên | Dòng trùng mã số sinh viên được cập nhật họ tên, email; sinh viên không có trong tệp mới không bị xóa khỏi lớp |
+| 3b | Lớp có kỳ thi đã lên lịch chưa kết thúc | Số chỗ đặt trước của mỗi kỳ thi được cập nhật bằng sĩ số mới; nếu không tăng được, sinh viên vẫn được thêm, giảng viên nhận cảnh báo kèm số chỗ thiếu và thử lại được từ trang kỳ thi (AC-L2.13) |
 | 5a | Hạn mức vượt phần trần còn lại | Từ chối, hiển thị phần còn lại; giảng viên giảm hạn mức của lớp này hoặc lớp khác, hoặc đề nghị quản trị nâng trần (AC-R2.6) |
 
 ### 3.6. UC14 — Lên lịch kỳ thi
@@ -528,3 +529,4 @@ Liên kết giữa các module (mũi tên đi qua ranh giới namespace) chỉ l
 | 1.2 | 18/10/2026 | Bước trả lời trong UC03 và soạn bài lab; UC03 4c |
 | 1.3 | 18/10/2026 | UC05 3b, 3c; UC15 cộng giờ, 3a, 3b |
 | 1.4 | 18/10/2026 | UC22 Tham số hệ thống (mục 3.10) |
+| 1.5 | 18/10/2026 | UC11 3b: cập nhật số chỗ đặt trước khi sĩ số lớp thay đổi |

@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.8 |
+| Phiên bản | 1.9 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -129,6 +129,7 @@ Quy định:
 | Thời điểm có hiệu lực | Kỳ thi chốt tham số khi lên lịch; tham số khác có hiệu lực ngay | Mọi thay đổi có hiệu lực ngay |
 | Mức đặt tham số | Một giá trị cho toàn bản cài đặt | Giảng viên chỉnh trong giới hạn của quản trị viên |
 | Vai trò quản trị cấp cao cho tham số hệ thống | Giữ một vai trò `ADMIN`; tách quản trị nền tảng và quản trị đơn vị ở bản dịch vụ nhiều đơn vị | Quyền riêng cho sửa tham số; thêm `SUPER_ADMIN` |
+| Thêm sinh viên sau khi kỳ thi đã lên lịch | Tự tăng số chỗ đặt trước theo sĩ số; không tăng được thì vẫn thêm sinh viên và cảnh báo giảng viên kèm số chỗ thiếu | Không tự tăng; chặn thêm sinh viên khi không đủ chỗ |
 
 ### 3.3. Phần việc của công cụ
 
@@ -235,6 +236,7 @@ thành viên.
 | 22 | Chọn lý do kết thúc và cách xử lý phiên thi khi môi trường bị dừng; hỏi cơ chế cộng giờ thủ công | Đề xuất phương án; rà thiết kế, chỉ ra thiếu cơ chế cộng giờ và thời hạn phiên thi không vượt hạn nộp ban đầu nên bù giờ không có hiệu lực; cập nhật hợp đồng, yêu cầu, ca sử dụng, giao diện, kiểm thử | Chọn `ENVIRONMENT_FAILED`; mở môi trường mới không bù giờ; giảng viên cộng giờ tối đa 30 phút, trợ giảng đề xuất |
 | 23 | Yêu cầu tham số như trần cộng giờ do quản trị viên chỉnh, không cố định | Kiểm kê 18 tham số nghiệp vụ của ba module; tách tham số kỹ thuật, bảo mật; đề xuất mỗi module giữ tham số của mình với cùng khuôn API; kỳ thi chép tham số khi lên lịch; thay mức cộng cố định của thời hạn phiên thi bằng `sessionUntil` | Chọn phương án đề xuất cho 3 câu hỏi; hỏi có nên thêm vai trò quản trị cấp cao |
 | 24 | Yêu cầu xóa dòng đồng tác giả của công cụ khỏi lịch sử commit; hỏi lại vai trò quản trị cấp cao | Viết lại lịch sử, kiểm tra nội dung từng commit không đổi, nêu ảnh hưởng của việc ghi đè nhánh trên GitHub trước khi đẩy; đổi quy ước commit; phân tích chi phí và lợi ích của vai trò quản trị cấp cao | Đồng ý ghi đè nhánh; giữ một vai trò `ADMIN` |
+| 25 | Chọn cách xử lý sĩ số tăng sau khi lên lịch thi; yêu cầu hỏi bằng hộp chọn thay cho văn bản | Thêm thao tác đổi số chỗ đặt trước vào hợp đồng M1, cập nhật yêu cầu, ca sử dụng, giao diện, thiết kế M1 | Chọn tự tăng số chỗ, cảnh báo khi thiếu |
 
 ## Lịch sử thay đổi
 
@@ -249,3 +251,4 @@ thành viên.
 | 1.6 | 18/10/2026 | Vòng 22: môi trường bị dừng, cộng giờ thi |
 | 1.7 | 18/10/2026 | Vòng 23: tham số hệ thống |
 | 1.8 | 18/10/2026 | Vòng 24: lịch sử commit, vai trò quản trị |
+| 1.9 | 18/10/2026 | Vòng 25: sĩ số lớp và đặt trước |

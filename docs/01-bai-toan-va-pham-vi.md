@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.7 |
+| Phiên bản | 1.8 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
@@ -158,7 +158,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L02 | Lộ trình: chuỗi bài lab luyện tập có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm; không giới hạn số lượt; không tính vào điểm học phần, giảng viên theo dõi tiến độ của lớp |
 | L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do; khi giao hoặc đổi hạn nộp, hệ thống ước tính tải cao nhất gần hạn nộp và cảnh báo nếu vượt sức chứa (không chặn) |
 | L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên (thời lượng không vượt tham số `exam.maxDurationMinutes`), hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
-| L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
+| L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi; số chỗ đặt trước cập nhật theo sĩ số lớp tới giờ kết thúc |
 | L06 | Bù giờ tự động khi phiên thi bị gián đoạn do sự cố hạ tầng; giảng viên phụ trách cộng giờ cho từng sinh viên trong lúc thi, trợ giảng đề xuất; mỗi loại có giới hạn riêng, ghi nhật ký |
 | L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal, cảnh báo phiên dùng CPU bất thường |
 | L08 | Xem lại bản ghi phiên: giảng viên phụ trách và trợ giảng xem mọi bản ghi của lớp; sinh viên xem bản ghi phiên thi của chính mình sau khi điểm được công bố |
@@ -345,6 +345,7 @@ tại mục 5.6 là giá trị mặc định của tham số đó; kiểm thử 
 - AC-L2.10: Sự kiện `runtime.session.resource-alert` của phiên thi hiển thị thành cảnh báo trên dòng của học viên tại màn hình giám sát trong ≤ 30 giây; cảnh báo không phải tín hiệu gian lận và không ảnh hưởng điểm.
 - AC-L2.11: Phiên thi bị dừng với lý do `OUT_OF_MEMORY` hoặc `ENVIRONMENT_FAILED` khi sinh viên chưa nộp: sinh viên tiếp tục được bằng phiên mới, khôi phục tới các bước đã đạt theo lần chấm ngầm gần nhất, trong thời gian còn lại; đồng hồ không tạm dừng và không được bù giờ tự động.
 - AC-L2.12: Trong lúc thi, giảng viên phụ trách cộng giờ cho từng sinh viên chưa nộp, bắt buộc nhập lý do; tổng thời gian cộng của một sinh viên trong một kỳ thi không vượt 30 phút, tính riêng với bù giờ tự động (409 `EXTRA_TIME_LIMIT`). Trợ giảng gửi đề xuất cộng giờ để giảng viên phụ trách duyệt hoặc từ chối; đề xuất chưa xử lý hết hiệu lực khi sinh viên đã nộp. Mỗi lần cộng được ghi nhật ký (người duyệt, người đề xuất, số phút, lý do) và thông báo cho sinh viên; đồng hồ trên trang làm bài cập nhật theo thời gian mới.
+- AC-L2.13: Khi sĩ số lớp thay đổi sau khi kỳ thi được lên lịch và trước giờ kết thúc, số chỗ đặt trước được cập nhật bằng sĩ số. Khi không tăng được vì thiếu sức chứa hoặc vượt ngân sách chỗ × giờ, sinh viên vẫn được thêm vào lớp, số chỗ giữ nguyên, giảng viên phụ trách nhận cảnh báo kèm số chỗ thiếu và thử lại được từ trang kỳ thi. Sinh viên vượt số chỗ đặt trước được cấp phiên từ sức chứa chung với ưu tiên `EXAM`.
 
 **US-L3 (L08–L11, L13, L14)** — Là giảng viên, tôi muốn phát hiện dấu hiệu gian lận và xử lý khiếu nại.
 - AC-L3.1: Học viên nhập giá trị tham số thuộc biến thể của học viên khác trong cùng kỳ thi tạo tín hiệu `VARIANT_LEAK`.
@@ -399,3 +400,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 | 1.5 | 18/10/2026 | Thời lượng kỳ thi tối đa (L04); cộng giờ của giảng viên (L06, AC-L2.12); tiếp tục phiên thi bị dừng do môi trường (AC-C2.7, AC-L2.11) |
 | 1.6 | 18/10/2026 | Tham số hệ thống (P04, mục 5.6, US-P1) |
 | 1.7 | 18/10/2026 | Hai cấp quản trị chỉ có ở bản dịch vụ nhiều đơn vị (mục 1.2) |
+| 1.8 | 18/10/2026 | Cập nhật số chỗ đặt trước theo sĩ số lớp (L05, AC-L2.13) |

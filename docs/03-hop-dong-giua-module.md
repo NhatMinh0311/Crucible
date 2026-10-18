@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.5 |
+| Phiên bản | 1.6 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
@@ -102,6 +102,8 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `EXTENSION_LIMIT` | 409 | M1 | Gia hạn vượt mức tối đa hoặc phiên thi |
 | `SESSION_NOT_ACTIVE` | 409 | M1 | Thao tác yêu cầu phiên ở pha `READY` hoặc `EXPIRING` |
 | `EXEC_BUSY` | 409 | M1 | Phiên đang chạy một lệnh kiểm tra khác |
+| `RESERVATION_SLOTS_IN_USE` | 409 | M1 | Giảm số chỗ đặt trước xuống dưới số chỗ đang dùng |
+| `RESERVATION_CLOSED` | 409 | M1 | Đặt trước đã hủy hoặc đã qua giờ kết thúc |
 | `CAPACITY_UNAVAILABLE` | 409 | M1, M3 | Không đủ sức chứa cho đặt trước; kèm trường `capacity` gồm số chỗ cần và số chỗ còn |
 | `ENVIRONMENT_NOT_ALLOWED` | 422 | M1 | Image ngoài danh sách cho phép, mức tài nguyên không tồn tại hoặc capability không được cấp trên cụm |
 | `LAB_NOT_PUBLISHED` | 409 | M2 | Bài lab hoặc phiên bản chưa xuất bản |
@@ -322,3 +324,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.3 | 18/10/2026 | Trường `environment.capabilities`, `warmCapabilities` của đặt trước (ADR-0016) |
 | 1.4 | 18/10/2026 | Lý do kết thúc `ENVIRONMENT_FAILED`; thời hạn phiên thi; mã lỗi `EXTRA_TIME_LIMIT` |
 | 1.5 | 18/10/2026 | Tham số hệ thống (mục 3.6), mã lỗi `SETTING_OUT_OF_RANGE`; `sessionUntil` của lượt thi |
+| 1.6 | 18/10/2026 | Đổi số chỗ đặt trước; mã lỗi `RESERVATION_SLOTS_IN_USE`, `RESERVATION_CLOSED` |
