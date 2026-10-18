@@ -93,6 +93,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `UNAUTHENTICATED` | 401 | Mọi module | Thiếu hoặc sai token |
 | `FORBIDDEN` | 403 | Mọi module | Token hợp lệ nhưng thiếu vai trò hoặc scope |
 | `NOT_FOUND` | 404 | Mọi module | Không tồn tại hoặc không có quyền xem |
+| `METHOD_NOT_ALLOWED` | 405 | Mọi module | Phương thức HTTP không có ở đường dẫn |
 | `RATE_LIMITED` | 429 | Mọi module | Vượt giới hạn tần suất |
 | `IDEMPOTENCY_KEY_REUSED` | 422 | Mọi module | Khóa lặp lại an toàn dùng cho nội dung khác |
 | `NOT_IMPLEMENTED` | 501 | M1 | Operation chưa có ở chế độ đang chạy (chế độ `docker` của `runtime-api`) |

@@ -71,6 +71,10 @@ paths:
           $ref: '#/components/responses/Problem'
         '422':
           $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}:
     parameters:
@@ -88,6 +92,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Session'
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}/extend:
@@ -122,6 +132,12 @@ paths:
           $ref: '#/components/responses/Problem'
         '409':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}/terminate:
     parameters:
@@ -151,6 +167,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Session'
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}/exec:
@@ -182,6 +204,12 @@ paths:
           $ref: '#/components/responses/Problem'
         '409':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}/terminal-tickets:
     parameters:
@@ -203,6 +231,12 @@ paths:
         '404':
           $ref: '#/components/responses/Problem'
         '409':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}/view-tickets:
@@ -240,6 +274,12 @@ paths:
                 $ref: '#/components/schemas/TerminalTicket'
         '404':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/sessions/{sessionId}/recording:
     parameters:
@@ -269,6 +309,12 @@ paths:
                   durationSeconds:
                     type: integer
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
 
   /v1/reservations:
@@ -304,6 +350,12 @@ paths:
           $ref: '#/components/responses/Problem'
         '422':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/reservations/{reservationId}:
     parameters:
@@ -325,6 +377,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Reservation'
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
     patch:
       tags: [reservations]
@@ -362,6 +420,12 @@ paths:
           $ref: '#/components/responses/Problem'
         '409':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
     delete:
       tags: [reservations]
       operationId: cancelReservation
@@ -371,6 +435,12 @@ paths:
         '204':
           description: Đã hủy
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
 
   /v1/capacity:
@@ -414,6 +484,10 @@ paths:
                   availableSlots:
                     type: integer
         '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
 
   /v1/capacity/windows:
@@ -495,6 +569,10 @@ paths:
                           type: integer
         '400':
           $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/resource-violations:
     get:
@@ -535,6 +613,10 @@ paths:
                       $ref: '#/components/schemas/ResourceViolation'
         '403':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
 
   /v1/quota-accounts:
     get:
@@ -568,6 +650,10 @@ paths:
                       $ref: '#/components/schemas/QuotaAccount'
         '403':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
 
   /v1/quota-accounts/{quotaAccountRef}:
     parameters:
@@ -588,6 +674,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/QuotaAccount'
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
           $ref: '#/components/responses/Problem'
     put:
       tags: [quota]
@@ -633,6 +725,12 @@ paths:
                 $ref: '#/components/schemas/QuotaAccount'
         '422':
           $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
 
   /v1/settings:
     get:
@@ -654,6 +752,10 @@ paths:
                     items:
                       $ref: '#/components/schemas/Setting'
         '403':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
           $ref: '#/components/responses/Problem'
 
   /v1/settings/{key}:
@@ -685,6 +787,10 @@ paths:
         '404':
           $ref: '#/components/responses/Problem'
         '422':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
           $ref: '#/components/responses/Problem'
 
   /v1/settings/{key}/history:
@@ -725,6 +831,10 @@ paths:
         '403':
           $ref: '#/components/responses/Problem'
         '404':
+          $ref: '#/components/responses/Problem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
           $ref: '#/components/responses/Problem'
 
 components:
@@ -818,7 +928,9 @@ components:
       required: [image, profile, ttlMinutes, idleMinutes, maxExtensionMinutes, network]
       properties:
         image:
+          description: Image bài lab; phải thuộc danh sách tiền tố được phép của bản cài đặt, nếu không trả 422 `ENVIRONMENT_NOT_ALLOWED`.
           type: string
+          minLength: 1
         profile:
           $ref: '#/components/schemas/Profile'
         ttlMinutes:
@@ -981,6 +1093,14 @@ components:
       type: object
       additionalProperties: false
       required: [script, timeoutSeconds, purpose]
+      if:
+        properties:
+          purpose:
+            const: CHECK
+      then:
+        properties:
+          timeoutSeconds:
+            maximum: 15
       properties:
         machine:
           $ref: '#/components/schemas/MachineName'
