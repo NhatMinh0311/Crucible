@@ -5,7 +5,7 @@
 | Mã tài liệu | CR-DOC-02 |
 | Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
-| Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0015 |
+| Tài liệu liên quan | CR-DOC-01 Bài toán và phạm vi, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật, ADR-0001 đến ADR-0016 |
 
 ## 1. Phạm vi
 
@@ -410,4 +410,4 @@ sequenceDiagram
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Trình tự lên lịch kỳ thi có ngân sách đặt trước và gợi ý khung giờ; lý do kết thúc phiên mới |
-| 1.2 | 18/10/2026 | Tham chiếu ADR-0015 |
+| 1.2 | 18/10/2026 | Tham chiếu ADR-0015, ADR-0016 |

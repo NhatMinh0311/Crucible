@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-12 |
-| Phiên bản | 1.2 |
-| Ngày ban hành | 17/10/2026 |
+| Phiên bản | 1.3 |
+| Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 7, 8; CR-DOC-04 mục 9, 11; CR-DOC-05 mục 6; CR-DOC-06 mục 6; tài liệu module |
 
 ## 1. Mục tiêu và phạm vi
@@ -39,7 +39,7 @@ và được kiểm tra lại sau mỗi thí nghiệm chaos bằng script đối
 | INV5 | Điểm các bước đã đạt của lượt luyện tập không giảm khi tiếp tục hoặc khi phiên bị mất | Tích hợp M2; chaos CH1 |
 | INV6 | Điểm thi bằng kết quả chấm cuối; mọi thay đổi sau đó có bản ghi điều chỉnh với điểm cũ, người sửa, lý do | Tích hợp M2, M3 |
 | INV7 | Mọi sự kiện đã ghi vào outbox được giao tới hàng đợi của bên nhận; mỗi sự kiện được xử lý đúng một lần | Tích hợp mỗi module; chaos CH4 |
-| INV8 | Từ pod phiên không kết nối được tới thành phần nền tảng, pod khác, Kubernetes API, Internet (kể cả qua máy chủ gói) | Bộ kiểm thử cách ly I1–I11 |
+| INV8 | Từ pod phiên không kết nối được tới thành phần nền tảng, pod khác, Kubernetes API, Internet (kể cả qua máy chủ gói) | Bộ kiểm thử cách ly I1–I12 |
 | INV9 | Kết quả lệnh kiểm tra không phụ thuộc công cụ, biến môi trường, cấu hình shell trong môi trường | Tích hợp M2 với M1 (AC-C2.4) |
 | INV10 | Sinh viên chỉ đọc được dữ liệu của mình; điểm và bản ghi thi chỉ hiển thị sau khi công bố | Ma trận phân quyền API |
 | INV11 | Tổng chỗ đặt trước chồng lấn thời gian không vượt 80% sức chứa | Đơn vị M1 |
@@ -120,3 +120,4 @@ kiểm thử phi chức năng hoặc chaos kèm biên bản thí nghiệm.
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | INV13; INV8 gồm kiểm thử I10, I11 |
 | 1.2 | 18/10/2026 | Bộ bài mẫu theo dạng bài và mẫu kịch bản |
+| 1.3 | 18/10/2026 | INV8 gồm kiểm thử I12 (`NET_ADMIN`) |

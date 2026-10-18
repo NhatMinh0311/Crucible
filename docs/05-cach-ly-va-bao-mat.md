@@ -3,9 +3,9 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-05 |
-| Phiên bản | 1.1 |
-| Ngày ban hành | 17/10/2026 |
-| Tài liệu liên quan | CR-DOC-02 Kiến trúc, CR-DOC-03 Hợp đồng, CR-DOC-04 Vận hành, ADR-0003, ADR-0004, ADR-0011 |
+| Phiên bản | 1.2 |
+| Ngày ban hành | 18/10/2026 |
+| Tài liệu liên quan | CR-DOC-02 Kiến trúc, CR-DOC-03 Hợp đồng, CR-DOC-04 Vận hành, ADR-0003, ADR-0004, ADR-0011, ADR-0016 |
 
 ## 1. Phạm vi
 
@@ -61,7 +61,7 @@ flowchart LR
 
 | Mã | Mối đe dọa | Biện pháp |
 |---|---|---|
-| T1 | Thoát container, chiếm node | gVisor (`RuntimeClass gvisor`): lời gọi hệ thống được xử lý bởi nhân riêng trong không gian người dùng; không cấp `privileged`, không thêm capability ngoài mặc định, `allowPrivilegeEscalation: false`, seccomp mặc định của runtime; không gắn `hostPath`, không dùng `hostNetwork`, `hostPID` |
+| T1 | Thoát container, chiếm node | gVisor (`RuntimeClass gvisor`): lời gọi hệ thống được xử lý bởi nhân riêng trong không gian người dùng; không cấp `privileged`, không thêm capability ngoài mặc định trừ `NET_ADMIN` cho bài lab khai báo (ADR-0016; capability chỉ có hiệu lực với nhân của sandbox), `allowPrivilegeEscalation: false`, seccomp mặc định của runtime; không gắn `hostPath`, không dùng `hostNetwork`, `hostPID` |
 | T2 | Gọi Kubernetes API bằng token của pod | `automountServiceAccountToken: false`; tài khoản dịch vụ của pod phiên không có Role nào; NetworkPolicy chặn địa chỉ API server |
 | T3 | Truy cập dịch vụ nền tảng, pod khác, dịch vụ metadata | NetworkPolicy mặc định chặn mọi chiều vào và ra trong `crucible-sessions`; bài lab `network: mirror` chỉ được ra tới máy chủ gói nội bộ cổng 3142; không có DNS nội bộ cụm cho pod phiên ngoại trừ tên máy chủ gói. Máy chủ gói không được dùng làm proxy ra Internet: chỉ phục vụ các kho gói đã khai báo (`ForceManaged: 1`), không chuyển tiếp yêu cầu `CONNECT` (`PassThroughPattern` không khớp địa chỉ nào) |
 | T4 | Chiếm tài nguyên (fork bomb, đầy bộ nhớ, đầy đĩa) | Giới hạn bộ nhớ, CPU, `pids` theo mức tài nguyên; ephemeral storage giới hạn 2 GiB; vượt giới hạn chỉ ảnh hưởng phiên đó |
@@ -98,7 +98,7 @@ lực khi bộ điều khiển phiên có lỗi.
 
 | Chính sách | Áp dụng | Nội dung |
 |---|---|---|
-| `session-pod-hardening` | Namespace `crucible-sessions` | Bắt buộc `runtimeClassName: gvisor`, `automountServiceAccountToken: false`, không `privileged`, không `hostPath`, không `hostNetwork`/`hostPID`/`hostIPC`, có giới hạn bộ nhớ và CPU |
+| `session-pod-hardening` | Namespace `crucible-sessions` | Bắt buộc `runtimeClassName: gvisor`, `automountServiceAccountToken: false`, không `privileged`, `capabilities.add` chỉ chứa `NET_ADMIN`, không `hostPath`, không `hostNetwork`/`hostPID`/`hostIPC`, có giới hạn bộ nhớ và CPU |
 | `session-image-allowlist` | Namespace `crucible-sessions` | Image bắt đầu bằng `ghcr.io/<tổ chức>/crucible-labs/` hoặc image công cụ của M1 |
 | `platform-image-signed` | Namespace `crucible-*` trừ `crucible-sessions` | Image dịch vụ thuộc `ghcr.io/<tổ chức>/crucible/` (xác minh chữ ký bằng policy-controller của Sigstore là mục mở rộng) |
 | Pod Security Admission | Mọi namespace dịch vụ | Mức `restricted` |
@@ -124,6 +124,7 @@ chứng Q6.
 | I9 | Tạo pod thiếu `runtimeClassName` hoặc có `hostPath` trong `crucible-sessions` bằng tài khoản có quyền tạo pod | Bị chính sách từ chối |
 | I10 | Chạy tiến trình dùng hết CPU trong phiên luyện tập 16 phút | Cảnh báo sau 10 phút, phiên kết thúc với `RESOURCE_ABUSE` sau 15 phút; phiên khác trên cùng node giữ độ trễ terminal p95 ≤ 150 ms |
 | I11 | Qua máy chủ gói nội bộ, tải một địa chỉ ngoài danh sách kho gói (`http_proxy=http://mirror:3142 curl http://example.com`) và mở đường hầm `CONNECT` tới cổng 443 | Bị từ chối (bài lab `network: mirror`) |
+| I12 | Trong phiên có `NET_ADMIN`: xóa toàn bộ quy tắc tường lửa, gán thêm địa chỉ IP của một pod phiên khác và của máy chủ gói cho giao diện mạng, rồi lặp lại I1, I3, I4, I5; tạo pod có capability khác `NET_ADMIN` trong `crucible-sessions` | Các kết nối vẫn thất bại; pod bị chính sách từ chối |
 
 ### 6.2. Kiểm thử ứng dụng
 
@@ -149,3 +150,4 @@ chứng Q6.
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | T4a dùng CPU kéo dài, T12 trần theo giảng viên, máy chủ gói không làm proxy, kiểm thử I10, I11 |
+| 1.2 | 18/10/2026 | `NET_ADMIN` cho bài lab khai báo (T1, chính sách `session-pod-hardening`), kiểm thử I12 |

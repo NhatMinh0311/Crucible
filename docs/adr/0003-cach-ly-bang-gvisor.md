@@ -14,7 +14,7 @@ hổng nhân đủ để thoát ra node và chiếm cụm. Cụm chạy trên m�
 - Pod phiên chạy với `RuntimeClass gvisor` (runsc, nền tảng systrap), chỉ trên node phiên được gắn nhãn.
 - NetworkPolicy mặc định chặn mọi lưu lượng vào và ra trong `crucible-sessions`; chỉ mở đường ra máy chủ gói nội bộ cho
   bài lab `network: mirror`.
-- Không token tài khoản dịch vụ, không capability bổ sung, không `hostPath`, giới hạn bộ nhớ, CPU, số tiến trình,
+- Không token tài khoản dịch vụ, không capability bổ sung (ngoại lệ `NET_ADMIN` theo ADR-0016), không `hostPath`, giới hạn bộ nhớ, CPU, số tiến trình,
   dung lượng tạm.
 - Các ràng buộc trên được thực thi bằng ValidatingAdmissionPolicy, độc lập với mã của operator (CR-DOC-05 mục 5).
 
