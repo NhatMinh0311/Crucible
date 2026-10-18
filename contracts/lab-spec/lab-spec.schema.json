@@ -92,6 +92,11 @@
         "slug": { "$ref": "#/$defs/slug" },
         "title": { "type": "string", "minLength": 3, "maxLength": 120 },
         "summary": { "type": "string", "maxLength": 500 },
+        "language": {
+          "description": "Ngôn ngữ của nội dung bài lab (tiêu đề, mô tả, gợi ý, thông điệp). Nội dung không được dịch; giao diện quanh bài lab theo ngôn ngữ của người dùng.",
+          "enum": ["vi", "en"],
+          "default": "vi"
+        },
         "tags": {
           "type": "array",
           "maxItems": 10,

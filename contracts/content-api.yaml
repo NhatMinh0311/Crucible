@@ -412,6 +412,11 @@ components:
           type: string
         summary:
           type: string
+        language:
+          description: Ngôn ngữ của nội dung bài lab (`metadata.language` của đặc tả).
+          type: string
+          enum: [vi, en]
+          default: vi
         difficulty:
           type: string
           enum: [BEGINNER, INTERMEDIATE, ADVANCED]
