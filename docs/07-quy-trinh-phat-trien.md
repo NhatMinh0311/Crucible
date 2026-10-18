@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-07 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-03 mục 2 (quản lý hợp đồng), CR-DOC-04 mục 5 (triển khai), `CONTRIBUTING.md`, `.github/` |
 
@@ -82,7 +82,7 @@ chạy khi pull request thay đổi đường dẫn của module hoặc `contrac
 | `changes` | Xác định đường dẫn thay đổi để chỉ chạy job liên quan | Đang chạy |
 | `contracts` | Lint OpenAPI (`redocly lint`), kiểm tra AsyncAPI (`asyncapi validate`), kiểm tra lược đồ và quy tắc ngữ nghĩa của đặc tả bài lab trong `contracts/lab-spec/examples/` và `labs/` | Đang chạy |
 | `dev-env` | Khởi động dịch vụ phụ thuộc của `dev/compose.yaml`, chạy `dev/check.sh` | Đang chạy |
-| `runtime` | `go vet`, `staticcheck`, kiểm thử đơn vị, envtest, kiểm thử tích hợp | Bổ sung khi có mã |
+| `runtime` | Mã sinh khớp hợp đồng, `gofmt`, `go vet`, `staticcheck`; build image bộ công cụ và image nền bài lab; `go test -race` gồm kiểm thử tích hợp với PostgreSQL, RabbitMQ (Testcontainers) và Docker Engine của runner; envtest bổ sung cùng chế độ `kubernetes` | Đang chạy |
 | `content`, `learning` | Gradle build: sinh mã từ hợp đồng, biên dịch, kiểm thử đơn vị và tích hợp với Testcontainers | Đang chạy |
 | `web` | Sinh kiểu từ hợp đồng, kiểm tra kiểu, lint (oxlint), kiểm thử (Vitest), build | Đang chạy |
 | `e2e` | Dựng k3d, triển khai bằng Helm chart, chạy luồng đầu cuối bằng Playwright | Bổ sung từ mốc MA |
@@ -135,3 +135,4 @@ flowchart LR
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
+| 1.1 | 18/10/2026 | Job CI `runtime` |

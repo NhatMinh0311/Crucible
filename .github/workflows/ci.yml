@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       dev: ${{ steps.filter.outputs.dev }}
+      runtime: ${{ steps.filter.outputs.runtime }}
       content: ${{ steps.filter.outputs.content }}
       learning: ${{ steps.filter.outputs.learning }}
       web: ${{ steps.filter.outputs.web }}
@@ -32,6 +33,10 @@ jobs:
             dev:
               - 'dev/**'
               - '.devcontainer/**'
+            runtime:
+              - 'services/runtime/**'
+              - 'images/**'
+              - 'contracts/runtime-api.yaml'
             content:
               - 'services/content/**'
               - 'libs/java/**'
@@ -83,6 +88,38 @@ jobs:
       - name: Log khi thất bại
         if: failure()
         run: docker compose -f dev/compose.yaml logs
+
+  runtime:
+    name: runtime
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: services/runtime
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/runtime/go.mod
+          cache-dependency-path: services/runtime/go.sum
+      - name: Mã sinh từ hợp đồng khớp với hợp đồng
+        run: |
+          go generate ./internal/api ./internal/httpapi
+          git diff --exit-code -- .
+      - name: gofmt, go vet, staticcheck
+        run: |
+          test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+          go vet ./...
+          go run honnef.co/go/tools/cmd/staticcheck@v0.8.2 ./...
+      - name: Build image bộ công cụ và image nền bài lab
+        working-directory: .
+        run: |
+          docker build -t ghcr.io/crucible-project/crucible/tools:1.0.0 images/crucible-tools
+          docker build -t ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0 images/lab-ubuntu-nginx
+      - name: Kiểm thử (PostgreSQL, RabbitMQ qua Testcontainers; Docker Engine của runner)
+        run: go test -race -count=1 -timeout 15m ./...
 
   content:
     name: content
