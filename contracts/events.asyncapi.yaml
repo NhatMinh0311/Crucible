@@ -396,7 +396,7 @@ components:
                   format: uuid
                 endReason:
                   type: string
-                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST, OUT_OF_MEMORY, RESOURCE_ABUSE]
+                  enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, NODE_LOST, OUT_OF_MEMORY, ENVIRONMENT_FAILED, RESOURCE_ABUSE]
                 endedAt:
                   type: string
                   format: date-time

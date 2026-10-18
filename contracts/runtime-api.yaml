@@ -655,8 +655,11 @@ components:
       enum: [PENDING, PROVISIONING, READY, EXPIRING, TERMINATED, FAILED, LOST]
 
     EndReason:
+      description: >-
+        `OUT_OF_MEMORY`: môi trường bị dừng vì vượt giới hạn bộ nhớ. `ENVIRONMENT_FAILED`: môi trường dừng ngoài ý muốn vì
+        lý do khác (vượt giới hạn số tiến trình, tiến trình chính của môi trường kết thúc, lỗi sandbox).
       type: string
-      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST, OUT_OF_MEMORY, RESOURCE_ABUSE]
+      enum: [COMPLETED, EXPIRED, IDLE, CANCELLED, ADMIN, QUEUE_TIMEOUT, PROVISION_FAILED, NODE_LOST, OUT_OF_MEMORY, ENVIRONMENT_FAILED, RESOURCE_ABUSE]
 
     Capabilities:
       description: Capability Linux bổ sung cho pod phiên, chỉ cấp khi phiên chạy trong gVisor (ADR-0016). Capability không có trong `SESSION_ALLOWED_CAPABILITIES` của cụm bị từ chối với 422 `ENVIRONMENT_NOT_ALLOWED`.
