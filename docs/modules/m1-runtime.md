@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.7 |
+| Phiên bản | 0.8 |
 | Ngày ban hành | 18/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
@@ -355,13 +355,20 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | Biến | Ý nghĩa | Mặc định |
 |---|---|---|
 | `RUNTIME_DRIVER` | `kubernetes` hoặc `docker` | `kubernetes` |
-| `DB_URL` | Kết nối CSDL `runtime` | |
+| `DB_URL` | Kết nối CSDL `runtime` | `postgres://runtime:runtime-dev@localhost:5432/runtime` |
 | `AMQP_URL` | Kết nối RabbitMQ | |
-| `OIDC_ISSUER`, `OIDC_AUDIENCE` | Xác thực token | |
+| `OIDC_ISSUER`, `OIDC_AUDIENCE` | Xác thực token | `http://localhost:8180/realms/crucible`, `runtime-api` |
 | `S3_ENDPOINT`, `S3_BUCKET` | Lưu bản ghi | `recordings` |
 | `SESSION_NAMESPACE` | Namespace của phiên | `crucible-sessions` |
 | `SETUP_TIMEOUT` | Thời hạn setup | `60s` |
-| `SESSION_ALLOWED_CAPABILITIES` | Capability được cấp cho bài lab khai báo (BR-M1.26); để rỗng khi cụm không chạy gVisor | `NET_ADMIN` |
+| `SESSION_ALLOWED_CAPABILITIES` | Capability được cấp cho bài lab khai báo (BR-M1.26); để rỗng khi cụm không chạy gVisor | `NET_ADMIN` (chế độ `docker`: rỗng) |
+| `PORT` | Cổng HTTP | `8081` |
+| `OIDC_JWKS_URL` | Địa chỉ JWKS khi dịch vụ không tới được Keycloak qua địa chỉ issuer (chạy trong container) | `<OIDC_ISSUER>/protocol/openid-connect/certs` |
+| `EVENTS_EXCHANGE`, `EVENTS_SOURCE` | Exchange và `source` của sự kiện | `crucible.events`, `/crucible/runtime-api` |
+| `TERMINAL_PUBLIC_URL` | Địa chỉ WebSocket trả trong vé terminal | `ws://localhost:8081/v1/terminal` |
+| `TERMINAL_ALLOWED_ORIGINS` | Origin của giao diện được mở terminal | `localhost:*,127.0.0.1:*` |
+| `PROVISION_TIMEOUT` | Thời hạn dựng môi trường, gồm kéo image và setup | `5m` |
+| `TOOLS_IMAGE` | Image bộ công cụ kiểm tra (chế độ `docker`) | `ghcr.io/crucible-project/crucible/tools:1.0.0` |
 
 ## Lịch sử thay đổi
 
@@ -374,3 +381,4 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | 0.5 | 18/10/2026 | BR-M1.17: lý do `ENVIRONMENT_FAILED` khi môi trường dừng không do hết bộ nhớ |
 | 0.6 | 18/10/2026 | BR-M1.27 tham số hệ thống; bảng `settings`, `settings_history`; BR-M1.6–BR-M1.8, BR-M1.21–BR-M1.23 dùng tham số thay biến môi trường |
 | 0.7 | 18/10/2026 | BR-M1.28: đổi số chỗ của đặt trước |
+| 0.8 | 18/10/2026 | Biến cấu hình của chế độ `docker` (mục 12) |

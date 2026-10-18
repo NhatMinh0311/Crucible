@@ -137,9 +137,13 @@ npx --yes @asyncapi/cli@2.16.0 validate contracts/events.asyncapi.yaml --fail-se
 
 # Khi sửa lược đồ đặc tả bài lab hoặc bài lab
 python3 contracts/lab-spec/validate.py contracts/lab-spec/examples/*.yaml labs/*/lab.yaml
+
+# Khi sửa services/runtime (cần Docker; image ở images/ phải được build trước, mục 5.2)
+cd services/runtime && test -z "$(gofmt -l .)" && go vet ./... \
+  && go run honnef.co/go/tools/cmd/staticcheck@v0.8.2 ./... && go test -race ./...
 ```
 
-Lệnh kiểm tra của từng module được bổ sung vào mục này khi mã nguồn module có mặt.
+Lệnh kiểm tra của M2, M3 được bổ sung vào mục này khi mã nguồn module có mặt.
 
 ### 2.5. Push và mở pull request
 
@@ -254,5 +258,54 @@ Client trong realm: `crucible-web` (giao diện, public, PKCE), `runtime-api`, `
 
 ### 5.2. Theo module
 
-Hướng dẫn chạy từng module, cách dùng mock hoặc chế độ `docker` của M1 (CR-DOC-03 mục 2.3) và lệnh kiểm thử được bổ sung
-khi mã nguồn module có mặt.
+#### `runtime-api` chế độ `docker` (M1)
+
+Chế độ `docker` cho M2, M3 một `runtime-api` thật trên máy phát triển: cùng API và sự kiện với bản trên cụm, mỗi phiên là
+một container Docker trên máy (CR-DOC-03 mục 2.3, `specs/001-runtime-docker-mode`). Trên Windows, chạy mọi lệnh trong WSL2.
+
+1. Build image bộ công cụ kiểm tra và image nền bài lab (lặp lại khi `images/` thay đổi):
+
+   ```bash
+   docker build -t ghcr.io/crucible-project/crucible/tools:1.0.0 images/crucible-tools
+   docker build -t ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0 images/lab-ubuntu-nginx
+   ```
+
+2. Chạy `runtime-api`, chọn một trong hai cách:
+
+   | Cách | Lệnh | Dùng khi |
+   |---|---|---|
+   | Container (không cần cài Go) | `docker compose -f dev/compose.yaml --profile runtime up -d --build --wait` | Phát triển M2, M3 |
+   | Từ mã nguồn | `cd services/runtime && RUNTIME_DRIVER=docker go run ./cmd/runtime-api` (dịch vụ phụ thuộc đã chạy) | Phát triển M1 |
+
+   Dịch vụ lắng nghe `http://localhost:8081`; `content-service`, `learning-service` đã trỏ sẵn tới địa chỉ này
+   (`RUNTIME_API_URL`). Terminal ở `ws://localhost:8081/v1/terminal?ticket=<vé>`.
+
+3. Gọi thử bằng token của Keycloak phát triển:
+
+   ```bash
+   KC=http://localhost:8180/realms/crucible/protocol/openid-connect/token
+   SVC=$(curl -s $KC -d grant_type=client_credentials -d client_id=content-service \
+         -d client_secret=content-service-dev-secret | jq -r .access_token)          # token của M2
+   STU=$(curl -s $KC -d grant_type=password -d client_id=crucible-web -d username=sv1 \
+         -d password=crucible | jq -r .access_token)                                 # token của sinh viên
+   OWNER=$(echo "$STU" | cut -d. -f2 | base64 -d 2>/dev/null | jq -r .sub)
+   curl -s -X POST localhost:8081/v1/sessions -H "Authorization: Bearer $SVC" -H "Idempotency-Key: $(uuidgen)" \
+     -H 'Content-Type: application/json' -d '{"ownerUserId":"'$OWNER'","priority":"PRACTICE",
+     "quotaAccountRef":"class:1","environment":{"image":"ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0",
+     "profile":"small","ttlMinutes":60,"idleMinutes":15,"maxExtensionMinutes":30,"network":"none"}}'
+   ```
+
+Khác biệt so với bản trên cụm:
+
+| Mục | Chế độ `docker` |
+|---|---|
+| Cách ly | Không có gVisor; container chạy bằng runc trên máy, chỉ dùng khi phát triển |
+| `network: mirror` | Không có máy chủ gói nội bộ; container ra Internet qua mạng `bridge` |
+| Capability | Mặc định không cấp; đặt `SESSION_ALLOWED_CAPABILITIES=NET_ADMIN` trong `dev/.env` để thử bài tường lửa |
+| Đặt trước, hạn mức, tham số hệ thống, bản ghi phiên | Trả 501 `NOT_IMPLEMENTED`; dùng mock Prism (CR-DOC-03 mục 2.3) |
+| Hết bộ nhớ | Tiến trình vượt giới hạn bộ nhớ làm phiên kết thúc với `OUT_OF_MEMORY`, giống hành vi của gVisor trên cụm |
+
+Container phiên mang nhãn `crucible.dev/managed-by=runtime-api`; `runtime-api` tự xóa container mồ côi khi khởi động.
+Dọn bằng tay: `docker rm -f $(docker ps -aq --filter label=crucible.dev/managed-by=runtime-api)`.
+
+Hướng dẫn chạy M2, M3 được bổ sung khi mã nguồn module có mặt.

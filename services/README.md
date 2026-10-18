@@ -2,7 +2,7 @@
 
 | Thư mục | Module | Dịch vụ | Cổng khi phát triển | Thiết kế |
 |---|---|---|---|---|
-| `runtime/` | M1 | `runtime-api`, `runtime-gateway`, `runtime-operator` (Go) | 8081 | `docs/modules/m1-runtime.md` |
+| `runtime/` | M1 | `runtime-api` (Go; hiện có chế độ `docker`, CONTRIBUTING mục 5.2); `runtime-gateway`, `runtime-operator` bổ sung cùng chế độ `kubernetes` | 8081 | `docs/modules/m1-runtime.md` |
 | `content/` | M2 | `content-service` (Spring Boot) | 8082 | `docs/modules/m2-content.md` |
 | `learning/` | M3 | `learning-service` (Spring Boot) | 8083 | `docs/modules/m3-learning.md` |
 

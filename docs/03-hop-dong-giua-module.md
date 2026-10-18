@@ -44,7 +44,7 @@ có thể bỏ qua và được ghi log cảnh báo.
 | Nhu cầu | Cách đáp ứng |
 |---|---|
 | Gọi API của module chưa hoàn thành | Mock sinh từ OpenAPI bằng Prism: `npx @stoplight/prism-cli@5.14.2 mock contracts/runtime-api.yaml` |
-| Có môi trường thật khi M1 chưa chạy trên Kubernetes | M1 cung cấp chế độ `docker` của `runtime-api`: cùng API, chạy phiên bằng container Docker trên máy phát triển, không có gVisor (chỉ dùng khi phát triển) |
+| Có môi trường thật khi M1 chưa chạy trên Kubernetes | M1 cung cấp chế độ `docker` của `runtime-api`: cùng API, chạy phiên bằng container Docker trên máy phát triển, không có gVisor (chỉ dùng khi phát triển). Chạy bằng `docker compose -f dev/compose.yaml --profile runtime up -d --build --wait` (CONTRIBUTING mục 5.2) |
 | Nhận sự kiện của module khác | Tệp sự kiện mẫu trong kiểm thử của bên nhận, được kiểm tra theo lược đồ trong `events.asyncapi.yaml` |
 | Bảo đảm bên cung cấp không làm lệch hợp đồng | Kiểm thử của bên cung cấp chạy bộ kiểm thử sinh từ OpenAPI (Schemathesis) trên dịch vụ đang chạy |
 
