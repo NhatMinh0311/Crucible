@@ -369,6 +369,7 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | `TERMINAL_ALLOWED_ORIGINS` | Origin của giao diện được mở terminal | `localhost:*,127.0.0.1:*` |
 | `PROVISION_TIMEOUT` | Thời hạn dựng môi trường, gồm kéo image và setup | `5m` |
 | `TOOLS_IMAGE` | Image bộ công cụ kiểm tra (chế độ `docker`) | `ghcr.io/crucible-project/crucible/tools:1.0.0` |
+| `SESSION_IMAGE_PREFIXES` | Tiền tố image bài lab được phép; image khác bị từ chối với 422 `ENVIRONMENT_NOT_ALLOWED` | `ghcr.io/crucible-project/crucible-labs/` |
 
 ## Lịch sử thay đổi
 

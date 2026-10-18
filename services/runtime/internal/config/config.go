@@ -26,6 +26,7 @@ type Config struct {
 	AllowedCapabilities []string
 	ToolsImage          string
 	AllowedOrigins      []string
+	ImagePrefixes       []string
 }
 
 // Load đọc cấu hình; trả lỗi khi giá trị không hợp lệ.
@@ -62,6 +63,12 @@ func Load() (Config, error) {
 	for _, v := range strings.Split(env("SESSION_ALLOWED_CAPABILITIES", defaultCaps), ",") {
 		if v = strings.TrimSpace(v); v != "" {
 			c.AllowedCapabilities = append(c.AllowedCapabilities, v)
+		}
+	}
+	// Image bài lab được phép (CR-DOC-03 mục 3.4, ENVIRONMENT_NOT_ALLOWED; CR-DOC-05 session-image-allowlist).
+	for _, v := range strings.Split(env("SESSION_IMAGE_PREFIXES", "ghcr.io/crucible-project/crucible-labs/"), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			c.ImagePrefixes = append(c.ImagePrefixes, v)
 		}
 	}
 	// Origin của giao diện được mở terminal WebSocket; mặc định cho máy phát triển.

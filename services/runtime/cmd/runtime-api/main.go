@@ -74,7 +74,7 @@ func run(log *slog.Logger) error {
 
 	sessions := session.New(st, drv, log, session.Options{
 		SetupTimeout: cfg.SetupTimeout, ProvisionTimeout: cfg.ProvisionTimeout,
-		AllowedCapabilities: cfg.AllowedCapabilities, EventsSource: cfg.EventsSource,
+		AllowedCapabilities: cfg.AllowedCapabilities, ImagePrefixes: cfg.ImagePrefixes, EventsSource: cfg.EventsSource,
 	})
 	term := &terminal.Handler{Store: st, Sessions: sessions, Driver: drv, Events: events.Writer{Source: cfg.EventsSource},
 		OriginPatterns: cfg.AllowedOrigins, Log: log}

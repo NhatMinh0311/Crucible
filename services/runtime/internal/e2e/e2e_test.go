@@ -98,7 +98,8 @@ func setup(t *testing.T) *env {
 	clk := &clock{}
 	sessions := session.New(st, drv, slog.Default(), session.Options{
 		SetupTimeout: 20 * time.Second, ProvisionTimeout: 2 * time.Minute, EventsSource: "/crucible/runtime-api",
-		Now: clk.now,
+		ImagePrefixes: []string{"ghcr.io/crucible-project/crucible-labs/"},
+		Now:           clk.now,
 	})
 	term := &terminal.Handler{Store: st, Sessions: sessions, Driver: drv, Events: events.Writer{Source: "/crucible/runtime-api"},
 		OriginPatterns: []string{"*"}, Log: slog.Default()}
@@ -415,6 +416,13 @@ func TestFailuresAndExits(t *testing.T) {
 			t.Errorf("phiên lỗi: %v", f)
 		}
 		e.waitEvent(events.SessionFailed, id)
+	})
+
+	t.Run("image ngoài danh sách cho phép", func(t *testing.T) {
+		code, body := e.create(uuid.New(), "PRACTICE", environment(func(m map[string]any) { m["image"] = "nginx:latest" }))
+		if code != http.StatusUnprocessableEntity || body["code"] != "ENVIRONMENT_NOT_ALLOWED" {
+			t.Errorf("mong đợi 422 ENVIRONMENT_NOT_ALLOWED: %d %v", code, body)
+		}
 	})
 
 	t.Run("BR-M1.26 capability ngoài danh sách", func(t *testing.T) {

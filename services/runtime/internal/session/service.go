@@ -17,6 +17,7 @@ import (
 	"os"
 	"slices"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -68,6 +69,7 @@ type Options struct {
 	SetupTimeout        time.Duration
 	ProvisionTimeout    time.Duration
 	AllowedCapabilities []string
+	ImagePrefixes       []string
 	EventsSource        string
 	// Now thay đồng hồ trong kiểm thử; mặc định time.Now theo UTC.
 	Now func() time.Time
@@ -132,6 +134,10 @@ func (s *Service) Create(ctx context.Context, caller string, key uuid.UUID, req 
 	prof, ok := profiles[env.Profile]
 	if !ok {
 		return CreateResult{}, problem.New(http.StatusUnprocessableEntity, "ENVIRONMENT_NOT_ALLOWED", "Mức tài nguyên không tồn tại")
+	}
+	if !slices.ContainsFunc(s.opts.ImagePrefixes, func(p string) bool { return strings.HasPrefix(env.Image, p) }) {
+		return CreateResult{}, problem.New(http.StatusUnprocessableEntity, "ENVIRONMENT_NOT_ALLOWED",
+			fmt.Sprintf("Image %s ngoài danh sách cho phép (SESSION_IMAGE_PREFIXES)", env.Image))
 	}
 	if env.Capabilities != nil {
 		for _, c := range *env.Capabilities {
