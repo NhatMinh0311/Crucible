@@ -85,7 +85,15 @@ tương thích.
   - Cần bổ sung: khai báo `environment.machines`; operator tạo các pod của một phiên theo nguyên tắc đủ cả hoặc không
     tạo, chạy setup theo thứ tự máy; NetworkPolicy và tên DNS theo phiên; sức chứa, hạn mức và đặt trước tính theo tổng
     chỗ của các máy; kho phiên dựng sẵn theo cấu hình máy; terminal nhiều tab.
-  - Không bao gồm bài tầng liên kết dữ liệu và định tuyến (VLAN, DHCP, định tuyến giữa mạng con).
+  - Không bao gồm bài tầng liên kết dữ liệu và router là máy riêng (VLAN, DHCP, định tuyến động).
+- [ ] **Định tuyến nhiều mạng con trong một môi trường (thử nghiệm S7).** `setup` dựng topo mô phỏng như
+  `client – r1 – r2 – server` bằng namespace mạng, `veth` và `bridge` bên trong một pod; học viên sửa tuyến tĩnh,
+  gateway, bật chuyển tiếp gói, lọc gói ở router.
+  - Giữ nguyên một pod cho mỗi phiên: sức chứa, kho phiên dựng sẵn, terminal và hợp đồng không đổi.
+  - Topo nằm trong user namespace con nên container không cần `SYS_ADMIN` và lệnh kiểm tra vẫn được bảo vệ (ADR-0011).
+  - Theo mã nguồn gVisor: tạo được `veth`, `bridge`, tuyến tĩnh, `ip_forward`; không có `ip rule` và nhiều bảng định
+    tuyến, không có `nftables`; bảng `nat` của `iptables` chưa chắc chắn.
+  - Cần bổ sung: image nền mạng (`iproute2`, `iptables`, `traceroute`, `tcpdump`), thư viện script dựng topo, bài mẫu.
 - [ ] **Bài lab Docker (R15).** Chạy Docker Engine trong môi trường học viên, phụ thuộc kết quả thử nghiệm S6.
 - [ ] **Bài lab có bước phụ thuộc (C12).** Bước sau chỉ mở khi bước trước đạt.
 - [ ] **Dạng bài viết script.** Học viên viết script, hệ thống chạy script để chấm trong điều kiện kiểm soát.

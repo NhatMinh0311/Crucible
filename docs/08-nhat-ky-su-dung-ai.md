@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -114,6 +114,7 @@ Quy định:
 | Số lần chọn khi chẩn đoán trắc nghiệm | Mặc định 1, giảng viên đổi được | Mặc định 3 như tự luận |
 | Chấm chẩn đoán nhiều lỗi | Điểm theo từng phương án, chọn sai bị trừ, không âm | Đúng cả tập mới đạt; mỗi lỗi một câu |
 | Bài tường lửa cần `NET_ADMIN` | Cấp theo bài lab khai báo, chỉ khi chạy gVisor (ADR-0016) | Không cấp, bỏ bài tường lửa; cấp cho mọi phiên |
+| Bài định tuyến | Mô phỏng nhiều mạng con trong một pod, phạm vi mở rộng, kiểm chứng bằng thử nghiệm S7 | Chỉ sửa tuyến trong một mạng con; router là pod riêng với mạng tầng 2 theo phiên |
 | Thứ tự chẩn đoán và sửa | Khóa kiểm tra các bước sửa tới khi đã nộp chẩn đoán | Không ràng buộc; chẩn đoán trước khi có terminal |
 | Kênh thông báo | Trong ứng dụng và email cho sự kiện quan trọng | Chỉ trong ứng dụng |
 | Thiết bị | Làm bài trên máy tính; trang khác dùng được trên điện thoại | Chỉ máy tính |
@@ -163,6 +164,7 @@ Quy định:
 | 17 | Hỏi các dạng bài hiện có; hỏi bài quản trị mạng và số pod mỗi phiên | Liệt kê hai dạng hiện có và ba dạng phổ biến chưa hỗ trợ trọn vẹn; phân tích ba mức bài mạng; hỏi đợt 10; thêm bước trả lời, hai bài mẫu, danh mục dạng bài, ADR-0015 | Chọn dạng điều tra và gia cố, để sau dạng viết script; chọn phương án cho 3 câu hỏi |
 | 18 | Hỏi thêm dạng bài sáng tạo ít thay đổi | Đề xuất 5 mẫu kịch bản dùng cơ chế sẵn có và 2 dạng cần thay đổi nhỏ; hỏi đợt 11 về chẩn đoán; thêm trắc nghiệm, biến `{{faults}}`, `answerFirst`, bước chẩn đoán trong bài mẫu | Chọn 6 dạng; chọn phương án cho 3 câu hỏi |
 | 19 | Hỏi khối lượng thay đổi khi cần nhiều máy cho một phiên; hỏi lại quy trình ra đề và chấm | Phân tích phần hạ tầng giữ nguyên và phần mã cần sửa; chỉ ra mâu thuẫn giữa bài tường lửa và quy định không thêm capability; mô tả đặc tả bài lab, kiểm thử khi xuất bản, chế độ phản hồi; thêm hướng phát triển vào README, ADR-0016 | Giữ một máy mỗi phiên cho MVP, đưa vào hướng phát triển; đồng ý cấp `NET_ADMIN` theo bài lab |
+| 20 | Hỏi độ phức tạp của bài thay đổi bảng định tuyến; yêu cầu tra cứu kỹ tài liệu gVisor | Phân tích ba mức (trong một mạng con, nhiều mạng con trong một pod, router là máy riêng); đọc bảng tương thích syscall và mã nguồn netstack của gVisor để xác định cơ chế hỗ trợ; đề xuất user namespace con để không cấp `SYS_ADMIN`; thêm thử nghiệm S7 | Loại mức router là máy riêng; chọn mức nhiều mạng con trong một pod làm hướng phát triển |
 
 ### 3.6. Các lần điều chỉnh hướng
 
@@ -193,3 +195,4 @@ Quy định:
 | 1.1 | 17/10/2026 | Vòng 15, 16: sức chứa, hạn mức theo giảng viên, giám sát tài nguyên |
 | 1.2 | 18/10/2026 | Vòng 17: dạng bài, bài mạng nhiều máy; vòng 18: mẫu kịch bản, chẩn đoán |
 | 1.3 | 18/10/2026 | Vòng 19: hướng phát triển, capability `NET_ADMIN` |
+| 1.4 | 18/10/2026 | Vòng 20: bài định tuyến, thử nghiệm S7 |

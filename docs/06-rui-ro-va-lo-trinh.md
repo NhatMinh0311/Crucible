@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-06 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 đến CR-DOC-05, CR-DOC-07 Quy trình phát triển |
 
@@ -25,6 +25,7 @@ chứng, lộ trình theo mốc, phân công và tiêu chí hoàn thành của t
 | RK7 | Thời gian học công nghệ mới (Go, controller-runtime, Kubernetes) của người phụ trách M1 | Trung bình | Trung bình | Thử nghiệm sớm S1–S3 do chính người phụ trách thực hiện | Giảm phạm vi M1 về chức năng MVP, chuyển `WarmPool` theo lịch sang cấu hình tĩnh |
 | RK8 | Mã do công cụ AI sinh ra sai nghiệp vụ mà không bị phát hiện | Cao | Cao | Tiêu chí chấp nhận có mã và được kiểm thử; review bắt buộc; kiểm thử hợp đồng trong CI | |
 | RK9 | Chạy Docker bên trong môi trường học viên không khả thi trong gVisor | Trung bình | Thấp | Đưa bài lab Docker ra ngoài MVP; thử nghiệm S6 khi còn thời gian | Không hỗ trợ bài lab Docker |
+| RK10 | gVisor không cho tạo namespace mạng, `veth` trong user namespace con, hoặc cần `SYS_ADMIN` cho container | Trung bình | Thấp | Bài định tuyến nhiều mạng con là phạm vi mở rộng; thử nghiệm S7 | Không cấp `SYS_ADMIN`; giữ bài mạng trong một mạng con |
 
 ## 3. Thử nghiệm sớm
 
@@ -40,8 +41,9 @@ theo quy trình bình thường.
 | S4 | Image nền và bốn bài mẫu chạy đúng trong gVisor; các cơ chế mẫu kịch bản cần: `cron`, tiến trình nền tách khỏi phiên, `/proc/<PID>/fd`, `netstat -ltnp` hiện PID; với `NET_ADMIN` (ADR-0016): `iptables`, `nftables`, `ip addr`, `ip route` | 3 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công; ghi rõ cơ chế nào không dùng được |
 | S5 | Toàn bộ thành phần nền tảng vừa bộ nhớ của `cr-server` | 1 ngày | Số đo bộ nhớ thực tế của từng thành phần sau khi cài |
 | S6 | Docker Engine chạy bên trong pod gVisor | 1 ngày | Kết luận khả thi hay không |
+| S7 | Mô phỏng nhiều mạng con và router trong một pod gVisor: không cấp `SYS_ADMIN`, `setup` tạo user namespace con chứa các namespace mạng có tên, nối bằng `veth` và `bridge`; tuyến tĩnh, `ip_forward` riêng từng namespace; bảng `filter`, `nat` của `iptables` trong namespace router; học viên và lệnh kiểm tra vào topo bằng `nsenter` | 1 ngày | Topo `client – r1 – r2 – server` thông khi tuyến đúng, không thông khi tuyến sai; `/opt/crucible/bin` không bị gắn đè từ trong topo; I1–I12 vẫn đạt; ghi rõ lệnh nào không dùng được |
 
-S1–S5 do người phụ trách M1 thực hiện trong tuần 1–2, song song với việc hai module còn lại bắt đầu trên mock.
+S6, S7 thực hiện khi còn thời gian sau mốc MC. S1–S5 do người phụ trách M1 thực hiện trong tuần 1–2, song song với việc hai module còn lại bắt đầu trên mock.
 
 ## 4. Lộ trình
 
@@ -103,3 +105,4 @@ Một chức năng được coi là hoàn thành khi:
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 18/10/2026 | Thử nghiệm S4 kiểm chứng thêm cơ chế của mẫu kịch bản |
 | 1.2 | 18/10/2026 | S4 kiểm chứng lệnh mạng với `NET_ADMIN`; phương án dự phòng RK1 không cấp `NET_ADMIN` |
+| 1.3 | 18/10/2026 | Thử nghiệm S7, rủi ro RK10: định tuyến nhiều mạng con trong một pod |
