@@ -370,7 +370,10 @@ components:
         reservationRef:
           $ref: '#/components/schemas/Ref'
         deadline:
-          description: Thời điểm nộp tự động do M3 quản lý; M2 dùng để đặt thời hạn phiên không vượt quá.
+          description: >-
+            Giờ kết thúc chung của kỳ thi hoặc hạn nộp, do M3 quản lý. Ngữ cảnh `EXAM`: thời hạn phiên = `deadline` + 45 phút
+            (`ttlMinutes` tại runtime-api); M3 nộp bài khi hết giờ của sinh viên đã tính bù giờ và cộng giờ. Ngữ cảnh khác:
+            thời hạn phiên không vượt quá `deadline`.
           type: string
           format: date-time
         hintsEnabled:

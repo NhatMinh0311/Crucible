@@ -681,9 +681,13 @@ components:
         profile:
           $ref: '#/components/schemas/Profile'
         ttlMinutes:
+          description: >-
+            Thời hạn phiên. Phiên `PRACTICE`, `LAB_CI` dùng giá trị của đặc tả bài lab (tối đa 180). Phiên `EXAM` được M2
+            đặt bằng số phút tới `deadline` của lượt thi cộng 45, đủ chứa bù giờ tự động (tối đa 15 phút) và cộng giờ của
+            giảng viên (tối đa 30 phút); lượt thi kết thúc khi M3 nộp bài, thời hạn phiên chỉ là giới hạn an toàn.
           type: integer
           minimum: 10
-          maximum: 180
+          maximum: 240
         idleMinutes:
           type: integer
           minimum: 5
