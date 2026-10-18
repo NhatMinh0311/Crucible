@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.5 |
+| Phiên bản | 1.6 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
@@ -156,7 +156,7 @@ Mã chức năng có tiền tố theo module. Chức năng đánh dấu (MR) thu
 | L01 | Lớp học: tạo lớp; nhập danh sách sinh viên từ tệp CSV (mã số sinh viên, họ tên, email trường); sinh viên đăng nhập lần đầu bằng email trùng được gắn vào lớp; thêm giảng viên phụ trách và trợ giảng |
 | L02 | Lộ trình: chuỗi bài lab luyện tập có điều kiện tiên quyết; bài sau mở khi bài trước đạt ngưỡng điểm; không giới hạn số lượt; không tính vào điểm học phần, giảng viên theo dõi tiến độ của lớp |
 | L03 | Bài tập: giao bài lab cho lớp, có thời hạn và số lượt làm tối đa; điểm bài tập là điểm của lượt cao nhất; chính sách quá hạn do giảng viên chọn: không nhận (mặc định) hoặc nhận muộn trong hạn muộn tối đa với tỉ lệ trừ điểm mỗi ngày; gia hạn riêng cho từng sinh viên kèm lý do; khi giao hoặc đổi hạn nộp, hệ thống ước tính tải cao nhất gần hạn nộp và cảnh báo nếu vượt sức chứa (không chặn) |
-| L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên (thời lượng tối đa 180 phút), hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
+| L04 | Kỳ thi: một bài lab (cố định phiên bản khi lên lịch), giờ bắt đầu, giờ kết thúc chung cho mọi sinh viên (thời lượng không vượt tham số `exam.maxDurationMinutes`), hạn chót được vào thi, chế độ phản hồi khi kiểm tra, bật hoặc tắt gợi ý, bắt đầu đồng loạt, tự nộp khi hết giờ. Kỳ thi nhiều bài lab thuộc phạm vi mở rộng |
 | L05 | Đặt trước tài nguyên tự động khi lên lịch kỳ thi |
 | L06 | Bù giờ tự động khi phiên thi bị gián đoạn do sự cố hạ tầng; giảng viên phụ trách cộng giờ cho từng sinh viên trong lúc thi, trợ giảng đề xuất; mỗi loại có giới hạn riêng, ghi nhật ký |
 | L07 | Giám sát kỳ thi: trạng thái từng học viên, xem trực tiếp terminal, cảnh báo phiên dùng CPU bất thường |
@@ -203,6 +203,45 @@ Các mẫu kịch bản dưới đây dùng cơ chế sẵn có, được khuy�
 | P01 | Đăng nhập qua Keycloak; liên kết nhà cung cấp định danh của trường (ví dụ Microsoft Entra ID của tài khoản email trường) khi đơn vị cấu hình, tài khoản cục bộ khi không có; vai trò `STUDENT`, `INSTRUCTOR`, `ADMIN` | Nền tảng (trưởng nhóm) |
 | P02 | Khung giao diện chung: điều hướng, đăng nhập, thông báo | Nền tảng |
 | P03 | Phát hành phiên bản: image, Helm chart tổng, ghi chú phát hành; hướng dẫn cài đặt và nâng cấp cho người vận hành | Nền tảng |
+| P04 | Tham số hệ thống: quản trị viên xem, sửa và xem lịch sử các tham số nghiệp vụ (mục 5.6) trên một màn hình, không cần khởi động lại dịch vụ | Mỗi module giữ tham số của mình; giao diện chung: nền tảng |
+
+### 5.6. Tham số hệ thống
+
+Các tham số dưới đây do quản trị viên chỉnh qua chức năng P04 để phù hợp với điều kiện của từng đơn vị; một giá trị áp
+dụng cho toàn bản cài đặt. Tham số kỹ thuật và bảo mật (kết nối, thời hạn vé terminal, capability được cấp, giới hạn
+tiến trình của node) thuộc cấu hình triển khai, không có trên giao diện.
+
+| Khóa | Ý nghĩa | Mặc định | Khoảng hợp lệ | Module | Liên quan |
+|---|---|---|---|---|---|
+| `queue.timeoutMinutes` | Thời gian chờ cấp tối đa của phiên (phút) | 10 | 1–60 | M1 | AC-R2.3 |
+| `reservation.maxCapacityRatio` | Tỉ lệ sức chứa tối đa dành cho đặt trước | 0,8 | 0,5–0,95 | M1 | AC-L2.1 |
+| `reservation.leadMinutes` | Thời gian giữ chỗ và nâng nhóm ấm trước giờ thi (phút) | 15 | 5–60 | M1 | AC-R2.2 |
+| `quota.defaultWeeklyMinutes` | Trần giờ máy mỗi tuần của giảng viên mới (phút) | 6000 | 0–100000 | M1 | AC-R2.8 |
+| `quota.defaultMaxConcurrentSessions` | Trần phiên đồng thời của giảng viên mới | 60 | 1–500 | M1 | AC-R2.8 |
+| `quota.defaultReservationSlotHours` | Ngân sách chỗ × giờ đặt trước mỗi tháng của giảng viên mới | 300 | 0–100000 | M1 | AC-R2.7 |
+| `cpuAbuse.ratio` | Ngưỡng dùng CPU bất thường so với giới hạn CPU | 0,9 | 0,5–1,0 | M1 | AC-R5.1 |
+| `cpuAbuse.windowMinutes` | Cửa sổ tính trung bình để phát hiện (phút) | 10 | 5–60 | M1 | AC-R5.1 |
+| `cpuAbuse.graceMinutes` | Thời gian từ cảnh báo tới khi kết thúc phiên luyện tập (phút) | 5 | 1–30 | M1 | AC-R5.1 |
+| `grading.backgroundIntervalMinutes` | Chu kỳ chấm ngầm lượt thi (phút) | 2 | 1–10 | M2 | C15 |
+| `publish.memoryWarningRatio` | Ngưỡng cảnh báo bộ nhớ cao nhất so với giới hạn khi kiểm thử xuất bản | 0,8 | 0,5–0,95 | M2 | AC-C1.8 |
+| `answer.defaultMaxTries` | Số lần trả lời mặc định của bước tự luận | 3 | 1–10 | M2 | AC-C2.10 |
+| `choice.defaultMaxTries` | Số lần chọn mặc định của bước trắc nghiệm | 1 | 1–10 | M2 | AC-C2.10 |
+| `exam.maxDurationMinutes` | Thời lượng tối đa của kỳ thi (phút) | 180 | 30–300 | M3 | L04 |
+| `exam.autoCompensationMaxMinutes` | Trần bù giờ tự động mỗi sinh viên mỗi kỳ thi (phút) | 15 | 0–60 | M3 | AC-L2.4 |
+| `exam.extraTimeMaxMinutes` | Trần cộng giờ của giảng viên mỗi sinh viên mỗi kỳ thi (phút) | 30 | 0–120 | M3 | AC-L2.12 |
+| `exam.waitingRoomMinutes` | Thời gian mở phòng chờ trước giờ thi (phút) | 15 | 5–60 | M3 | L16 |
+| `regrade.defaultWindowDays` | Thời hạn phúc khảo mặc định sau khi công bố (ngày) | 7 | 1–30 | M3 | L11 |
+
+Thời điểm có hiệu lực:
+
+| Tham số | Có hiệu lực |
+|---|---|
+| `exam.*` | Chốt vào kỳ thi khi lên lịch; kỳ thi đã lên lịch giữ giá trị đã chốt kể cả khi đổi giờ |
+| `regrade.defaultWindowDays` | Điền làm giá trị mặc định khi lên lịch kỳ thi; giảng viên đổi được cho từng kỳ thi |
+| `quota.default*` | Khi tạo tài khoản hạn mức mới của giảng viên |
+| `answer.defaultMaxTries`, `choice.defaultMaxTries` | Khi xuất bản phiên bản bài lab không khai báo `maxTries`; phiên bản đã xuất bản không đổi |
+| `reservation.maxCapacityRatio` | Với đặt trước mới; đặt trước đã tạo được giữ |
+| Tham số còn lại | Với thao tác mới trong vòng 60 giây sau khi sửa |
 
 ## 6. Ngoài phạm vi
 
@@ -216,7 +255,8 @@ Các mẫu kịch bản dưới đây dùng cơ chế sẵn có, được khuy�
 
 ## 7. User story và tiêu chí chấp nhận
 
-Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết từ kiểm thử.
+Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết từ kiểm thử. Con số trong tiêu chí chấp nhận ứng với một tham số
+tại mục 5.6 là giá trị mặc định của tham số đó; kiểm thử dùng giá trị mặc định trừ khi kiểm thử chính tham số.
 
 ### 7.1. M1
 
@@ -312,6 +352,17 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-L3.3: Điều chỉnh điểm khi phúc khảo lưu điểm cũ, điểm mới, người điều chỉnh và lý do.
 - AC-L3.5: Yêu cầu phúc khảo gửi sau thời hạn hoặc gửi lần thứ hai cho cùng một bài bị từ chối (409 `REGRADE_NOT_ALLOWED`).
 
+### 7.4. Chức năng dùng chung
+
+**US-P1 (P04)** — Là quản trị viên, tôi muốn chỉnh các tham số nghiệp vụ cho phù hợp với đơn vị mà không cần sửa cấu
+hình triển khai.
+- AC-P1.1: Chỉ vai trò `ADMIN` xem và sửa được tham số hệ thống; người dùng khác nhận 403 `FORBIDDEN`.
+- AC-P1.2: Giá trị ngoài khoảng hợp lệ bị từ chối (422 `SETTING_OUT_OF_RANGE`); khóa không tồn tại trả 404.
+- AC-P1.3: Mỗi lần sửa được ghi lịch sử gồm người sửa, giá trị cũ, giá trị mới, thời điểm; quản trị viên xem được lịch sử
+  của từng tham số.
+- AC-P1.4: Giá trị mới có hiệu lực theo bảng tại mục 5.6 mà không khởi động lại dịch vụ; kỳ thi đã lên lịch giữ giá trị
+  `exam.*` đã chốt.
+
 ## 8. Yêu cầu chất lượng
 
 Yêu cầu chất lượng được viết dưới dạng kịch bản có số đo. Mỗi kịch bản là căn cứ cho một quyết định kiến trúc
@@ -345,3 +396,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 | 1.3 | 18/10/2026 | Capability `NET_ADMIN` cho bài lab mạng (mục 5.4, AC-C1.9) |
 | 1.4 | 18/10/2026 | Dạng bài định tuyến nhiều mạng con trong một môi trường (mục 5.4), thu hẹp mục ngoài phạm vi |
 | 1.5 | 18/10/2026 | Thời lượng kỳ thi tối đa (L04); cộng giờ của giảng viên (L06, AC-L2.12); tiếp tục phiên thi bị dừng do môi trường (AC-C2.7, AC-L2.11) |
+| 1.6 | 18/10/2026 | Tham số hệ thống (P04, mục 5.6, US-P1) |

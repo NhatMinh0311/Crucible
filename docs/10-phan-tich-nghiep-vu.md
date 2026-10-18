@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-10 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 (chức năng, tiêu chí chấp nhận), CR-DOC-02 (vòng đời đối tượng, luồng kỹ thuật) |
 
@@ -71,8 +71,9 @@ flowchart LR
         UC19((UC19 Tài khoản,<br/>hạn mức))
         UC20((UC20 Giám sát cụm,<br/>phiên))
         UC21((UC21 Nộp tự động, chấm ngầm,<br/>thu hồi phiên, nâng nhóm ấm))
+        UC22((UC22 Tham số<br/>hệ thống))
     end
-    QT --- UC19 & UC20
+    QT --- UC19 & UC20 & UC22
     HT --- UC21
 ```
 
@@ -98,7 +99,8 @@ flowchart LR
 | UC18 | Công bố điểm kỳ thi, xem và xuất bảng điểm | Giảng viên | L10, L14 | M3 |
 | UC19 | Quản lý tài khoản, vai trò, trần hạn mức của giảng viên | Quản trị | R05, P01 | Nền tảng, M1 |
 | UC20 | Giám sát sức chứa, hàng đợi, phiên, lần phát hiện dùng CPU bất thường; kết thúc phiên | Quản trị | R13, R16 | M1 |
-| UC21 | Nộp tự động khi hết giờ, chấm ngầm mỗi 2 phút, thu hồi phiên hết hạn hoặc không hoạt động, nâng nhóm ấm trước kỳ thi | Hệ thống | R03, R07, C15, L04 | M1, M2, M3 |
+| UC21 | Nộp tự động khi hết giờ, chấm ngầm định kỳ, thu hồi phiên hết hạn hoặc không hoạt động, nâng nhóm ấm trước kỳ thi | Hệ thống | R03, R07, C15, L04 | M1, M2, M3 |
+| UC22 | Xem, sửa tham số hệ thống và lịch sử sửa | Quản trị | P04 | Nền tảng, M1, M2, M3 |
 
 ## 3. Đặc tả use case chính
 
@@ -309,6 +311,23 @@ Tỉ lệ 0,5 và độ dài 3 giờ là tham số cấu hình của M3.
 | 2a | Số phiên ước tính vượt số chỗ còn trống hoặc vượt giới hạn của lớp | Cảnh báo kèm số liệu và gợi ý (dời hạn nộp sang khung giờ ít bài tập khác, mở bài sớm hơn, nâng hạn mức của lớp); giảng viên xác nhận để lưu hoặc sửa (AC-L1.6) |
 | 2b | Đổi hạn nộp của bài tập đã giao | Ước tính lại như bước 2 |
 
+
+### 3.10. UC22 — Tham số hệ thống
+
+Luồng chính:
+1. Quản trị viên mở màn hình tham số hệ thống; hệ thống hiển thị tham số của ba module theo nhóm, kèm giá trị, mặc định,
+   khoảng hợp lệ, phạm vi hiệu lực và lần sửa gần nhất.
+2. Quản trị viên sửa một hoặc nhiều giá trị, bấm lưu và xác nhận danh sách thay đổi.
+3. Hệ thống ghi giá trị mới và lịch sử sửa; giá trị có hiệu lực theo CR-DOC-01 mục 5.6.
+
+| Mã | Điều kiện | Xử lý |
+|---|---|---|
+| 2a | Giá trị ngoài khoảng hợp lệ | Từ chối, hiển thị khoảng hợp lệ (AC-P1.2) |
+| 3a | Một module không lưu được | Báo tham số chưa lưu; các tham số đã lưu ở module khác giữ nguyên |
+
+| Mục | Nội dung |
+|---|---|
+| Tiêu chí liên quan | AC-P1.1–AC-P1.4 |
 ## 4. Biểu đồ hoạt động
 
 ### 4.1. Học theo lộ trình và làm bài tập
@@ -508,3 +527,4 @@ Liên kết giữa các module (mũi tên đi qua ranh giới namespace) chỉ l
 | 1.1 | 17/10/2026 | UC03 3d, UC09 5b và 6b, UC11 5a, UC13 (mục 3.9), UC14 2a và 2b; tài khoản hạn mức phân cấp trong mô hình miền |
 | 1.2 | 18/10/2026 | Bước trả lời trong UC03 và soạn bài lab; UC03 4c |
 | 1.3 | 18/10/2026 | UC05 3b, 3c; UC15 cộng giờ, 3a, 3b |
+| 1.4 | 18/10/2026 | UC22 Tham số hệ thống (mục 3.10) |

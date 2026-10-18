@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-11 |
-| Phiên bản | 1.3 |
+| Phiên bản | 1.4 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01, CR-DOC-10 (use case), CR-DOC-03 mục 6 (giao thức terminal), AGENTS.md mục 4 |
 
@@ -67,6 +67,7 @@ flowchart LR
 
     home -->|Quản trị| a1[SCR-40 Sức chứa, hàng đợi, phiên]
     a1 --> a2[SCR-41 Tài khoản, hạn mức]
+    a1 --> a3[SCR-42 Tham số hệ thống]
 
     home --> n1[SCR-02 Thông báo]
 ```
@@ -95,6 +96,7 @@ flowchart LR
 | SCR-30 | Bảng điểm, xuất CSV, công bố điểm, xử lý phúc khảo | Giảng viên (trợ giảng xem, góp ý) | M3 | UC17, UC18 |
 | SCR-40 | Sức chứa theo node, nhóm ấm, hàng đợi, đặt trước, phiên đang chạy, lần phát hiện dùng CPU bất thường | Quản trị | M1 | UC20 |
 | SCR-41 | Tài khoản, vai trò, trần hạn mức của từng giảng viên (giờ máy, phiên đồng thời, chỗ × giờ đặt trước) và mức đã dùng; lịch sử phát hiện dùng CPU bất thường của người dùng | Quản trị | Nền tảng, M1 | UC19 |
+| SCR-42 | Tham số hệ thống theo nhóm: giá trị, mặc định, khoảng hợp lệ, phạm vi hiệu lực, lịch sử sửa | Quản trị | Nền tảng (gọi API của M1, M2, M3) | UC22 |
 
 ## 7. Bố cục các màn hình chính
 
@@ -225,6 +227,28 @@ Trên điện thoại, bảng chuyển thành danh sách thẻ; xem trực tiế
 Số chỗ cần bằng số sinh viên của lớp. Khung giờ gợi ý có cùng thời lượng, bắt đầu từ giờ giảng viên nhập trở đi.
 Màn hình hiển thị thêm ngân sách chỗ × giờ đặt trước còn lại trong tháng của giảng viên (ví dụ "đã dùng 135/300").
 
+### 7.6. SCR-42 Tham số hệ thống
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────────────────┐
+│ Tham số hệ thống                                                                          │
+├──────────────────────────────────────────────────────────────────────────────────────────┤
+│ [Kỳ thi] [Phiên và đặt trước] [Dùng CPU bất thường] [Hạn mức mặc định] [Soạn bài, chấm]   │
+│                                                                                          │
+│ Tham số                         Giá trị    Mặc định  Khoảng     Sửa gần nhất              │
+│ Trần cộng giờ của giảng viên    [ 45 ] ph  30        0–120      admin1, 18/10 09:12  [⟲]  │
+│ Trần bù giờ tự động             [ 15 ] ph  15        0–60       —                    [⟲]  │
+│ Thời lượng tối đa của kỳ thi    [180 ] ph  180       30–300     —                    [⟲]  │
+│ ⓘ Áp dụng cho kỳ thi lên lịch từ khi lưu; kỳ thi đã lên lịch giữ giá trị cũ.              │
+│                                                              [Hủy]  [Lưu thay đổi (1)]   │
+└──────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+Mỗi nhóm hiển thị câu ghi phạm vi hiệu lực theo CR-DOC-01 mục 5.6. Ô giá trị kiểm tra khoảng hợp lệ ngay khi nhập; giá
+trị khác mặc định được đánh dấu. "Lưu thay đổi" mở hộp xác nhận liệt kê từng tham số với giá trị cũ và mới. Nút ⟲ mở lịch
+sử sửa của tham số. Khi API của một module không phản hồi, nhóm tham số của module đó báo lỗi và chỉ đọc; các nhóm khác
+vẫn dùng được.
+
 ## 8. Trạng thái và thông báo
 
 ### 8.1. Trạng thái lượt làm bài trên giao diện
@@ -275,3 +299,4 @@ outbox (CR-DOC-01 L15).
 | 1.1 | 17/10/2026 | Bố cục SCR-26 khi thiếu sức chứa; cảnh báo CPU trên SCR-12, SCR-27; SCR-21, SCR-22, SCR-25, SCR-40, SCR-41 |
 | 1.2 | 18/10/2026 | Ô trả lời trên SCR-12, chọn loại bước trên SCR-24; bước chẩn đoán trên SCR-12 |
 | 1.3 | 18/10/2026 | Cộng giờ trên SCR-27; thông báo cộng giờ; trạng thái `SUSPENDED` của kỳ thi |
+| 1.4 | 18/10/2026 | SCR-42 Tham số hệ thống |
