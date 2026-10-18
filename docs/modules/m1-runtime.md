@@ -3,12 +3,13 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.3 |
+| Phiên bản | 0.4 |
 | Ngày ban hành | 18/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
 
-Phiên bản 0.1 là thiết kế trước thử nghiệm S1–S3. Các mục phụ thuộc kết quả thử nghiệm được đánh dấu (S1), (S2), (S3).
+Phiên bản 0.1 là thiết kế trước thử nghiệm S1–S3; phiên bản 0.4 cập nhật theo kết quả S1 (`docs/spikes/S1.md`). Các mục
+còn phụ thuộc kết quả thử nghiệm được đánh dấu (S2), (S3).
 
 ## 1. Phạm vi và trách nhiệm
 
@@ -150,7 +151,9 @@ sequenceDiagram
 ```
 
 Pod phiên: PID 1 là `tini` chạy `sleep infinity`; terminal và lệnh kiểm tra đều đi qua exec. Volume `/opt/crucible/bin`
-là image công cụ gắn dạng chỉ đọc (S1 xác nhận cách gắn tương thích gVisor).
+là image volume chứa bộ công cụ, gắn chỉ đọc; gVisor không cho ghi, gắn lại ở chế độ ghi hay gắn đè lên thư mục này.
+Pod phiên và pod ấm dùng `restartPolicy: Never`: vượt giới hạn bộ nhớ hoặc số tiến trình làm dừng cả sandbox, và nếu
+được khởi động lại, container sẽ thành một môi trường mới trống trong khi phiên vẫn tiếp tục (BR-M1.17).
 
 ### 5.4. Đồng bộ trạng thái với CSDL và sự kiện
 
@@ -352,3 +355,4 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | 0.1 | 17/10/2026 | Bản thiết kế trước thử nghiệm S1–S3 |
 | 0.2 | 17/10/2026 | Gợi ý khung giờ còn đủ chỗ; đo tài nguyên phiên (mục 5.5); BR-M1.17–BR-M1.25: hết bộ nhớ, trần hạn mức theo giảng viên, ngân sách đặt trước, phát hiện dùng CPU bất thường |
 | 0.3 | 18/10/2026 | BR-M1.26: capability `NET_ADMIN` theo bài lab, pod ấm khớp theo tập capability |
+| 0.4 | 18/10/2026 | Cập nhật theo thử nghiệm S1: `restartPolicy: Never`, bộ công cụ gắn bằng image volume |
