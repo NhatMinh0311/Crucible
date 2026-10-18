@@ -19,6 +19,8 @@ tags:
     description: Thông tin bài lab cho module khác hiển thị
   - name: attempts
     description: Lượt làm bài
+  - name: settings
+    description: Tham số hệ thống do quản trị viên chỉnh
 
 paths:
   /v1/labs:
@@ -249,6 +251,99 @@ paths:
         '422':
           $ref: '#/components/responses/Problem'
 
+  /v1/settings:
+    get:
+      tags: [settings]
+      operationId: listSettings
+      summary: Danh sách tham số hệ thống của module
+      description: Chỉ vai trò `ADMIN`. Quy ước chung về tham số hệ thống tại CR-DOC-03 mục 3.6.
+      responses:
+        '200':
+          description: Tham số của module
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Setting'
+        '403':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings/{key}:
+    parameters:
+      - $ref: '#/components/parameters/SettingKeyPath'
+    put:
+      tags: [settings]
+      operationId: updateSetting
+      summary: Sửa giá trị tham số
+      description: >-
+        Chỉ vai trò `ADMIN`. Giá trị ngoài khoảng [`minimum`, `maximum`] bị từ chối với 422 `SETTING_OUT_OF_RANGE`.
+        Giá trị mới áp dụng cho thao tác mới trong vòng 60 giây, không cần khởi động lại dịch vụ; đối tượng đã tạo
+        trước đó không đổi theo (CR-DOC-03 mục 3.6).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingUpdate'
+      responses:
+        '200':
+          description: Tham số sau khi sửa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings/{key}/history:
+    parameters:
+      - $ref: '#/components/parameters/SettingKeyPath'
+    get:
+      tags: [settings]
+      operationId: listSettingChanges
+      summary: Lịch sử thay đổi của một tham số
+      description: Chỉ vai trò `ADMIN`. Mới nhất trước.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Các lần thay đổi
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SettingChange'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+
 components:
   securitySchemes:
     oidc:
@@ -277,6 +372,13 @@ components:
       schema:
         type: string
         format: uuid
+
+    SettingKeyPath:
+      name: key
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/SettingKey'
 
   responses:
     Problem:
@@ -371,9 +473,15 @@ components:
           $ref: '#/components/schemas/Ref'
         deadline:
           description: >-
-            Giờ kết thúc chung của kỳ thi hoặc hạn nộp, do M3 quản lý. Ngữ cảnh `EXAM`: thời hạn phiên = `deadline` + 45 phút
-            (`ttlMinutes` tại runtime-api); M3 nộp bài khi hết giờ của sinh viên đã tính bù giờ và cộng giờ. Ngữ cảnh khác:
-            thời hạn phiên không vượt quá `deadline`.
+            Giờ kết thúc chung của kỳ thi hoặc hạn nộp, do M3 quản lý. Ngữ cảnh khác `EXAM`: thời hạn phiên không vượt quá
+            `deadline`.
+          type: string
+          format: date-time
+        sessionUntil:
+          description: >-
+            Chỉ với ngữ cảnh `EXAM` và bắt buộc khi đó. Thời điểm muộn nhất lượt thi có thể kéo dài: giờ kết thúc chung
+            cộng trần bù giờ tự động và trần cộng giờ đã chốt khi lên lịch kỳ thi. M2 đặt thời hạn phiên tới thời điểm này
+            (`ttlMinutes` tại runtime-api); M3 nộp bài khi hết giờ của từng sinh viên.
           type: string
           format: date-time
         hintsEnabled:
@@ -477,3 +585,60 @@ components:
           type: string
         traceId:
           type: string
+
+    SettingKey:
+      description: Khóa tham số hệ thống của module; ý nghĩa, mặc định và khoảng hợp lệ tại CR-DOC-01 mục 5.6.
+      type: string
+      enum: [grading.backgroundIntervalMinutes, publish.memoryWarningRatio, answer.defaultMaxTries, choice.defaultMaxTries]
+
+    Setting:
+      type: object
+      required: [key, value, defaultValue, minimum, maximum, unit, description, updatedAt]
+      properties:
+        key:
+          $ref: '#/components/schemas/SettingKey'
+        value:
+          type: number
+        defaultValue:
+          type: number
+        minimum:
+          type: number
+        maximum:
+          type: number
+        unit:
+          type: string
+          enum: [MINUTES, DAYS, RATIO, COUNT, SLOT_HOURS]
+        description:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          description: Người sửa gần nhất; không có khi tham số chưa từng được sửa.
+          type: string
+          format: uuid
+
+    SettingUpdate:
+      type: object
+      additionalProperties: false
+      required: [value]
+      properties:
+        value:
+          type: number
+
+    SettingChange:
+      type: object
+      required: [key, oldValue, newValue, changedAt, changedBy]
+      properties:
+        key:
+          $ref: '#/components/schemas/SettingKey'
+        oldValue:
+          type: number
+        newValue:
+          type: number
+        changedAt:
+          type: string
+          format: date-time
+        changedBy:
+          type: string
+          format: uuid

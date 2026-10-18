@@ -26,6 +26,8 @@ tags:
     description: Hạn mức giờ máy
   - name: capacity
     description: Sức chứa của cụm
+  - name: settings
+    description: Tham số hệ thống do quản trị viên chỉnh
 
 paths:
   /v1/sessions:
@@ -593,6 +595,99 @@ paths:
         '422':
           $ref: '#/components/responses/Problem'
 
+  /v1/settings:
+    get:
+      tags: [settings]
+      operationId: listSettings
+      summary: Danh sách tham số hệ thống của module
+      description: Chỉ vai trò `ADMIN`. Quy ước chung về tham số hệ thống tại CR-DOC-03 mục 3.6.
+      responses:
+        '200':
+          description: Tham số của module
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Setting'
+        '403':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings/{key}:
+    parameters:
+      - $ref: '#/components/parameters/SettingKeyPath'
+    put:
+      tags: [settings]
+      operationId: updateSetting
+      summary: Sửa giá trị tham số
+      description: >-
+        Chỉ vai trò `ADMIN`. Giá trị ngoài khoảng [`minimum`, `maximum`] bị từ chối với 422 `SETTING_OUT_OF_RANGE`.
+        Giá trị mới áp dụng cho thao tác mới trong vòng 60 giây, không cần khởi động lại dịch vụ; đối tượng đã tạo
+        trước đó không đổi theo (CR-DOC-03 mục 3.6).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingUpdate'
+      responses:
+        '200':
+          description: Tham số sau khi sửa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings/{key}/history:
+    parameters:
+      - $ref: '#/components/parameters/SettingKeyPath'
+    get:
+      tags: [settings]
+      operationId: listSettingChanges
+      summary: Lịch sử thay đổi của một tham số
+      description: Chỉ vai trò `ADMIN`. Mới nhất trước.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Các lần thay đổi
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SettingChange'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+
 components:
   securitySchemes:
     oidc:
@@ -621,6 +716,13 @@ components:
       schema:
         type: string
         format: uuid
+
+    SettingKeyPath:
+      name: key
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/SettingKey'
 
   responses:
     Problem:
@@ -683,11 +785,11 @@ components:
         ttlMinutes:
           description: >-
             Thời hạn phiên. Phiên `PRACTICE`, `LAB_CI` dùng giá trị của đặc tả bài lab (tối đa 180). Phiên `EXAM` được M2
-            đặt bằng số phút tới `deadline` của lượt thi cộng 45, đủ chứa bù giờ tự động (tối đa 15 phút) và cộng giờ của
-            giảng viên (tối đa 30 phút); lượt thi kết thúc khi M3 nộp bài, thời hạn phiên chỉ là giới hạn an toàn.
+            đặt bằng số phút tới `sessionUntil` của lượt thi; lượt thi kết thúc khi M3 nộp bài, thời hạn phiên chỉ là giới
+            hạn an toàn.
           type: integer
           minimum: 10
-          maximum: 240
+          maximum: 480
         idleMinutes:
           type: integer
           minimum: 5
@@ -1014,3 +1116,60 @@ components:
         availableSlots:
           description: Số chỗ còn có thể đặt trước trong khung giờ yêu cầu (đã trừ đặt trước khác và phần dành cho luyện tập).
           type: integer
+
+    SettingKey:
+      description: Khóa tham số hệ thống của module; ý nghĩa, mặc định và khoảng hợp lệ tại CR-DOC-01 mục 5.6.
+      type: string
+      enum: [queue.timeoutMinutes, reservation.maxCapacityRatio, reservation.leadMinutes, quota.defaultWeeklyMinutes, quota.defaultMaxConcurrentSessions, quota.defaultReservationSlotHours, cpuAbuse.ratio, cpuAbuse.windowMinutes, cpuAbuse.graceMinutes]
+
+    Setting:
+      type: object
+      required: [key, value, defaultValue, minimum, maximum, unit, description, updatedAt]
+      properties:
+        key:
+          $ref: '#/components/schemas/SettingKey'
+        value:
+          type: number
+        defaultValue:
+          type: number
+        minimum:
+          type: number
+        maximum:
+          type: number
+        unit:
+          type: string
+          enum: [MINUTES, DAYS, RATIO, COUNT, SLOT_HOURS]
+        description:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          description: Người sửa gần nhất; không có khi tham số chưa từng được sửa.
+          type: string
+          format: uuid
+
+    SettingUpdate:
+      type: object
+      additionalProperties: false
+      required: [value]
+      properties:
+        value:
+          type: number
+
+    SettingChange:
+      type: object
+      required: [key, oldValue, newValue, changedAt, changedBy]
+      properties:
+        key:
+          $ref: '#/components/schemas/SettingKey'
+        oldValue:
+          type: number
+        newValue:
+          type: number
+        changedAt:
+          type: string
+          format: date-time
+        changedBy:
+          type: string
+          format: uuid
