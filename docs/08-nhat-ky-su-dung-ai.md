@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.4 |
+| Phiên bản | 1.5 |
 | Ngày ban hành | 18/10/2026 |
 
 ## 1. Mục đích
@@ -187,6 +187,42 @@ Quy định:
 | Phát hiện thiếu sót, điều chỉnh hướng | 60% | 40% |
 | **Tổng thể giai đoạn** | **khoảng 30%** | **khoảng 70%** |
 
+## 4. Giai đoạn 2 — Thử nghiệm sớm
+
+| Mục | Nội dung |
+|---|---|
+| Thời gian | Từ 18/10/2026 |
+| Người sử dụng công cụ | Trưởng nhóm (`NhatMinh0311`) |
+| Phạm vi | Các thử nghiệm S1–S7 tại CR-DOC-06 mục 3; cập nhật thiết kế theo kết quả |
+
+Ở giai đoạn này, công cụ soạn script và phân tích kết quả; thành viên tự chạy lệnh trên máy ảo, đọc kết quả và thực hiện
+các phép thử tương tác. Công cụ chỉ chạy trực tiếp lệnh đọc trạng thái và phép đo không ảnh hưởng tới máy chủ của
+thành viên.
+
+### 4.1. Phần việc của thành viên
+
+| Hạng mục | Nội dung | Loại |
+|---|---|---|
+| Thứ tự thử nghiệm | Chọn làm S1 trước vì kết quả quyết định ADR-0003 | TV-QĐ |
+| Thực hiện | Dựng máy ảo, cài k3s, gVisor; chạy từng script kiểm thử và gửi kết quả | TV-TH |
+| Kiểm thử tương tác | Exec có TTY (nhập liệu, Ctrl-C, đổi kích thước), attach, tách và attach lại | TV-TH |
+
+### 4.2. Phần việc của công cụ
+
+| Hạng mục | Nội dung | Loại |
+|---|---|---|
+| Chuẩn bị | Cấu hình cloud-init, script tạo máy ảo bằng `virt-install`, script cài gVisor và cấu hình containerd cho k3s | AI-TH |
+| Kiểm thử | Script kiểm thử cách ly I1–I8 đo trước và sau NetworkPolicy; thử hai cách gắn bộ công cụ chỉ đọc; đo số tiến trình trên node theo số tiến trình trong sandbox | AI-TH |
+| Phân tích | Đọc nhật ký kubelet và nhân của node để xác định sandbox dừng do bộ điều khiển `pids`; suy ra yêu cầu `restartPolicy: Never` | AI-TH |
+| Soạn thảo | `docs/spikes/S1.md`; cập nhật ADR-0003, CR-MOD-M1, CR-DOC-04, CR-DOC-05, CR-DOC-06 | AI-TH |
+| Lỗi trong script của công cụ | Tham số `kubectl` bị shell phía xa tách lại khi gọi qua `ssh`; dùng `ps` không có trong image; ghi cấu hình kubelet vào thư mục chưa tồn tại làm lần thử giới hạn số tiến trình đầu tiên không có hiệu lực; lệnh tạo pod để thử attach đặt sai vị trí tham số. Các lỗi được phát hiện khi đọc kết quả và sửa trước khi kết luận | AI-TH |
+
+### 4.3. Quá trình làm việc
+
+| Vòng | Thành viên đặt ra | Công cụ thực hiện | Kết quả đánh giá của thành viên |
+|---|---|---|---|
+| 21 | Thực hiện S1 | Script dựng cụm thử, cài gVisor, kiểm thử I1–I8, gắn bộ công cụ, giới hạn số tiến trình, attach; phân tích kết quả từng bước; tổng hợp kết luận và cập nhật thiết kế | S1 đạt; xác nhận exec và attach tương tác bằng tay |
+
 ## Lịch sử thay đổi
 
 | Phiên bản | Ngày | Nội dung |
@@ -196,3 +232,4 @@ Quy định:
 | 1.2 | 18/10/2026 | Vòng 17: dạng bài, bài mạng nhiều máy; vòng 18: mẫu kịch bản, chẩn đoán |
 | 1.3 | 18/10/2026 | Vòng 19: hướng phát triển, capability `NET_ADMIN` |
 | 1.4 | 18/10/2026 | Vòng 20: bài định tuyến, thử nghiệm S7 |
+| 1.5 | 18/10/2026 | Giai đoạn 2, vòng 21: thử nghiệm S1 |
