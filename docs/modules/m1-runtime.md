@@ -3,10 +3,10 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 0.2 |
-| Ngày ban hành | 17/10/2026 |
+| Phiên bản | 0.3 |
+| Ngày ban hành | 18/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
-| Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011 |
+| Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
 
 Phiên bản 0.1 là thiết kế trước thử nghiệm S1–S3. Các mục phụ thuộc kết quả thử nghiệm được đánh dấu (S1), (S2), (S3).
 
@@ -53,12 +53,12 @@ Thời điểm hoạt động cuối được `runtime-gateway` ghi vào annotat
 
 | Trường | Ý nghĩa |
 |---|---|
-| `spec.image`, `spec.profile` | Cấu hình môi trường của nhóm |
+| `spec.image`, `spec.profile`, `spec.capabilities` | Cấu hình môi trường của nhóm |
 | `spec.minReady`, `spec.maxReady` | Giới hạn số pod ấm |
 | `status.ready`, `status.target` | Số pod ấm hiện có, số mục tiêu đã tính |
 
 Số mục tiêu = `minReady` + phần nâng từ các `CapacityReservation` sắp bắt đầu hoặc đang diễn ra có `warmImages` chứa
-image của nhóm, giới hạn bởi `maxReady` và sức chứa trống. Nhóm cho image xuất hiện trong đặt trước nhưng chưa có `WarmPool`
+image của nhóm và `warmCapabilities` bằng tập capability của nhóm, giới hạn bởi `maxReady` và sức chứa trống. Nhóm cho image xuất hiện trong đặt trước nhưng chưa có `WarmPool`
 được tạo tự động với `minReady: 0`.
 
 ### 3.3. `CapacityReservation`
@@ -95,6 +95,7 @@ Bản sao của đặt trước trong CSDL (`reservationRef`, `profile`, `slots`
 | BR-M1.23 | Phiên `PRACTICE` dùng CPU bất thường nhận khung `warning` mã `CPU_ABUSE` với `terminateAt` = thời điểm phát hiện + 5 phút và sự kiện `resource-alert` (`WARNED`). Tới `terminateAt`, nếu CPU trung bình 5 phút vừa qua vẫn từ ngưỡng trở lên, phiên chuyển `TERMINATED` với lý do `RESOURCE_ABUSE`; nếu không, cảnh báo được gỡ và lần phát hiện ghi `WARNED` | AC-R5.1 |
 | BR-M1.24 | Phiên `EXAM` dùng CPU bất thường không bị kết thúc; phát `runtime.session.resource-alert` (`REPORTED`), tối đa một lần mỗi 10 phút cho một phiên | AC-R5.2, AC-L2.10 |
 | BR-M1.25 | Mỗi lần phát hiện được ghi vào `resource_violations` với cách xử lý cuối cùng; không có biện pháp tự động theo số lần vi phạm | AC-R5.3 |
+| BR-M1.26 | `environment.capabilities` chỉ chứa giá trị có trong `SESSION_ALLOWED_CAPABILITIES`, nếu không từ chối tạo phiên với 422 `ENVIRONMENT_NOT_ALLOWED`. Capability được thêm vào `securityContext.capabilities.add` của container phiên; phiên không khai báo không có capability bổ sung. Pod ấm chỉ được nhận khi tập capability bằng đúng tập của phiên (ADR-0016) | AC-C1.9 |
 
 ## 5. Cấp phát
 
@@ -119,7 +120,7 @@ và định kỳ mỗi 5 giây:
 
 1. Lấy các `LabSession` ở `PENDING`, sắp theo BR-M1.4.
 2. Với mỗi phiên: tính chỗ được phép dùng theo BR-M1.6, BR-M1.15.
-3. Nếu có pod ấm khớp image và mức tài nguyên trên node được phép: nhận pod ấm (`source = warm`).
+3. Nếu có pod ấm khớp image, mức tài nguyên và tập capability (BR-M1.26) trên node được phép: nhận pod ấm (`source = warm`).
 4. Nếu không: nếu còn chỗ trống, tạo pod mới; nếu hết chỗ nhưng có pod ấm không khớp, xóa pod ấm đó và tạo pod mới
    (`source = cold`); nếu không, giữ `PENDING` và dừng xét các phiên cùng ưu tiên sau nó.
 5. Ghi `status.admittedAt`, chuyển `PROVISIONING`.
@@ -320,6 +321,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | AC-R4.1, BR-M1.11 | envtest và chaos CH1 |
 | AC-R4.2, BR-M1.12 | envtest và chaos CH2, CH3 |
 | AC-R5.1–AC-R5.4, BR-M1.22–BR-M1.25 | Đơn vị: trung bình trượt và chuyển trạng thái cảnh báo với chuỗi mẫu giả lập; cụm chuẩn: kiểm thử cách ly I10 |
+| AC-C1.9, BR-M1.26 | Đơn vị: dựng pod spec theo capability, khớp pod ấm; tích hợp: capability ngoài danh sách bị từ chối; cụm chuẩn: `iptables` chạy được khi khai báo, kiểm thử cách ly I12 |
 
 ## 12. Cấu hình
 
@@ -341,6 +343,7 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 | `CPU_ABUSE_RATIO` | Ngưỡng BR-M1.22 | `0.9` |
 | `CPU_ABUSE_WINDOW` | Cửa sổ phát hiện BR-M1.22 | `10m` |
 | `CPU_ABUSE_GRACE` | Thời gian chờ trước khi kết thúc BR-M1.23 | `5m` |
+| `SESSION_ALLOWED_CAPABILITIES` | Capability được cấp cho bài lab khai báo (BR-M1.26); để rỗng khi cụm không chạy gVisor | `NET_ADMIN` |
 
 ## Lịch sử thay đổi
 
@@ -348,3 +351,4 @@ Bảng hạ tầng: `idempotency_keys`, `outbox`, `inbox` (CR-DOC-03 mục 3.3, 
 |---|---|---|
 | 0.1 | 17/10/2026 | Bản thiết kế trước thử nghiệm S1–S3 |
 | 0.2 | 17/10/2026 | Gợi ý khung giờ còn đủ chỗ; đo tài nguyên phiên (mục 5.5); BR-M1.17–BR-M1.25: hết bộ nhớ, trần hạn mức theo giảng viên, ngân sách đặt trước, phát hiện dùng CPU bất thường |
+| 0.3 | 18/10/2026 | BR-M1.26: capability `NET_ADMIN` theo bài lab, pod ấm khớp theo tập capability |

@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-06 |
-| Phiên bản | 1.1 |
-| Ngày ban hành | 17/10/2026 |
+| Phiên bản | 1.2 |
+| Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 đến CR-DOC-05, CR-DOC-07 Quy trình phát triển |
 
 ## 1. Phạm vi
@@ -16,7 +16,7 @@ chứng, lộ trình theo mốc, phân công và tiêu chí hoàn thành của t
 
 | Mã | Rủi ro | Khả năng | Ảnh hưởng | Biện pháp | Phương án dự phòng |
 |---|---|---|---|---|---|
-| RK1 | gVisor không chạy ổn định trên k3s trong máy ảo KVM, hoặc exec và attach không hoạt động | Thấp | Cao | Thử nghiệm S1 trong tuần đầu | Dùng runc kèm user namespace (`hostUsers: false`), seccomp và bỏ capability; ghi nhận mức cách ly thấp hơn tại CR-DOC-05 |
+| RK1 | gVisor không chạy ổn định trên k3s trong máy ảo KVM, hoặc exec và attach không hoạt động | Thấp | Cao | Thử nghiệm S1 trong tuần đầu | Dùng runc kèm user namespace (`hostUsers: false`), seccomp và bỏ capability, không cấp `NET_ADMIN` cho bài lab (ADR-0016); ghi nhận mức cách ly thấp hơn tại CR-DOC-05 |
 | RK2 | Thời gian cấp phiên từ nhóm ấm vượt 5 giây | Trung bình | Trung bình | Thử nghiệm S2 | Rút gọn script setup của bài lab; nới mục tiêu Q1 có căn cứ đo |
 | RK3 | Terminal qua Kubernetes exec có độ trễ cao hoặc mất kết nối | Thấp | Cao | Thử nghiệm S3 | Chạy agent nhỏ trong pod phiên, gateway kết nối trực tiếp qua mạng pod (cần mở NetworkPolicy một chiều) |
 | RK4 | Phần mềm trong bài lab (dịch vụ không có systemd, công cụ mạng) hoạt động khác thường trong gVisor | Trung bình | Trung bình | Thử nghiệm S4 với image nền và hai bài mẫu | Điều chỉnh image nền, loại bỏ dạng bài không tương thích khỏi phạm vi |
@@ -37,7 +37,7 @@ theo quy trình bình thường.
 | S1 | gVisor chạy được trên node k3s trong máy ảo KVM; exec, attach, NetworkPolicy, giới hạn tài nguyên hoạt động với pod gVisor | 2 ngày | Pod `runtimeClassName: gvisor` chạy bash, exec và attach thành công; các kiểm thử I1–I7 tại CR-DOC-05 cho kết quả mong đợi |
 | S2 | Thời gian từ khi nhận pod ấm tới khi sẵn sàng (gắn nhãn, ghi tệp, chạy setup) | 2 ngày | Số đo p50, p95 trên 50 lần với bài `linux-user-nginx` |
 | S3 | Gateway Go chuyển tiếp WebSocket ↔ exec và ghi asciicast | 3 ngày | Gõ lệnh tương tác qua trình duyệt với xterm.js; độ trễ khứ hồi p95 đo được; bản ghi phát lại được |
-| S4 | Image nền và bốn bài mẫu chạy đúng trong gVisor; các cơ chế mẫu kịch bản cần: `cron`, tiến trình nền tách khỏi phiên, `/proc/<PID>/fd`, `netstat -ltnp` hiện PID, iptables | 3 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công; ghi rõ cơ chế nào không dùng được |
+| S4 | Image nền và bốn bài mẫu chạy đúng trong gVisor; các cơ chế mẫu kịch bản cần: `cron`, tiến trình nền tách khỏi phiên, `/proc/<PID>/fd`, `netstat -ltnp` hiện PID; với `NET_ADMIN` (ADR-0016): `iptables`, `nftables`, `ip addr`, `ip route` | 3 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công; ghi rõ cơ chế nào không dùng được |
 | S5 | Toàn bộ thành phần nền tảng vừa bộ nhớ của `cr-server` | 1 ngày | Số đo bộ nhớ thực tế của từng thành phần sau khi cài |
 | S6 | Docker Engine chạy bên trong pod gVisor | 1 ngày | Kết luận khả thi hay không |
 
@@ -102,3 +102,4 @@ Một chức năng được coi là hoàn thành khi:
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 18/10/2026 | Thử nghiệm S4 kiểm chứng thêm cơ chế của mẫu kịch bản |
+| 1.2 | 18/10/2026 | S4 kiểm chứng lệnh mạng với `NET_ADMIN`; phương án dự phòng RK1 không cấp `NET_ADMIN` |

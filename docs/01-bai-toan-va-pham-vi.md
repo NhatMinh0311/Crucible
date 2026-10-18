@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.2 |
-| Ngày ban hành | 17/10/2026 |
+| Phiên bản | 1.3 |
+| Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
 ## 1. Bài toán
@@ -181,7 +181,7 @@ lab có thể kết hợp nhiều dạng.
 | Sửa hệ thống hỏng | Tìm nguyên nhân và khắc phục sự cố được cài sẵn; có thể phải chẩn đoán nguyên nhân trước khi sửa | Lỗi cài sẵn chọn theo seed, bước kiểm tra, bước chẩn đoán trắc nghiệm | MVP |
 | Bảo mật và gia cố | Sửa cấu hình, quyền, dịch vụ không an toàn | Lỗi cài sẵn hoặc setup, bước kiểm tra | MVP |
 | Điều tra và trả lời | Đọc nhật ký, trạng thái hệ thống để trả lời câu hỏi | Tham số, bước trả lời (C17) | MVP |
-| Mạng trong một máy | Cổng, địa chỉ lắng nghe, phân giải tên, tường lửa cục bộ | Như các dạng trên; tường lửa phụ thuộc kết quả thử nghiệm S4 | MVP |
+| Mạng trong một máy | Cổng, địa chỉ lắng nghe, phân giải tên, tường lửa cục bộ | Như các dạng trên; tường lửa, địa chỉ và tuyến cần bài lab khai báo `NET_ADMIN` (ADR-0016), lệnh dùng được theo kết quả thử nghiệm S4 | MVP |
 | Mạng nhiều máy | Dịch vụ giữa các máy: DNS, cơ sở dữ liệu từ xa, reverse proxy, tường lửa giữa máy | Môi trường nhiều máy (R14) | Mở rộng |
 | Viết script | Viết script đạt yêu cầu, hệ thống chạy script để chấm | Cần chế độ chấm chạy mã của học viên trong điều kiện kiểm soát, khác nguyên tắc tại ADR-0011 | Mở rộng |
 
@@ -263,6 +263,7 @@ Mã tiêu chí có dạng `AC-<module><số>.<số>`, dùng để truy vết t�
 - AC-C1.6: Phiên chạy thử của giảng viên dùng biến thể theo seed được chọn và không tạo lượt làm bài.
 - AC-C1.7: Bài lab riêng tư không hiển thị với giảng viên khác; nhân bản tạo bài lab mới thuộc người nhân bản, ghi nguồn gốc.
 - AC-C1.8: Kiểm thử bài lab không đạt khi một seed bị dừng vì vượt giới hạn bộ nhớ; kết quả kiểm thử cảnh báo khi bộ nhớ cao nhất vượt 80% giới hạn của mức tài nguyên đã chọn, kèm đề xuất mức tài nguyên.
+- AC-C1.9: Bài lab khai báo `environment.capabilities: [NET_ADMIN]` cấu hình được tường lửa bằng `iptables` trong môi trường; bài lab không khai báo thì lệnh báo không đủ quyền; capability khác `NET_ADMIN` bị từ chối khi kiểm tra lược đồ.
 
 **US-C2 (C06–C10, C14–C17)** — Là học viên, tôi muốn biết bước nào đã làm đúng và nhận điểm công bằng.
 - AC-C2.1: Một lượt làm bài luôn dùng cùng một biến thể, kể cả khi tiếp tục bằng phiên mới; lượt làm bài mới của cùng bài luyện tập nhận biến thể mới; học viên khác nhau trong cùng kỳ thi nhận biến thể khác nhau khi miền tham số cho phép.
@@ -338,3 +339,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Phản hồi khi thiếu sức chứa (AC-L2.1), đo bộ nhớ bài lab (C05, AC-C1.8), trần hạn mức theo giảng viên (R05, AC-R2.6–AC-R2.8), cảnh báo tải bài tập (AC-L1.6), giám sát CPU (R16, US-R5, AC-L2.10) |
 | 1.2 | 18/10/2026 | Dạng bài lab (mục 5.4), bước trả lời (C17, AC-C2.10, AC-C2.11), mạng tầng 2 ngoài phạm vi; mẫu kịch bản, chẩn đoán (AC-C2.12, AC-C2.13) |
+| 1.3 | 18/10/2026 | Capability `NET_ADMIN` cho bài lab mạng (mục 5.4, AC-C1.9) |

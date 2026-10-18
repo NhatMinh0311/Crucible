@@ -3,9 +3,9 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.2 |
-| Ngày ban hành | 17/10/2026 |
-| Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011 |
+| Phiên bản | 1.3 |
+| Ngày ban hành | 18/10/2026 |
+| Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
 ## 1. Phạm vi
 
@@ -103,7 +103,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `SESSION_NOT_ACTIVE` | 409 | M1 | Thao tác yêu cầu phiên ở pha `READY` hoặc `EXPIRING` |
 | `EXEC_BUSY` | 409 | M1 | Phiên đang chạy một lệnh kiểm tra khác |
 | `CAPACITY_UNAVAILABLE` | 409 | M1, M3 | Không đủ sức chứa cho đặt trước; kèm trường `capacity` gồm số chỗ cần và số chỗ còn |
-| `ENVIRONMENT_NOT_ALLOWED` | 422 | M1 | Image ngoài danh sách cho phép hoặc mức tài nguyên không tồn tại |
+| `ENVIRONMENT_NOT_ALLOWED` | 422 | M1 | Image ngoài danh sách cho phép, mức tài nguyên không tồn tại hoặc capability không được cấp trên cụm |
 | `LAB_NOT_PUBLISHED` | 409 | M2 | Bài lab hoặc phiên bản chưa xuất bản |
 | `ATTEMPT_STATE_CONFLICT` | 409 | M2 | Thao tác không hợp lệ với trạng thái hiện tại của lượt làm bài |
 | `VARIANT_UNSATISFIABLE` | 422 | M2 | Không sinh được biến thể thỏa ràng buộc `distinct` |
@@ -151,6 +151,10 @@ bảo mật và gia cố (`harden-server`), điều tra và trả lời (`invest
 trắc nghiệm lấy đáp án theo lỗi cài sẵn.
 
 Trường `machine` của bước và lỗi cài sẵn hiện chỉ nhận `main`; môi trường nhiều máy mở rộng giá trị này (ADR-0015).
+
+Trường `environment.capabilities` hiện chỉ nhận `NET_ADMIN`, dành cho bài tường lửa, cấu hình địa chỉ và tuyến
+(ADR-0016). M2 chuyển trường này cho M1 trong `RenderedEnvironment` và trả trong `LabSummary`; M3 truyền giá trị đó vào
+`warmCapabilities` khi đặt trước tài nguyên cho kỳ thi để pod ấm khớp phiên.
 
 ### 4.2. Quy tắc ngữ nghĩa
 
@@ -296,3 +300,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 17/10/2026 | Mã lỗi hạn mức mới, tài khoản hạn mức (mục 3.5), đo bộ nhớ khi kiểm thử bài lab, sự kiện `runtime.session.resource-alert`, khung `warning` của terminal |
 | 1.2 | 18/10/2026 | Bước trả lời (mục 4.6), trường `machine`, bốn bài mẫu, mã lỗi `ANSWER_TRIES_EXHAUSTED`; trắc nghiệm, biến `{{faults}}`, `answerFirst`, mã lỗi `CHECK_LOCKED` |
+| 1.3 | 18/10/2026 | Trường `environment.capabilities`, `warmCapabilities` của đặt trước (ADR-0016) |
