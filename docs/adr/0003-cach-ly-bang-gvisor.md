@@ -2,7 +2,7 @@
 
 | Thuộc tính | Giá trị |
 |---|---|
-| Trạng thái | Đã chấp nhận (chờ kết quả thử nghiệm S1) |
+| Trạng thái | Đã chấp nhận; thử nghiệm S1 đạt ngày 18/10/2026 (`docs/spikes/S1.md`) |
 | Ngày | 17/10/2026 |
 
 ## Bối cảnh
@@ -30,3 +30,5 @@ hổng nhân đủ để thoát ra node và chiếm cụm. Cụm chạy trên m�
 - (+) Chính sách thực thi ở API server nên lỗi của operator không làm mất cách ly.
 - (−) Một số lời gọi hệ thống và công cụ nhân không có trong gVisor; bài lab về nhân hệ điều hành không làm được.
 - (−) Hiệu năng vào ra thấp hơn runc; không ảnh hưởng bài thực hành cơ bản.
+- (−) Vượt giới hạn bộ nhớ hoặc số tiến trình làm dừng cả sandbox thay vì chỉ tiến trình vi phạm; phiên mất môi
+  trường (S1).
