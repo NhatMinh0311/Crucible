@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-01 |
-| Phiên bản | 1.6 |
+| Phiên bản | 1.7 |
 | Ngày ban hành | 18/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, CR-DOC-03 Hợp đồng giữa các module, CR-DOC-04 Vận hành, CR-DOC-05 Cách ly và bảo mật |
 
@@ -47,7 +47,8 @@ hướng dẫn cài đặt và nâng cấp. Cụm chuẩn của nhóm (CR-DOC-04
 
 Bản dịch vụ do nhóm vận hành cho nhiều đơn vị (nhiều tổ chức trên một bản cài đặt, gói theo số học viên hoặc giờ máy)
 là hướng phát triển, không thực hiện trong đồ án. Thiết kế giữ khả năng mở rộng theo hướng này bằng các mã tham chiếu
-mờ giữa module và hạn mức theo tài khoản hạn mức (ADR-0013).
+mờ giữa module và hạn mức theo tài khoản hạn mức (ADR-0013). Khi đó vai trò quản trị được tách thành quản trị nền tảng và quản trị
+của từng đơn vị; bản tự cài chỉ có vai trò `ADMIN`, gồm cả quyền sửa tham số hệ thống (mục 5.6).
 
 ## 2. Tác nhân
 
@@ -397,3 +398,4 @@ tại CR-DOC-02 và được kiểm chứng bằng phương pháp ghi ở cột 
 | 1.4 | 18/10/2026 | Dạng bài định tuyến nhiều mạng con trong một môi trường (mục 5.4), thu hẹp mục ngoài phạm vi |
 | 1.5 | 18/10/2026 | Thời lượng kỳ thi tối đa (L04); cộng giờ của giảng viên (L06, AC-L2.12); tiếp tục phiên thi bị dừng do môi trường (AC-C2.7, AC-L2.11) |
 | 1.6 | 18/10/2026 | Tham số hệ thống (P04, mục 5.6, US-P1) |
+| 1.7 | 18/10/2026 | Hai cấp quản trị chỉ có ở bản dịch vụ nhiều đơn vị (mục 1.2) |

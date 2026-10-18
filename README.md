@@ -99,7 +99,9 @@ tương thích.
 - [ ] **Dạng bài viết script.** Học viên viết script, hệ thống chạy script để chấm trong điều kiện kiểm soát.
 - [ ] **Kỳ thi nhiều bài lab.**
 - [ ] **Bản dịch vụ cho nhiều đơn vị đào tạo** trên một bản cài đặt, dựa trên mã tham chiếu mờ và tài khoản hạn mức
-  (ADR-0013).
+  (ADR-0013). Phân hai cấp quản trị: quản trị nền tảng (sức chứa cụm, đơn vị, gói dịch vụ, tham số áp dụng cho mọi đơn
+  vị) và quản trị của từng đơn vị (tài khoản, hạn mức, tham số hệ thống trong giới hạn của nền tảng). Bản tự cài hiện
+  tại có một vai trò `ADMIN`.
 
 ## Đóng góp
 
