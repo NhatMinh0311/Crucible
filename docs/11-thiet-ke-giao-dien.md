@@ -36,7 +36,7 @@ chính và cách hiển thị trạng thái. Chi tiết từng màn hình thuộ
 | Thành phần | Lựa chọn |
 |---|---|
 | Thư viện thành phần | shadcn/ui (Radix UI, Tailwind CSS); mã thành phần nằm trong `web/src/shell/ui` |
-| Định hướng thẩm mỹ | "Bản vẽ kỹ thuật": nền giấy kẻ lưới 24 px, mực xanh đậm, xanh bản vẽ làm màu chính, cam tín hiệu cho thời gian và cảnh báo; góc vuông; đường kẻ 1 px thay cho bóng đổ; các mục đánh dấu bằng ký hiệu ("A — Điều hướng", số thứ tự 01, 02); nhãn mục, tiêu đề cột, nhãn trạng thái dùng chữ mono in hoa. Chọn từ ba hướng dựng thử (phòng lab, lò luyện, bản vẽ kỹ thuật) tham khảo các DESIGN.md của designmd.app và getdesign.md. Token tại `web/src/shell/theme/theme.css`; kiểm thử tự động bảo đảm các cặp chữ trên nền đạt 4,5:1 |
+| Định hướng thẩm mỹ | "Bản vẽ kỹ thuật": nền giấy kẻ lưới 24 px, mực xanh đậm, xanh bản vẽ làm màu chính, cam tín hiệu cho thời gian và cảnh báo; góc vuông; đường kẻ 1 px thay cho bóng đổ; các mục đánh dấu bằng ký hiệu ("A — Điều hướng", số thứ tự 01, 02); nhãn mục, tiêu đề cột, nhãn trạng thái dùng chữ mono in hoa. Chọn từ ba hướng dựng thử (phòng lab, lò luyện, bản vẽ kỹ thuật) tham khảo các DESIGN.md của designmd.app và getdesign.md. Token tại `web/src/shell/theme/theme.css`; `DESIGN.md` ở gốc kho mã mô tả hướng này theo định dạng DESIGN.md cho trợ lý AI, kiểm thử giữ token của hai tệp khớp nhau; kiểm thử tự động bảo đảm các cặp chữ trên nền đạt 4,5:1 |
 | Phông chữ | Space Grotesk cho tiêu đề và nút chính; IBM Plex Sans cho nội dung; IBM Plex Mono cho nhãn, số liệu, terminal và mã. Cả ba có bộ ký tự tiếng Việt |
 | Biểu tượng | Lucide |
 | Chế độ màu | Sáng, tối, theo hệ điều hành (mặc định); chọn ở menu tài khoản, lưu trên trình duyệt; terminal luôn nền tối |

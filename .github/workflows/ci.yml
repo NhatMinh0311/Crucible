@@ -48,6 +48,7 @@ jobs:
             web:
               - 'web/**'
               - 'contracts/**'
+              - 'DESIGN.md'
 
   contracts:
     name: contracts

@@ -79,6 +79,9 @@ Chế độ màu (Sáng, Tối, Theo hệ thống) và ngôn ngữ do người d
 
 ## Hướng giao diện "Bản vẽ kỹ thuật"
 
+Mô tả đầy đủ cho người và trợ lý AI tại `DESIGN.md` ở gốc kho mã. Đổi token thì sửa cả `theme.css` và `DESIGN.md`;
+`design-md.test.ts` báo lỗi khi hai tệp lệch nhau.
+
 | Quy tắc | Cách viết |
 |---|---|
 | Màu | Chỉ dùng token: `bg-surface`, `border-rule` (khung), `border-border` (kẻ trong), `text-primary`, `text-signal` (thời gian, cảnh báo), `bg-success-soft text-success`…; không đặt mã màu trong màn hình |

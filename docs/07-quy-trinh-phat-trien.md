@@ -24,6 +24,7 @@ Toàn bộ hệ thống nằm trong một kho mã `github.com/NhatMinh0311/cruci
 | `services/content/` | M2: `content-service` (Spring Boot) | Phụ trách M2 |
 | `services/learning/` | M3: `learning-service` (Spring Boot) | Phụ trách M3 |
 | `web/src/shell/` | Khung giao diện chung | Trưởng nhóm |
+| `DESIGN.md` | Ngôn ngữ thiết kế giao diện, khớp token của `web/src/shell/theme` | Trưởng nhóm |
 | `web/src/modules/<module>/` | Giao diện của từng module | Chủ module |
 | `labs/` | Bài lab mẫu và image bài lab | Phụ trách M2 |
 | `infra/`, `deploy/` | Máy ảo, cụm, GitOps | Trưởng nhóm |
