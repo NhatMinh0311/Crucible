@@ -44,6 +44,7 @@ Chi tiết tại CR-DOC-02.
 | `contracts/` | Hợp đồng giữa các module: `runtime-api.yaml`, `content-api.yaml`, `events.asyncapi.yaml`, `lab-spec/` |
 | `services/runtime/`, `services/content/`, `services/learning/` | Mã nguồn dịch vụ của M1, M2, M3 |
 | `web/` | Giao diện React: `src/shell/` (khung chung), `src/modules/<module>/` |
+| `DESIGN.md` | Ngôn ngữ thiết kế giao diện (token, phông, thành phần, quy tắc) cho người và trợ lý AI |
 | `labs/` | Bài lab mẫu và image bài lab |
 | `infra/` | Terraform và cloud-init dựng máy ảo, k3s, gVisor |
 | `deploy/` | Helm chart, cấu hình cụm chuẩn, ứng dụng Argo CD |

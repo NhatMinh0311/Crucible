@@ -1,49 +1,69 @@
 /*
- * Token giao diện của Crucible (CR-DOC-11 mục 4).
- * Màu chủ đạo lấy cảm hứng từ "lò luyện": nền than chì, điểm nhấn màu than hồng; trạng thái luôn kèm biểu tượng và chữ.
+ * Token giao diện của Crucible (CR-DOC-11 mục 4), hướng "Bản vẽ kỹ thuật": giấy kẻ lưới, mực xanh đậm, xanh bản vẽ
+ * làm màu chính, cam tín hiệu cho cảnh báo và thời gian. Góc vuông, đường kẻ 1 px thay cho bóng đổ.
+ * Màu viết bằng hex để kiểm thử tính được độ tương phản (theme.test.ts).
  */
 @import "tailwindcss";
-@import "@fontsource/be-vietnam-pro/400.css";
-@import "@fontsource/be-vietnam-pro/500.css";
-@import "@fontsource/be-vietnam-pro/600.css";
-@import "@fontsource/be-vietnam-pro/700.css";
-@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: oklch(0.985 0.004 75);
-  --foreground: oklch(0.22 0.012 60);
-  --surface: oklch(1 0 0);
-  --muted: oklch(0.955 0.006 75);
-  --muted-foreground: oklch(0.5 0.015 60);
-  --border: oklch(0.9 0.008 70);
-  --primary: oklch(0.63 0.19 42);
-  --primary-foreground: oklch(0.99 0.005 75);
-  --accent: oklch(0.93 0.05 60);
-  --ring: oklch(0.63 0.19 42);
-  --sidebar: oklch(0.21 0.012 60);
-  --sidebar-foreground: oklch(0.92 0.01 75);
-  --sidebar-active: oklch(0.3 0.03 50);
-  --success: oklch(0.6 0.14 150);
-  --warning: oklch(0.76 0.15 75);
-  --danger: oklch(0.58 0.2 25);
-  --info: oklch(0.6 0.12 240);
-  --terminal: oklch(0.17 0.01 60);
-  --terminal-foreground: oklch(0.92 0.02 90);
-  --radius: 0.6rem;
+  --background: #f3f3ee;
+  --foreground: #0b1b2b;
+  --surface: #fafaf6;
+  --muted: #e9ebe4;
+  --muted-foreground: #52647a;
+  --border: #c4cfda;
+  --rule: #0b1b2b;
+  --grid: rgba(29, 78, 216, 0.07);
+  --primary: #1d4ed8;
+  --primary-foreground: #f6f7f2;
+  --accent: #e1e8fa;
+  --ring: #1d4ed8;
+  --signal: #b93d0b;
+  --signal-soft: #fbe8dc;
+  --signal-foreground: #fff6ef;
+  --success: #11704f;
+  --success-soft: #dbede4;
+  --danger: #b42318;
+  --danger-soft: #f8e1de;
+  --info: #1d4ed8;
+  --info-soft: #e1e8fa;
+  --terminal: #06101a;
+  --terminal-foreground: #d7e4f1;
 }
 
 .dark {
-  --background: oklch(0.17 0.01 60);
-  --foreground: oklch(0.93 0.01 75);
-  --surface: oklch(0.21 0.012 60);
-  --muted: oklch(0.25 0.012 60);
-  --muted-foreground: oklch(0.68 0.015 70);
-  --border: oklch(0.3 0.012 60);
-  --accent: oklch(0.3 0.05 50);
-  --sidebar: oklch(0.14 0.01 60);
-  --sidebar-active: oklch(0.26 0.03 50);
+  --background: #0a1522;
+  --foreground: #e9f0f7;
+  --surface: #0d1b2b;
+  --muted: #13243a;
+  --muted-foreground: #8aa0b5;
+  --border: #1f3349;
+  --rule: #3a5470;
+  --grid: rgba(124, 180, 255, 0.07);
+  --primary: #7cb4ff;
+  --primary-foreground: #0a1522;
+  --accent: #122843;
+  --ring: #7cb4ff;
+  --signal: #ff9f43;
+  --signal-soft: #2a1c0d;
+  --signal-foreground: #0a1522;
+  --success: #5fd3a6;
+  --success-soft: #0f2a24;
+  --danger: #ff8a7a;
+  --danger-soft: #2e1618;
+  --info: #7cb4ff;
+  --info-soft: #122843;
 }
 
 @theme inline {
@@ -53,24 +73,44 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-rule: var(--rule);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
   --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-active: var(--sidebar-active);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-signal-foreground: var(--signal-foreground);
   --color-success: var(--success);
-  --color-warning: var(--warning);
+  --color-success-soft: var(--success-soft);
   --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
   --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
   --color-terminal: var(--terminal);
   --color-terminal-foreground: var(--terminal-foreground);
-  --radius-lg: var(--radius);
-  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 body {
   @apply bg-background text-foreground font-sans antialiased;
+}
+
+/* Nền giấy kẻ lưới 24 px cho vùng nội dung. */
+.bg-blueprint {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Nhãn mục, tiêu đề cột, nhãn trạng thái: chữ mono in hoa, giãn chữ nhẹ. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }

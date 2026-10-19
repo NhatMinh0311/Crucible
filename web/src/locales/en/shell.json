@@ -1,0 +1,74 @@
+{
+  "auth": {
+    "redirecting": "Redirecting to the sign-in page…",
+    "error": "Could not sign in: {{message}}",
+    "forbidden": "Your account does not have access to this page."
+  },
+  "nav": {
+    "main": "Main navigation",
+    "openMenu": "Open menu",
+    "notifications": "Notifications",
+    "signOut": "Sign out",
+    "skipToContent": "Skip to content",
+    "closeMenu": "Close menu",
+    "section": "Navigation"
+  },
+  "roles": {
+    "STUDENT": "Student",
+    "INSTRUCTOR": "Instructor",
+    "ADMIN": "Administrator"
+  },
+  "status": {
+    "passed": "Passed",
+    "failed": "Not passed",
+    "checking": "Checking",
+    "recorded": "Recorded",
+    "interrupted": "Interrupted",
+    "pending": "Not started"
+  },
+  "home": {
+    "greeting": "Hello",
+    "shellReady": "The application shell is running",
+    "roles": "Roles: {{roles}}",
+    "noRole": "none",
+    "section": "Overview"
+  },
+  "pages": {
+    "notFound": "Page not found.",
+    "comingSoon": "{{name}} ({{screen}}) — coming soon.",
+    "error": "Something went wrong while showing this page.",
+    "errorHint": "Reload the page; if the problem persists, contact an administrator.",
+    "backHome": "Back to home",
+    "desktopOnly": "This screen needs a computer",
+    "desktopOnlyHint": "Use a computer with a screen at least 1024 px wide to work on labs and author them."
+  },
+  "errors": {
+    "VALIDATION_FAILED": "The submitted data is invalid. Check the fields you entered.",
+    "UNAUTHENTICATED": "Your sign-in has expired. Reload the page to sign in again.",
+    "FORBIDDEN": "Your account is not allowed to perform this action.",
+    "NOT_FOUND": "The requested item was not found or you do not have access to it.",
+    "METHOD_NOT_ALLOWED": "This operation is not supported. Report it to an administrator with the reference code.",
+    "RATE_LIMITED": "Too many requests. Wait a moment and try again.",
+    "IDEMPOTENCY_KEY_REUSED": "This request repeats an earlier one with different content. Reload the page and try again.",
+    "SETTING_OUT_OF_RANGE": "The value is outside the allowed range for this setting.",
+    "network": "Could not reach the server. Check your connection and try again.",
+    "unknown": "Something went wrong ({{code}}). Try again; if it persists, report it to an administrator with the reference code.",
+    "reference": "Reference: {{ref}}"
+  },
+  "account": {
+    "menu": "Account",
+    "language": "Language",
+    "theme": "Appearance",
+    "languageNotSaved": "Could not save the language to your account; the choice applies to this browser only.",
+    "dismiss": "Dismiss notice"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "auth": {
+    "redirecting": "Đang chuyển tới trang đăng nhập…",
+    "error": "Không đăng nhập được: {{message}}",
+    "forbidden": "Tài khoản không có quyền truy cập trang này."
+  },
+  "nav": {
+    "main": "Điều hướng chính",
+    "openMenu": "Mở menu",
+    "notifications": "Thông báo",
+    "signOut": "Đăng xuất",
+    "skipToContent": "Bỏ qua tới nội dung",
+    "closeMenu": "Đóng menu",
+    "section": "Điều hướng"
+  },
+  "roles": {
+    "STUDENT": "Sinh viên",
+    "INSTRUCTOR": "Giảng viên",
+    "ADMIN": "Quản trị"
+  },
+  "status": {
+    "passed": "Đạt",
+    "failed": "Chưa đạt",
+    "checking": "Đang kiểm tra",
+    "recorded": "Đã ghi nhận",
+    "interrupted": "Gián đoạn",
+    "pending": "Chưa làm"
+  },
+  "home": {
+    "greeting": "Xin chào",
+    "shellReady": "Khung giao diện đang hoạt động",
+    "roles": "Vai trò: {{roles}}",
+    "noRole": "chưa có",
+    "section": "Tổng quan"
+  },
+  "pages": {
+    "notFound": "Không tìm thấy trang.",
+    "comingSoon": "{{name}} ({{screen}}) — sẽ được xây dựng.",
+    "error": "Đã xảy ra lỗi khi hiển thị trang.",
+    "errorHint": "Tải lại trang; nếu vẫn lỗi, báo quản trị.",
+    "backHome": "Về trang chủ",
+    "desktopOnly": "Màn hình này cần máy tính",
+    "desktopOnlyHint": "Dùng máy tính có màn hình rộng từ 1024 px để làm bài và soạn bài lab."
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Dữ liệu gửi lên không hợp lệ. Kiểm tra lại các trường đã nhập.",
+    "UNAUTHENTICATED": "Phiên đăng nhập đã hết hạn. Tải lại trang để đăng nhập lại.",
+    "FORBIDDEN": "Tài khoản không có quyền thực hiện thao tác này.",
+    "NOT_FOUND": "Không tìm thấy dữ liệu yêu cầu hoặc tài khoản không có quyền xem.",
+    "METHOD_NOT_ALLOWED": "Thao tác không được hỗ trợ. Báo quản trị kèm mã tra cứu.",
+    "RATE_LIMITED": "Thao tác quá nhanh. Đợi một lát rồi thử lại.",
+    "IDEMPOTENCY_KEY_REUSED": "Yêu cầu trùng với một yêu cầu trước nhưng khác nội dung. Tải lại trang rồi thử lại.",
+    "SETTING_OUT_OF_RANGE": "Giá trị nằm ngoài khoảng cho phép của tham số.",
+    "network": "Không kết nối được tới máy chủ. Kiểm tra mạng rồi thử lại.",
+    "unknown": "Đã xảy ra lỗi ({{code}}). Thử lại; nếu vẫn lỗi, báo quản trị kèm mã tra cứu.",
+    "reference": "Mã tra cứu: {{ref}}"
+  },
+  "account": {
+    "menu": "Tài khoản",
+    "language": "Ngôn ngữ",
+    "theme": "Chế độ màu",
+    "languageNotSaved": "Không lưu được ngôn ngữ vào tài khoản; lựa chọn chỉ áp dụng trên trình duyệt này.",
+    "dismiss": "Đóng thông báo"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Theo hệ thống"
+  }
+}
