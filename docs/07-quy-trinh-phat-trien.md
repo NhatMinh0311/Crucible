@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-07 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-03 mục 2 (quản lý hợp đồng), CR-DOC-04 mục 5 (triển khai), `CONTRIBUTING.md`, `.github/` |
 
@@ -74,16 +74,18 @@ và buộc mỗi thành viên đọc mã của một module khác.
 
 ## 5. Cấu hình bảo vệ nhánh `main`
 
-Ruleset "main branch protection" có cấu hình sau:
+Ruleset "main branch protection" áp dụng cho nhánh mặc định, ở trạng thái Active từ ngày 19/10/2026, có cấu hình sau:
 
 | Mục | Giá trị |
 |---|---|
 | Restrict deletions, Require linear history, Block force pushes | Bật |
 | Require a pull request before merging | Bật; 1 lượt duyệt; bỏ lượt duyệt cũ khi có commit mới; yêu cầu Code Owners; yêu cầu duyệt lần push cuối; yêu cầu giải quyết trao đổi; chỉ squash |
-| Require status checks to pass | `contracts`; bổ sung `runtime`, `content`, `learning`, `web`, `e2e`, `security` khi mã tương ứng có mặt |
-| Bypass list | Repository admin, chỉ qua pull request |
+| Require status checks to pass | `contracts`, `runtime`, `content`, `learning`, `web`, nguồn GitHub Actions; nhánh phải cập nhật theo `main` trước khi merge; bổ sung `e2e`, `security` khi mã tương ứng có mặt. Job bị bỏ qua do không đổi đường dẫn của module (điều kiện `if` cấp job) được tính là đạt |
+| Bypass list | Repository admin, chế độ For pull requests only: không push trực tiếp; chỉ dùng khi sự cố cần merge gấp |
 
-Cấu hình được xuất ra `.github/rulesets/main-branch-protection.json` mỗi khi thay đổi.
+Cấu hình được xuất ra `.github/rulesets/main-branch-protection.json` mỗi khi thay đổi, bằng lệnh
+`gh api repos/NhatMinh0311/Crucible/rulesets/<id>` rồi bỏ các trường do máy chủ sinh (`id`, `source`, `node_id`,
+`created_at`, `updated_at`, `_links`, `current_user_can_bypass`). Tệp dùng được với chức năng Import a ruleset.
 
 ## 6. Pipeline CI
 
@@ -151,3 +153,4 @@ flowchart LR
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 18/10/2026 | Job CI `runtime` |
 | 1.2 | 19/10/2026 | Quản lý công việc bằng GitHub Issues, milestone và Project board |
+| 1.3 | 19/10/2026 | Bật ruleset nhánh `main`, tệp xuất cấu hình |
