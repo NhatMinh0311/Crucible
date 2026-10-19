@@ -255,7 +255,8 @@ Tài khoản trong realm `crucible` (mật khẩu `crucible`):
 Client trong realm: `crucible-web` (giao diện, public, PKCE), `runtime-api`, `content-service`, `learning-service`
 (client credentials, secret `<tên client>-dev-secret`, scope theo CR-DOC-03 mục 3.2). Cấu hình realm tại
 `dev/keycloak/realm-crucible.json`; sửa realm bằng pull request sửa tệp này. Mỗi tài khoản có vai trò `manage-account`,
-`view-profile` của client `account` để giao diện lưu ngôn ngữ vào thuộc tính `locale` qua Account API.
+`view-profile` của client `account` để giao diện lưu ngôn ngữ vào thuộc tính `locale` qua Account API. Cấu hình User
+Profile chỉ cho quản trị sửa `username`, `email`, `firstName`, `lastName`; người dùng chỉ tự đổi được `locale`.
 
 Keycloak chỉ nhập realm khi realm chưa tồn tại. Sau khi tệp realm thay đổi, nhập lại (giữ dữ liệu các CSDL khác; mã
 `sub` của tài khoản thử đổi, dữ liệu phát triển tham chiếu tài khoản cũ cần tạo lại):

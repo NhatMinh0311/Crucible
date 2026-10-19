@@ -56,6 +56,7 @@ dịch không bị dồn về cuối dự án.
 | Claim `locale` khác `vi`, `en` | Bỏ qua claim, chọn theo mục W1 |
 | Ngôn ngữ lưu trên máy khác claim `locale` | Claim thắng, vì là lựa chọn gần nhất được lưu vào tài khoản |
 | Account API lỗi (mất mạng, token hết hạn) | Giữ ngôn ngữ mới trên máy, báo không lưu được vào tài khoản |
+| Người dùng gửi họ tên, email khác qua Account API | Keycloak trả 400 `error-user-attribute-read-only`; chỉ quản trị sửa họ tên, email (User Profile); `locale` vẫn do người dùng sửa |
 | Trình duyệt chặn `localStorage` | Giao diện vẫn chạy, không nhớ lựa chọn giữa các lần tải trang |
 | Lỗi không theo RFC 9457 (mất mạng, phản hồi không phải JSON) | Thông điệp chung "Không kết nối được tới máy chủ" hoặc "Đã xảy ra lỗi" |
 

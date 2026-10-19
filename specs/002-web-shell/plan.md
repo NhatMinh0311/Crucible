@@ -69,7 +69,9 @@ Lỗi của module tra theo khóa `errors.<CODE>` trong không gian của module
 
 ## 5. Realm phát triển
 
-Vai trò mặc định `default-roles-crucible` và các tài khoản thử có thêm `account: manage-account, view-profile`. Realm
+Vai trò mặc định `default-roles-crucible` và các tài khoản thử có thêm `account: manage-account, view-profile`. Vai trò
+này cho phép người dùng sửa hồ sơ của mình, nên cấu hình User Profile (`components` trong tệp realm) chỉ cho quản trị
+sửa `username`, `email`, `firstName`, `lastName`; đã kiểm chứng sinh viên đổi tên nhận 400, đổi `locale` nhận 204. Realm
 chỉ được nhập khi chưa tồn tại; thành viên đã chạy Keycloak trước đó nhập lại realm theo hướng dẫn bổ sung tại
 CONTRIBUTING mục 5.1.
 
