@@ -6,6 +6,8 @@
 
 <!-- Mã user story, tiêu chí chấp nhận, quy tắc nghiệp vụ, ví dụ: US-C2, AC-C2.4, BR-M1.3. -->
 
+Closes #
+
 ## Module và loại thay đổi
 
 - [ ] M1 runtime

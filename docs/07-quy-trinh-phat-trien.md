@@ -3,13 +3,13 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-07 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-03 mục 2 (quản lý hợp đồng), CR-DOC-04 mục 5 (triển khai), `CONTRIBUTING.md`, `.github/` |
 
 ## 1. Phạm vi
 
-Tài liệu quy định cấu trúc kho mã, quyền sở hữu mã theo module, quy trình pull request, cấu hình bảo vệ nhánh và
+Tài liệu quy định cấu trúc kho mã, quản lý công việc, quyền sở hữu mã theo module, quy trình pull request, cấu hình bảo vệ nhánh và
 pipeline CI. Phần triển khai lên cụm được quy định tại CR-DOC-04 mục 5.
 
 ## 2. Kho mã
@@ -32,9 +32,22 @@ Toàn bộ hệ thống nằm trong một kho mã `github.com/NhatMinh0311/cruci
 Nhánh làm việc tạo từ `main`, đặt tên `<loại>/<module>-<mô tả ngắn>`; loại là `feat`, `fix`, `docs`, `test`, `chore`.
 Ví dụ: `feat/m2-variant-generator`, `chore/infra-terraform-vms`. Pull request được merge bằng squash.
 
-## 3. Quy trình pull request
+## 3. Quản lý công việc và quy trình pull request
 
-1. Tạo nhánh, thực hiện thay đổi, mở pull request vào `main` theo mẫu; ghi mã yêu cầu liên quan (`US-C2`, `AC-C2.4`, `BR-M1.3`).
+Công việc được quản lý bằng GitHub Issues và Project board `Crucible`:
+
+| Thành phần | Quy ước |
+|---|---|
+| Issue | Một chức năng hoặc một thử nghiệm sớm; người được giao là chủ module; nội dung ghi mã chức năng, tiêu chí chấp nhận, tài liệu liên quan. Chủ module tự chia issue con khi cần |
+| Nhãn | Module `m1`, `m2`, `m3`, `platform`; loại `feature`, `spike`, `infra`, `security`, `test`, `docs`, `content`, `web`, `chore` |
+| Milestone | Mốc `MA`–`MD` của lộ trình (CR-DOC-06 mục 4) |
+| Board | Cột `Todo`, `In Progress`, `Done`; issue đóng thì tự chuyển sang `Done` |
+| Backlog khởi đầu | `.github/backlog.yaml`, tạo trên GitHub bằng `scripts/create-issues.py`; issue phát sinh sau đó tạo trực tiếp trên GitHub |
+
+Issue có đặc tả theo Spec Kit (mục 7) ghi đường dẫn `specs/<số>-<tên>/`.
+
+1. Tạo nhánh, thực hiện thay đổi, mở pull request vào `main` theo mẫu; ghi mã yêu cầu liên quan (`US-C2`, `AC-C2.4`, `BR-M1.3`) và
+   issue được giải quyết (`Closes #<số>`) để issue tự đóng khi merge.
 2. CI chạy tự động; pull request chỉ merge được khi mọi kiểm tra bắt buộc thành công.
 3. Người review theo CODEOWNERS (mục 4) duyệt. Mọi trao đổi phải được giải quyết trước khi merge.
 4. Commit mới sau khi được duyệt làm mất lượt duyệt cũ.
@@ -124,7 +137,8 @@ flowchart LR
 | Đối tượng | Truy vết qua |
 |---|---|
 | Thay đổi mã nguồn | Commit trên `main`, mỗi commit tương ứng một pull request |
-| Lý do thay đổi | Mô tả pull request, mã yêu cầu và mã quy tắc |
+| Lý do thay đổi | Issue, mô tả pull request, mã yêu cầu và mã quy tắc |
+| Tiến độ | Project board và milestone `MA`–`MD` |
 | Người duyệt | Lịch sử review |
 | Kết quả kiểm thử | Lịch sử chạy GitHub Actions |
 | Phiên bản đang chạy trên cụm | Lịch sử đồng bộ của Argo CD |
@@ -136,3 +150,4 @@ flowchart LR
 |---|---|---|
 | 1.0 | 17/10/2026 | Ban hành lần đầu |
 | 1.1 | 18/10/2026 | Job CI `runtime` |
+| 1.2 | 19/10/2026 | Quản lý công việc bằng GitHub Issues, milestone và Project board |
