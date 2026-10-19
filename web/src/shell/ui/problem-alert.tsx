@@ -9,11 +9,13 @@ export function ProblemAlert({ problem, ns, className }: { problem: ApiProblem |
   const { t, i18n } = useTranslation()
   const ref = traceReference(problem)
   return (
-    <div role="alert" className={cn('flex gap-3 rounded-lg border border-danger/30 bg-danger/10 p-3 text-sm', className)}>
-      <AlertTriangle className="mt-0.5 size-4 shrink-0 text-danger" aria-hidden />
-      <div>
-        <p>{problemMessage(i18n, problem, ns)}</p>
-        {ref && <p className="mt-1 text-xs text-muted-foreground">{t('errors.reference', { ref })}</p>}
+    <div role="alert" className={cn('grid grid-cols-[2.25rem_minmax(0,1fr)] border border-signal bg-surface text-sm', className)}>
+      <div className="flex items-center justify-center bg-signal text-signal-foreground">
+        <AlertTriangle className="size-4" aria-hidden />
+      </div>
+      <div className="space-y-1 px-3 py-2.5">
+        <p className="leading-relaxed">{problemMessage(i18n, problem, ns)}</p>
+        {ref && <p className="label-mono text-[10.5px] text-muted-foreground">{t('errors.reference', { ref })}</p>}
       </div>
     </div>
   )
