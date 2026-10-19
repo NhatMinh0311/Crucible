@@ -1,6 +1,37 @@
 {
   "auth": {
     "redirecting": "Redirecting to the sign-in page…",
-    "error": "Could not sign in: {{message}}"
+    "error": "Could not sign in: {{message}}",
+    "forbidden": "Your account does not have access to this page."
+  },
+  "nav": {
+    "main": "Main navigation",
+    "openMenu": "Open menu",
+    "notifications": "Notifications",
+    "toggleTheme": "Toggle light and dark mode",
+    "signOut": "Sign out"
+  },
+  "roles": {
+    "STUDENT": "Student",
+    "INSTRUCTOR": "Instructor",
+    "ADMIN": "Administrator"
+  },
+  "status": {
+    "passed": "Passed",
+    "failed": "Not passed",
+    "checking": "Checking",
+    "recorded": "Recorded",
+    "interrupted": "Interrupted",
+    "pending": "Not started"
+  },
+  "home": {
+    "greeting": "Hello",
+    "shellReady": "The application shell is running",
+    "roles": "Roles: {{roles}}",
+    "noRole": "none"
+  },
+  "pages": {
+    "notFound": "Page not found.",
+    "comingSoon": "{{name}} ({{screen}}) — coming soon."
   }
 }

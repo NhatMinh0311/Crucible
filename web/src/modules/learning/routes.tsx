@@ -2,9 +2,10 @@
 import { GraduationCap } from 'lucide-react'
 import type { RouteObject } from 'react-router'
 import type { NavItem } from '@/shell/navigation'
+import { ComingSoon } from '@/shell/pages/ComingSoon'
 
-export const learningNav: NavItem[] = [{ to: '/classes', label: 'Lớp học', icon: GraduationCap, roles: ['STUDENT', 'INSTRUCTOR'] }]
+export const learningNav: NavItem[] = [{ to: '/classes', labelKey: 'learning:nav.classes', icon: GraduationCap, roles: ['STUDENT', 'INSTRUCTOR'] }]
 
 export const learningRoutes: RouteObject[] = [
-  { path: 'classes', element: <p className="text-muted-foreground">Lớp học (SCR-11, SCR-21) — sẽ được xây dựng.</p> },
+  { path: 'classes', element: <ComingSoon labelKey="learning:nav.classes" screen="SCR-11, SCR-21" /> },
 ]

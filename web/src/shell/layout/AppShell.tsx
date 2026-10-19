@@ -1,5 +1,6 @@
 import { Bell, FlaskConical, LogOut, Menu, Moon, Sun } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from 'react-oidc-context'
 import { NavLink, Outlet } from 'react-router'
 import { learningNav } from '@/modules/learning/routes'
@@ -13,6 +14,7 @@ const NAV = [...learningNav, ...contentNav, ...runtimeNav]
 
 export function AppShell() {
   const auth = useAuth()
+  const { t } = useTranslation(['shell', 'runtime', 'content', 'learning'])
   const roles = useRoles()
   const [open, setOpen] = useState(false)
   const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
@@ -35,7 +37,7 @@ export function AppShell() {
           <FlaskConical className="size-6 text-primary" aria-hidden />
           Crucible
         </div>
-        <nav className="flex flex-col gap-1 px-3" aria-label="Điều hướng chính">
+        <nav className="flex flex-col gap-1 px-3" aria-label={t('nav.main')}>
           {items.map((item) => (
             <NavLink
               key={item.to}
@@ -49,7 +51,7 @@ export function AppShell() {
               }
             >
               <item.icon className="size-4" aria-hidden />
-              {item.label}
+              {t(item.labelKey)}
             </NavLink>
           ))}
         </nav>
@@ -57,18 +59,18 @@ export function AppShell() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center gap-2 border-b border-border bg-surface px-4">
-          <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setOpen(!open)} aria-label="Mở menu">
+          <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setOpen(!open)} aria-label={t('nav.openMenu')}>
             <Menu className="size-5" />
           </Button>
           <div className="flex-1" />
-          <Button variant="ghost" size="sm" aria-label="Thông báo">
+          <Button variant="ghost" size="sm" aria-label={t('nav.notifications')}>
             <Bell className="size-5" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={toggleDark} aria-label="Đổi chế độ sáng tối">
+          <Button variant="ghost" size="sm" onClick={toggleDark} aria-label={t('nav.toggleTheme')}>
             {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </Button>
           <span className="hidden text-sm text-muted-foreground sm:inline">{auth.user?.profile.name}</span>
-          <Button variant="ghost" size="sm" onClick={() => void auth.signoutRedirect()} aria-label="Đăng xuất">
+          <Button variant="ghost" size="sm" onClick={() => void auth.signoutRedirect()} aria-label={t('nav.signOut')}>
             <LogOut className="size-5" />
           </Button>
         </header>

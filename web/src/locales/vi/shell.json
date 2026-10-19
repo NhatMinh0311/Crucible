@@ -1,6 +1,37 @@
 {
   "auth": {
     "redirecting": "Đang chuyển tới trang đăng nhập…",
-    "error": "Không đăng nhập được: {{message}}"
+    "error": "Không đăng nhập được: {{message}}",
+    "forbidden": "Tài khoản không có quyền truy cập trang này."
+  },
+  "nav": {
+    "main": "Điều hướng chính",
+    "openMenu": "Mở menu",
+    "notifications": "Thông báo",
+    "toggleTheme": "Đổi chế độ sáng tối",
+    "signOut": "Đăng xuất"
+  },
+  "roles": {
+    "STUDENT": "Sinh viên",
+    "INSTRUCTOR": "Giảng viên",
+    "ADMIN": "Quản trị"
+  },
+  "status": {
+    "passed": "Đạt",
+    "failed": "Chưa đạt",
+    "checking": "Đang kiểm tra",
+    "recorded": "Đã ghi nhận",
+    "interrupted": "Gián đoạn",
+    "pending": "Chưa làm"
+  },
+  "home": {
+    "greeting": "Xin chào",
+    "shellReady": "Khung giao diện đang hoạt động",
+    "roles": "Vai trò: {{roles}}",
+    "noRole": "chưa có"
+  },
+  "pages": {
+    "notFound": "Không tìm thấy trang.",
+    "comingSoon": "{{name}} ({{screen}}) — sẽ được xây dựng."
   }
 }

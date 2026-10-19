@@ -1,3 +1,6 @@
+import { useTranslation } from 'react-i18next'
+
 export function NotFound() {
-  return <p className="text-muted-foreground">Không tìm thấy trang.</p>
+  const { t } = useTranslation()
+  return <p className="text-muted-foreground">{t('pages.notFound')}</p>
 }
