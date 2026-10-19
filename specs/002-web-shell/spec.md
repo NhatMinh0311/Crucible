@@ -5,7 +5,7 @@
 | Mã | 002-web-shell |
 | Module | Nền tảng |
 | Mốc | MA |
-| Trạng thái | Đã duyệt (19/10/2026) |
+| Trạng thái | Hoàn thành (19/10/2026) |
 | Issue | #3, #4 |
 | Tài liệu liên quan | CR-DOC-01 P02, P05, US-P2 (AC-P2.1–AC-P2.3); CR-DOC-03 mục 3.4; CR-DOC-11 mục 2, 3, 4, 4.1, 5 |
 
