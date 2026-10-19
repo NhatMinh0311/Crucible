@@ -1,29 +1,23 @@
-import { Bell, FlaskConical, LogOut, Menu, Moon, Sun } from 'lucide-react'
+import { Bell, FlaskConical, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from 'react-oidc-context'
 import { NavLink, Outlet } from 'react-router'
 import { learningNav } from '@/modules/learning/routes'
 import { contentNav } from '@/modules/content/routes'
 import { runtimeNav } from '@/modules/runtime/routes'
 import { useRoles } from '../auth/roles'
 import { Button } from '../ui/button'
+import { AccountMenu } from './AccountMenu'
 import { cn } from '../ui/cn'
 
 const NAV = [...learningNav, ...contentNav, ...runtimeNav]
 
 export function AppShell() {
-  const auth = useAuth()
   const { t } = useTranslation(['shell', 'runtime', 'content', 'learning'])
   const roles = useRoles()
   const [open, setOpen] = useState(false)
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
+  const [notice, setNotice] = useState<string | null>(null)
   const items = NAV.filter((i) => i.roles.some((r) => roles.includes(r)))
-
-  const toggleDark = () => {
-    document.documentElement.classList.toggle('dark')
-    setDark(!dark)
-  }
 
   return (
     <div className="flex min-h-dvh">
@@ -66,15 +60,17 @@ export function AppShell() {
           <Button variant="ghost" size="sm" aria-label={t('nav.notifications')}>
             <Bell className="size-5" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={toggleDark} aria-label={t('nav.toggleTheme')}>
-            {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
-          </Button>
-          <span className="hidden text-sm text-muted-foreground sm:inline">{auth.user?.profile.name}</span>
-          <Button variant="ghost" size="sm" onClick={() => void auth.signoutRedirect()} aria-label={t('nav.signOut')}>
-            <LogOut className="size-5" />
-          </Button>
+          <AccountMenu onNotice={setNotice} />
         </header>
         <main className="flex-1 p-4 md:p-8">
+          {notice && (
+            <div role="status" className="mb-4 flex items-start gap-3 rounded-lg border border-warning/40 bg-warning/15 p-3 text-sm">
+              <p className="flex-1">{notice}</p>
+              <Button variant="ghost" size="sm" onClick={() => setNotice(null)} aria-label={t('account.dismiss')}>
+                <X className="size-4" />
+              </Button>
+            </div>
+          )}
           <Outlet />
         </main>
       </div>

@@ -8,7 +8,6 @@
     "main": "Điều hướng chính",
     "openMenu": "Mở menu",
     "notifications": "Thông báo",
-    "toggleTheme": "Đổi chế độ sáng tối",
     "signOut": "Đăng xuất"
   },
   "roles": {
@@ -46,5 +45,21 @@
     "network": "Không kết nối được tới máy chủ. Kiểm tra mạng rồi thử lại.",
     "unknown": "Đã xảy ra lỗi ({{code}}). Thử lại; nếu vẫn lỗi, báo quản trị kèm mã tra cứu.",
     "reference": "Mã tra cứu: {{ref}}"
+  },
+  "account": {
+    "menu": "Tài khoản",
+    "language": "Ngôn ngữ",
+    "theme": "Chế độ màu",
+    "languageNotSaved": "Không lưu được ngôn ngữ vào tài khoản; lựa chọn chỉ áp dụng trên trình duyệt này.",
+    "dismiss": "Đóng thông báo"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Theo hệ thống"
   }
 }
