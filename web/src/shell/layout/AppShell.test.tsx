@@ -35,7 +35,7 @@ function renderAt(path: string) {
               { index: true, element: <p>home</p> },
               { path: 'boom', element: <Boom /> },
               { path: 'desk', element: <RequireDesktop><p>desk-content</p></RequireDesktop> },
-              { path: '*', element: <ErrorPage notFound /> },
+              { path: '*', element: <ErrorPage kind="notFound" /> },
             ],
           },
         ],

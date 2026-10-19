@@ -9,6 +9,8 @@
 | `src/modules/learning/`, `src/locales/*/learning.json` | M3 | Lớp học, lộ trình, bài tập, kỳ thi, giám sát, bảng điểm, thông báo |
 
 Mỗi module khai báo menu (`<module>Nav`) và route (`<module>Routes`) trong `routes.tsx` của mình; khung chung tự gộp.
+Route chỉ dành cho một số vai trò khai báo `handle: { roles: ['INSTRUCTOR'] } satisfies RouteHandle`; khung chung hiển thị
+trang "không có quyền" khi người dùng gõ thẳng đường dẫn. Quyền thật vẫn do dịch vụ kiểm tra.
 
 ```bash
 npm install
@@ -69,7 +71,7 @@ module thêm bản dịch cho mã lỗi riêng của mình tại CR-DOC-03 mục
 
 | Thành phần | Dùng khi |
 |---|---|
-| `RequireRole` | Trang chỉ dành cho một số vai trò |
+| `RequireRole` | Một phần của màn hình chỉ dành cho một số vai trò (cả route: `handle.roles`) |
 | `RequireDesktop` | Trang làm bài, phòng chờ thi, soạn bài lab, chạy thử (từ 1024 px, CR-DOC-11 mục 3) |
 | `ComingSoon` | Chỗ giữ cho màn hình chưa xây dựng |
 | `StatusBadge` | Trạng thái kèm màu, biểu tượng, nhãn |

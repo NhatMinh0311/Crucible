@@ -43,7 +43,7 @@ dịch không bị dồn về cuối dự án.
 | W5 | (AC-P2.3) Ngày giờ và số định dạng theo ngôn ngữ đang chọn; giờ luôn theo múi giờ `Asia/Ho_Chi_Minh` bất kể múi giờ của máy |
 | W6 | Thuộc tính `lang` của trang theo ngôn ngữ đang chọn |
 | W7 | Chế độ màu: lần đầu theo cài đặt của hệ điều hành; người dùng chọn Sáng, Tối hoặc Theo hệ thống ở menu tài khoản; lựa chọn lưu trên trình duyệt; tải trang không nháy sai màu; ở chế độ Theo hệ thống, giao diện đổi theo khi hệ điều hành đổi |
-| W8 | Menu chỉ hiện mục người dùng có vai trò. Dưới 768 px menu ẩn sau nút, mở ra có lớp phủ, đóng khi bấm lớp phủ, nhấn Esc hoặc chọn mục. Liên kết "Bỏ qua tới nội dung" là phần tử nhận tiêu điểm đầu tiên. Mọi thao tác trên khung dùng được bằng bàn phím (UX7) |
+| W8 | Menu chỉ hiện mục người dùng có vai trò; gõ thẳng đường dẫn của route khai báo vai trò khác hiển thị trang "không có quyền" trong khung. Dưới 768 px menu ẩn sau nút, mở ra có lớp phủ, đóng khi bấm lớp phủ, nhấn Esc hoặc chọn mục. Liên kết "Bỏ qua tới nội dung" là phần tử nhận tiêu điểm đầu tiên. Mọi thao tác trên khung dùng được bằng bàn phím (UX7) |
 | W9 | `RequireDesktop`: màn hình hẹp hơn 1024 px hiển thị thông báo yêu cầu dùng máy tính thay cho nội dung (CR-DOC-11 mục 3) |
 | W10 | Đường dẫn không tồn tại và lỗi khi hiển thị route có trang lỗi đã dịch, kèm nút về trang chủ |
 | W11 | Job CI `web` đạt: kiểm tra kiểu, lint, kiểm thử, build |
