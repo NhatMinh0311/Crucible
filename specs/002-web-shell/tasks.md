@@ -13,6 +13,10 @@ Mỗi việc là một commit, kiểm chứng được bằng cách ghi ở cộ
 | T7 | Điều hướng trên điện thoại, bỏ qua tới nội dung, chuông thông báo, trang lỗi, `RequireDesktop` | Kiểm thử W8–W10 | Xong |
 | T8 | Tài liệu: `web/README.md` (thêm khóa dịch, định dạng, lỗi API), CR-DOC-11 nếu thiết kế đổi | Đọc lại | Xong |
 | T9 | Kiểm thử trên trình duyệt thật với Keycloak phát triển | W1, W2, W7 đạt; job CI `web` đạt (W11) | Xong |
+| T10 | Phông Space Grotesk, IBM Plex Sans, IBM Plex Mono; token màu sáng và tối theo hướng C | Tỉ lệ tương phản tính từ token đạt 4,5:1 (kiểm thử) | |
+| T11 | Thành phần dùng chung theo hướng C: nút, thẻ, nhãn trạng thái, menu thả xuống, thông báo lỗi, nhãn mục | Kiểm thử hiện có đạt | |
+| T12 | Bố cục khung theo hướng C: thanh bên đánh số, header dạng ô, nền lưới | Kiểm thử W8–W10 đạt | |
+| T13 | Tài liệu (CR-DOC-11 mục 4, AGENTS.md, web/README) và kiểm tra trên Chrome | Ảnh chụp sáng, tối, điện thoại | |
 
 Kết quả: 45 kiểm thử Vitest đạt (kể cả khi chạy với `TZ=America/New_York`); kiểm tra kiểu, lint, build đạt. Kiểm thử trên
 Chrome 155 với Keycloak 26.8.1 phát triển: W1, W2 (đổi ngôn ngữ, lưu `locale`, đăng nhập lại trên ngữ cảnh trình duyệt

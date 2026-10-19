@@ -5,7 +5,7 @@
 | Mã | 002-web-shell |
 | Module | Nền tảng |
 | Mốc | MA |
-| Trạng thái | Hoàn thành (19/10/2026) |
+| Trạng thái | Đã duyệt; bổ sung W12 ngày 20/10/2026 |
 | Issue | #3, #4 |
 | Tài liệu liên quan | CR-DOC-01 P02, P05, US-P2 (AC-P2.1–AC-P2.3); CR-DOC-03 mục 3.4; CR-DOC-11 mục 2, 3, 4, 4.1, 5 |
 
@@ -30,6 +30,7 @@ dịch không bị dồn về cuối dự án.
 | Điều hướng trên điện thoại, liên kết bỏ qua tới nội dung, chuông thông báo dẫn tới `/notifications` | |
 | Trang lỗi của route, thành phần chỉ cho máy tính (`RequireDesktop`) | |
 | Realm phát triển: quyền `manage-account` cho người dùng | |
+| Giao diện theo hướng "Bản vẽ kỹ thuật" (W12): phông, token màu, thành phần, bố cục khung | Màn hình riêng của module (dùng token và thành phần chung) |
 
 ## 3. Tiêu chí chấp nhận
 
@@ -46,6 +47,7 @@ dịch không bị dồn về cuối dự án.
 | W9 | `RequireDesktop`: màn hình hẹp hơn 1024 px hiển thị thông báo yêu cầu dùng máy tính thay cho nội dung (CR-DOC-11 mục 3) |
 | W10 | Đường dẫn không tồn tại và lỗi khi hiển thị route có trang lỗi đã dịch, kèm nút về trang chủ |
 | W11 | Job CI `web` đạt: kiểm tra kiểu, lint, kiểm thử, build |
+| W12 | Giao diện theo hướng "Bản vẽ kỹ thuật" đã chọn: Space Grotesk cho tiêu đề, IBM Plex Sans cho nội dung, IBM Plex Mono cho nhãn, số liệu, terminal; góc vuông; đường kẻ 1 px thay cho bóng đổ; nền lưới 24 px; xanh bản vẽ làm màu chính, cam tín hiệu cho cảnh báo và thời gian; menu đánh số. Chữ thường đạt độ tương phản 4,5:1 ở cả chế độ sáng và tối |
 
 ## 4. Trường hợp biên
 
@@ -64,5 +66,6 @@ dịch không bị dồn về cuối dự án.
 | Chế độ màu mặc định, nơi lưu | Theo hệ điều hành; lựa chọn lưu trên trình duyệt (không lưu theo tài khoản) |
 | Nội dung hiển thị kèm lỗi API | Thông điệp theo `code` và mã tra cứu từ `traceId` |
 | Tổ chức công việc | Một đặc tả, một pull request đóng #3 và #4 |
+| Hướng giao diện | So sánh ba hướng (phòng lab, lò luyện, bản vẽ kỹ thuật) dựng từ các DESIGN.md của designmd.app, getdesign.md; chọn "Bản vẽ kỹ thuật", giữ nguyên chi tiết bản dựng; đưa vào cùng pull request vì #3 gồm theme |
 | Trang đăng nhập | Theme mặc định của Keycloak 26.8.1 (có `messages_vi`); ngôn ngữ truyền bằng tham số `ui_locales` |
 | Quyền gọi Account API | Người dùng có vai trò `manage-account`, `view-profile` của client `account`; đã kiểm chứng với Keycloak phát triển: ghi `locale` trả 204, CORS cho `http://localhost:5173`, token sau đó có claim `locale` |

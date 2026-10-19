@@ -80,3 +80,22 @@ CONTRIBUTING mục 5.1.
 | Đơn vị (Vitest) | Chọn ngôn ngữ (W1, trường hợp biên), định dạng ngày giờ với múi giờ máy khác (W5), thông điệp lỗi (W4), tập khóa và chữ viết thẳng (W3) |
 | Thành phần (Testing Library) | Menu tài khoản đổi ngôn ngữ, chế độ màu; menu theo vai trò; lớp phủ và Esc; `RequireDesktop` |
 | Trình duyệt thật | Puppeteer với Chrome và Keycloak phát triển: W1 (trang đăng nhập theo ngôn ngữ), W2 (đổi ngôn ngữ rồi đăng nhập trên ngữ cảnh trình duyệt mới), W7 |
+
+## 7. Hướng giao diện "Bản vẽ kỹ thuật" (W12)
+
+| Token | Sáng | Tối | Dùng cho |
+|---|---|---|---|
+| `background` | `#f3f3ee` | `#0a1522` | Nền trang, có lưới 24 px |
+| `surface` | `#fafaf6` | `#0d1b2b` | Thanh bên, header, thẻ |
+| `foreground` | `#0b1b2b` | `#e9f0f7` | Chữ chính |
+| `muted-foreground` | `#52647a` | `#8aa0b5` | Chữ phụ, nhãn |
+| `border` | `#c4cfda` | `#1f3349` | Đường kẻ trong |
+| `rule` | `#0b1b2b` | `#3a5470` | Khung, đường kẻ chính |
+| `primary` | `#1d4ed8` | `#7cb4ff` | Nút chính, mục đang chọn, nhãn mục |
+| `accent` | `#e1e8fa` | `#122843` | Nền mục đang chọn, hover |
+| `signal` | `#c2410c` | `#ff9f43` | Thời gian còn lại, cảnh báo, lỗi API |
+| `success`, `danger`, `info` | `#11704f`, `#b42318`, `#1d4ed8` | `#5fd3a6`, `#ff8a7a`, `#7cb4ff` | Trạng thái, kèm nền `*-soft` |
+| `terminal` | `#06101a` | `#06101a` | Terminal luôn nền tối |
+
+Phông qua Fontsource (bản 5.3.0, có tập ký tự tiếng Việt): Space Grotesk 500–700, IBM Plex Sans 400–600, IBM Plex
+Mono 400–600. Góc vuông ở mọi thành phần; không bóng đổ; nhãn mục, tiêu đề cột, nhãn trạng thái dùng chữ mono in hoa.
