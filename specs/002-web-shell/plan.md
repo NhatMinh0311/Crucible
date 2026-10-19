@@ -93,7 +93,7 @@ CONTRIBUTING mục 5.1.
 | `rule` | `#0b1b2b` | `#3a5470` | Khung, đường kẻ chính |
 | `primary` | `#1d4ed8` | `#7cb4ff` | Nút chính, mục đang chọn, nhãn mục |
 | `accent` | `#e1e8fa` | `#122843` | Nền mục đang chọn, hover |
-| `signal` | `#c2410c` | `#ff9f43` | Thời gian còn lại, cảnh báo, lỗi API |
+| `signal` | `#b93d0b` | `#ff9f43` | Thời gian còn lại, cảnh báo, lỗi API |
 | `success`, `danger`, `info` | `#11704f`, `#b42318`, `#1d4ed8` | `#5fd3a6`, `#ff8a7a`, `#7cb4ff` | Trạng thái, kèm nền `*-soft` |
 | `terminal` | `#06101a` | `#06101a` | Terminal luôn nền tối |
 
