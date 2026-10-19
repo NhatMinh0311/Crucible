@@ -14,7 +14,7 @@ Mỗi việc là một commit, kiểm chứng được bằng lệnh ghi ở c�
 | T8 | Trình điều khiển Docker: dựng, exec, xóa, theo dõi container dừng, nhận lại | Kiểm thử tích hợp D3, D4, D8, D10, D11 | Xong |
 | T9 | Dịch vụ phiên và handler: tạo, đọc, gia hạn, kết thúc, exec; hết hạn, không hoạt động | Kiểm thử tích hợp D2, D5, D7, D9 | Xong |
 | T10 | Terminal WebSocket: vé, tương tác, xem, một kết nối tương tác, khung trạng thái | Kiểm thử tích hợp D6 | Xong |
-| T11 | CI job `runtime`; hướng dẫn chạy cho M2, M3 | CI xanh; thành viên làm theo hướng dẫn chạy được D2 | Xong trên máy; CI chạy lần đầu khi push |
+| T11 | CI job `runtime`; hướng dẫn chạy cho M2, M3 | CI xanh; thành viên làm theo hướng dẫn chạy được D2 | Xong |
 | T12 | Schemathesis | D12 | Xong |
 
 Kết quả: toàn bộ kiểm thử Go đạt với `-race` (Testcontainers PostgreSQL, RabbitMQ; Docker Engine thật); Schemathesis 655 ca
