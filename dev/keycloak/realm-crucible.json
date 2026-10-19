@@ -37,7 +37,13 @@
         "offline_access",
         "uma_authorization",
         "STUDENT"
-      ]
+      ],
+      "client": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     }
   },
   "clientScopes": [
@@ -1054,7 +1060,13 @@
       ],
       "realmRoles": [
         "ADMIN"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "gv1",
@@ -1072,7 +1084,13 @@
       ],
       "realmRoles": [
         "INSTRUCTOR"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "gv2",
@@ -1090,7 +1108,13 @@
       ],
       "realmRoles": [
         "INSTRUCTOR"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "tg1",
@@ -1108,7 +1132,13 @@
       ],
       "realmRoles": [
         "INSTRUCTOR"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "sv1",
@@ -1126,7 +1156,13 @@
       ],
       "realmRoles": [
         "STUDENT"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "sv2",
@@ -1144,7 +1180,13 @@
       ],
       "realmRoles": [
         "STUDENT"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "sv3",
@@ -1162,7 +1204,13 @@
       ],
       "realmRoles": [
         "STUDENT"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "sv4",
@@ -1180,7 +1228,13 @@
       ],
       "realmRoles": [
         "STUDENT"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "sv5",
@@ -1198,7 +1252,13 @@
       ],
       "realmRoles": [
         "STUDENT"
-      ]
+      ],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ]
+      }
     },
     {
       "username": "service-account-content-service",
