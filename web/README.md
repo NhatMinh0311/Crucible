@@ -75,5 +75,16 @@ module thêm bản dịch cho mã lỗi riêng của mình tại CR-DOC-03 mục
 | `StatusBadge` | Trạng thái kèm màu, biểu tượng, nhãn |
 | `ui/dropdown-menu` | Menu thả xuống theo shadcn/ui |
 
-Chế độ màu (Sáng, Tối, Theo hệ thống) và ngôn ngữ do người dùng chọn ở menu tài khoản; màn hình của module dùng token
-màu trong `src/shell/theme/theme.css`, không đặt màu cố định.
+Chế độ màu (Sáng, Tối, Theo hệ thống) và ngôn ngữ do người dùng chọn ở menu tài khoản.
+
+## Hướng giao diện "Bản vẽ kỹ thuật"
+
+| Quy tắc | Cách viết |
+|---|---|
+| Màu | Chỉ dùng token: `bg-surface`, `border-rule` (khung), `border-border` (kẻ trong), `text-primary`, `text-signal` (thời gian, cảnh báo), `bg-success-soft text-success`…; không đặt mã màu trong màn hình |
+| Hình khối | Góc vuông, viền 1 px; không `rounded-*`, không `shadow-*` |
+| Chữ | Tiêu đề `font-display font-bold`; nhãn mục, tiêu đề cột `label-mono`; số liệu, mã `font-mono` |
+| Nhãn mục | `<SectionLabel index="B">{t('...')}</SectionLabel>` |
+| Nền vùng nội dung | Khung chung đã đặt `bg-blueprint`; thẻ dùng `bg-surface` để nổi trên lưới |
+
+`src/shell/theme/contrast.test.ts` kiểm tra độ tương phản của token; thêm token mới thì thêm cặp chữ trên nền vào danh sách.

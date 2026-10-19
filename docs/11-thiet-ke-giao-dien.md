@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-11 |
-| Phiên bản | 1.7 |
+| Phiên bản | 1.8 |
 | Ngày ban hành | 17/10/2026 |
 | Tài liệu liên quan | CR-DOC-01, CR-DOC-10 (use case), CR-DOC-03 mục 6 (giao thức terminal), AGENTS.md mục 4 |
 
@@ -36,8 +36,8 @@ chính và cách hiển thị trạng thái. Chi tiết từng màn hình thuộ
 | Thành phần | Lựa chọn |
 |---|---|
 | Thư viện thành phần | shadcn/ui (Radix UI, Tailwind CSS); mã thành phần nằm trong `web/src/shell/ui` |
-| Định hướng thẩm mỹ | Skill `frontend-design` được dùng khi dựng bộ theme và các màn hình đầu tiên; kết quả chốt thành token trong `web/src/shell/theme` |
-| Phông chữ | Be Vietnam Pro cho giao diện; JetBrains Mono cho terminal và mã |
+| Định hướng thẩm mỹ | "Bản vẽ kỹ thuật": nền giấy kẻ lưới 24 px, mực xanh đậm, xanh bản vẽ làm màu chính, cam tín hiệu cho thời gian và cảnh báo; góc vuông; đường kẻ 1 px thay cho bóng đổ; các mục đánh dấu bằng ký hiệu ("A — Điều hướng", số thứ tự 01, 02); nhãn mục, tiêu đề cột, nhãn trạng thái dùng chữ mono in hoa. Chọn từ ba hướng dựng thử (phòng lab, lò luyện, bản vẽ kỹ thuật) tham khảo các DESIGN.md của designmd.app và getdesign.md. Token tại `web/src/shell/theme/theme.css`; kiểm thử tự động bảo đảm các cặp chữ trên nền đạt 4,5:1 |
+| Phông chữ | Space Grotesk cho tiêu đề và nút chính; IBM Plex Sans cho nội dung; IBM Plex Mono cho nhãn, số liệu, terminal và mã. Cả ba có bộ ký tự tiếng Việt |
 | Biểu tượng | Lucide |
 | Chế độ màu | Sáng, tối, theo hệ điều hành (mặc định); chọn ở menu tài khoản, lưu trên trình duyệt; terminal luôn nền tối |
 | Màu trạng thái | Đạt, chưa đạt, đang kiểm tra, đã ghi nhận, gián đoạn, đã nộp; mỗi trạng thái có màu, biểu tượng và nhãn chữ |
@@ -55,7 +55,7 @@ chính và cách hiển thị trạng thái. Chi tiết từng màn hình thuộ
 | Chọn ngôn ngữ | Thứ tự: claim `locale` của token, lựa chọn lưu trên trình duyệt, `navigator.languages`; đổi ở menu tài khoản; lưu vào thuộc tính `locale` của người dùng trong Keycloak qua Account API (người dùng có vai trò `manage-account` của client `account`) rồi làm mới token, token mang claim `locale` để các dịch vụ biết ngôn ngữ người dùng; lưu thất bại thì giữ lựa chọn trên trình duyệt và báo cho người dùng |
 | Trang đăng nhập | Theme mặc định của Keycloak (có bản tiếng Việt), realm bật hai ngôn ngữ; giao diện truyền ngôn ngữ đang chọn bằng tham số `ui_locales` khi chuyển tới trang đăng nhập và đăng xuất |
 | Nội dung bài lab | Hiển thị nguyên văn theo `metadata.language`; trang làm bài đặt thuộc tính `lang` của vùng nội dung theo ngôn ngữ bài lab |
-| Phông chữ | Be Vietnam Pro hỗ trợ cả hai ngôn ngữ |
+| Phông chữ | Space Grotesk, IBM Plex Sans, IBM Plex Mono hỗ trợ cả hai ngôn ngữ |
 
 ## 5. Sơ đồ màn hình
 
@@ -323,3 +323,4 @@ mỗi lần đăng nhập và gửi theo ngôn ngữ đó (mặc định tiếng
 | 1.5 | 18/10/2026 | Cảnh báo thiếu chỗ đặt trước khi sĩ số lớp tăng (mục 7.5, 8.2) |
 | 1.6 | 18/10/2026 | Ngôn ngữ giao diện (mục 4.1); UX5 theo ngôn ngữ người dùng |
 | 1.7 | 19/10/2026 | Chế độ màu theo hệ điều hành; chi tiết hiện thực ngôn ngữ giao diện, mã tra cứu lỗi (`specs/002-web-shell`) |
+| 1.8 | 20/10/2026 | Định hướng thẩm mỹ "Bản vẽ kỹ thuật", phông Space Grotesk, IBM Plex Sans, IBM Plex Mono |
