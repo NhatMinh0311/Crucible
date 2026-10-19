@@ -6,7 +6,7 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
   const mine = useRoles()
   const { t } = useTranslation()
   if (!roles.some((r) => mine.includes(r))) {
-    return <p className="text-muted-foreground">{t('auth.forbidden')}</p>
+    return <p className="border border-rule bg-surface p-6 text-muted-foreground">{t('auth.forbidden')}</p>
   }
   return <>{children}</>
 }

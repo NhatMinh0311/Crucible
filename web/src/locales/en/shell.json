@@ -10,7 +10,8 @@
     "notifications": "Notifications",
     "signOut": "Sign out",
     "skipToContent": "Skip to content",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "section": "Navigation"
   },
   "roles": {
     "STUDENT": "Student",
@@ -29,7 +30,8 @@
     "greeting": "Hello",
     "shellReady": "The application shell is running",
     "roles": "Roles: {{roles}}",
-    "noRole": "none"
+    "noRole": "none",
+    "section": "Overview"
   },
   "pages": {
     "notFound": "Page not found.",

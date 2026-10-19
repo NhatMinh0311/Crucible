@@ -10,7 +10,8 @@
     "notifications": "Thông báo",
     "signOut": "Đăng xuất",
     "skipToContent": "Bỏ qua tới nội dung",
-    "closeMenu": "Đóng menu"
+    "closeMenu": "Đóng menu",
+    "section": "Điều hướng"
   },
   "roles": {
     "STUDENT": "Sinh viên",
@@ -29,7 +30,8 @@
     "greeting": "Xin chào",
     "shellReady": "Khung giao diện đang hoạt động",
     "roles": "Vai trò: {{roles}}",
-    "noRole": "chưa có"
+    "noRole": "chưa có",
+    "section": "Tổng quan"
   },
   "pages": {
     "notFound": "Không tìm thấy trang.",

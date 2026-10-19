@@ -42,20 +42,20 @@ export function AccountMenu({ onNotice }: { onNotice: (message: string) => void 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex items-center gap-3 border-l border-rule px-4 text-sm font-medium hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-5"
         aria-label={t('account.menu')}
       >
-        <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground" aria-hidden>
+        <span className="flex size-[30px] items-center justify-center bg-foreground font-mono text-[11px] font-semibold text-background" aria-hidden>
           {initials(name)}
         </span>
         <span className="hidden max-w-40 truncate sm:inline">{name}</span>
         <ChevronDown className="size-4 text-muted-foreground" aria-hidden />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <div className="px-2 py-1.5">
-          <p className="truncate text-sm font-semibold">{name}</p>
+      <DropdownMenuContent align="end" sideOffset={0}>
+        <div className="px-3 py-2">
+          <p className="truncate font-display font-semibold">{name}</p>
           {profile?.email && <p className="truncate text-xs text-muted-foreground">{profile.email}</p>}
-          {roles.length > 0 && <p className="text-xs text-muted-foreground">{roles.map((r) => t(`roles.${r}`)).join(', ')}</p>}
+          {roles.length > 0 && <p className="label-mono mt-1 text-primary">{roles.map((r) => t(`roles.${r}`)).join(', ')}</p>}
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>{t('account.language')}</DropdownMenuLabel>

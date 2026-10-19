@@ -16,9 +16,9 @@ export function RequireDesktop({ children }: { children: ReactNode }) {
   const desktop = useSyncExternalStore(subscribe, () => window.matchMedia(DESKTOP_QUERY).matches)
   if (desktop) return <>{children}</>
   return (
-    <div className="mx-auto flex max-w-sm flex-col items-center gap-3 py-16 text-center">
-      <MonitorSmartphone className="size-10 text-muted-foreground" aria-hidden />
-      <p className="font-semibold">{t('pages.desktopOnly')}</p>
+    <div className="mx-auto flex max-w-sm flex-col items-start gap-3 border border-rule bg-surface p-8">
+      <MonitorSmartphone className="size-8 text-primary" aria-hidden />
+      <p className="font-display text-lg font-bold">{t('pages.desktopOnly')}</p>
       <p className="text-sm text-muted-foreground">{t('pages.desktopOnlyHint')}</p>
     </div>
   )
