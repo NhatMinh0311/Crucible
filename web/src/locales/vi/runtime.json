@@ -1,5 +1,19 @@
 {
   "nav": {
     "cluster": "Sức chứa và phiên"
+  },
+  "errors": {
+    "NOT_IMPLEMENTED": "Chức năng này chưa có trên môi trường đang chạy.",
+    "SESSION_LIMIT": "Bạn đang có một phiên thực hành khác. Kết thúc phiên đó trước khi bắt đầu phiên mới.",
+    "QUOTA_EXHAUSTED": "Lớp đã hết giờ máy hoặc hết số phiên chạy cùng lúc. Liên hệ giảng viên.",
+    "QUOTA_CEILING_EXCEEDED": "Tổng hạn mức chia cho các lớp vượt trần của giảng viên.",
+    "RESERVATION_BUDGET_EXHAUSTED": "Đặt trước vượt ngân sách chỗ × giờ trong tháng.",
+    "EXTENSION_LIMIT": "Không thể gia hạn thêm cho phiên này.",
+    "SESSION_NOT_ACTIVE": "Môi trường chưa sẵn sàng hoặc đã kết thúc.",
+    "EXEC_BUSY": "Đang có một lần kiểm tra khác chạy. Đợi kết quả rồi thử lại.",
+    "RESERVATION_SLOTS_IN_USE": "Không thể giảm số chỗ đặt trước xuống dưới số chỗ đang dùng.",
+    "RESERVATION_CLOSED": "Đặt trước đã hủy hoặc đã qua giờ kết thúc.",
+    "CAPACITY_UNAVAILABLE": "Không đủ sức chứa trong khung giờ đã chọn. Chọn khung giờ khác.",
+    "ENVIRONMENT_NOT_ALLOWED": "Môi trường của bài lab không được phép trên hệ thống này. Liên hệ quản trị."
   }
 }

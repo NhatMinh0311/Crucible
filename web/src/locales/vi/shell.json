@@ -33,5 +33,18 @@
   "pages": {
     "notFound": "Không tìm thấy trang.",
     "comingSoon": "{{name}} ({{screen}}) — sẽ được xây dựng."
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Dữ liệu gửi lên không hợp lệ. Kiểm tra lại các trường đã nhập.",
+    "UNAUTHENTICATED": "Phiên đăng nhập đã hết hạn. Tải lại trang để đăng nhập lại.",
+    "FORBIDDEN": "Tài khoản không có quyền thực hiện thao tác này.",
+    "NOT_FOUND": "Không tìm thấy dữ liệu yêu cầu hoặc tài khoản không có quyền xem.",
+    "METHOD_NOT_ALLOWED": "Thao tác không được hỗ trợ. Báo quản trị kèm mã tra cứu.",
+    "RATE_LIMITED": "Thao tác quá nhanh. Đợi một lát rồi thử lại.",
+    "IDEMPOTENCY_KEY_REUSED": "Yêu cầu trùng với một yêu cầu trước nhưng khác nội dung. Tải lại trang rồi thử lại.",
+    "SETTING_OUT_OF_RANGE": "Giá trị nằm ngoài khoảng cho phép của tham số.",
+    "network": "Không kết nối được tới máy chủ. Kiểm tra mạng rồi thử lại.",
+    "unknown": "Đã xảy ra lỗi ({{code}}). Thử lại; nếu vẫn lỗi, báo quản trị kèm mã tra cứu.",
+    "reference": "Mã tra cứu: {{ref}}"
   }
 }

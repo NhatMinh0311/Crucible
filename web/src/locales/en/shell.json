@@ -33,5 +33,18 @@
   "pages": {
     "notFound": "Page not found.",
     "comingSoon": "{{name}} ({{screen}}) — coming soon."
+  },
+  "errors": {
+    "VALIDATION_FAILED": "The submitted data is invalid. Check the fields you entered.",
+    "UNAUTHENTICATED": "Your sign-in has expired. Reload the page to sign in again.",
+    "FORBIDDEN": "Your account is not allowed to perform this action.",
+    "NOT_FOUND": "The requested item was not found or you do not have access to it.",
+    "METHOD_NOT_ALLOWED": "This operation is not supported. Report it to an administrator with the reference code.",
+    "RATE_LIMITED": "Too many requests. Wait a moment and try again.",
+    "IDEMPOTENCY_KEY_REUSED": "This request repeats an earlier one with different content. Reload the page and try again.",
+    "SETTING_OUT_OF_RANGE": "The value is outside the allowed range for this setting.",
+    "network": "Could not reach the server. Check your connection and try again.",
+    "unknown": "Something went wrong ({{code}}). Try again; if it persists, report it to an administrator with the reference code.",
+    "reference": "Reference: {{ref}}"
   }
 }

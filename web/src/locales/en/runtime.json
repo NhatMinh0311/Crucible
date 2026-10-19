@@ -1,5 +1,19 @@
 {
   "nav": {
     "cluster": "Capacity and sessions"
+  },
+  "errors": {
+    "NOT_IMPLEMENTED": "This feature is not available in the current environment.",
+    "SESSION_LIMIT": "You already have another active lab session. End it before starting a new one.",
+    "QUOTA_EXHAUSTED": "The class has used up its machine hours or concurrent sessions. Contact your instructor.",
+    "QUOTA_CEILING_EXCEEDED": "The total quota allocated to classes exceeds the instructor's ceiling.",
+    "RESERVATION_BUDGET_EXHAUSTED": "This reservation exceeds the monthly seat-hour budget.",
+    "EXTENSION_LIMIT": "This session cannot be extended any further.",
+    "SESSION_NOT_ACTIVE": "The environment is not ready or has already ended.",
+    "EXEC_BUSY": "Another check is running. Wait for its result and try again.",
+    "RESERVATION_SLOTS_IN_USE": "Reserved seats cannot be reduced below the number in use.",
+    "RESERVATION_CLOSED": "The reservation has been cancelled or has already ended.",
+    "CAPACITY_UNAVAILABLE": "Not enough capacity in the selected time window. Choose another window.",
+    "ENVIRONMENT_NOT_ALLOWED": "The lab environment is not allowed on this platform. Contact an administrator."
   }
 }
