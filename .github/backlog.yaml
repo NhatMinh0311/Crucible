@@ -1,6 +1,6 @@
 # Backlog khởi đầu, sinh từ lộ trình (CR-DOC-06 mục 4) và chức năng, tiêu chí chấp nhận (CR-DOC-01).
 # Tạo issue trên GitHub bằng: GITHUB_TOKEN=<token> python3 scripts/create-issues.py <chủ sở hữu>/<kho mã>
-# Trường owner: m1, m2, m3 (ánh xạ sang tài khoản GitHub khi chạy script).
+# Trường owner: m1, m2, m3 (ánh xạ sang tài khoản GitHub khi chạy script). done: true thì issue được đóng.
 
 milestones:
   MA: "Luồng luyện tập đầu cuối trên môi trường phát triển (cuối tuần 3)"
@@ -15,13 +15,13 @@ issues:
   - {title: "Khung giao diện chung: đăng nhập OIDC, điều hướng theo vai trò, theme, thư mục module", owner: m1, milestone: MA, labels: [platform, web], refs: "CR-DOC-11 mục 4, 5; P02"}
   - {title: "Giao diện hai ngôn ngữ: i18next, tệp dịch theo module, kiểm tra khóa trong CI, chọn ngôn ngữ lưu vào Keycloak", owner: m1, milestone: MA, labels: [platform, web], refs: "P05; US-P2; AC-P2.1-AC-P2.3; CR-DOC-11 mục 4.1"}
   - {title: "SCR-42 Tham số hệ thống: gom tham số ba module, xác nhận thay đổi, lịch sử", owner: m1, milestone: MC, labels: [platform, web], refs: "P04; UC22; AC-P1.1-AC-P1.4; CR-DOC-11 mục 7.6"}
-  - {title: "Thử nghiệm S1: gVisor trên k3s trong máy ảo KVM", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
+  - {title: "Thử nghiệm S1: gVisor trên k3s trong máy ảo KVM", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; docs/spikes/S1.md", done: true}
   - {title: "Thử nghiệm S2: thời gian cấp phiên từ nhóm ấm", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
   - {title: "Thử nghiệm S3: gateway WebSocket - exec và ghi asciicast", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
   - {title: "Thử nghiệm S4: image nền và bài lab mẫu trong gVisor", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
   - {title: "Thử nghiệm S5: bộ nhớ thực tế của thành phần nền tảng", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
-  - {title: "runtime-api chế độ docker: tạo, đọc, kết thúc phiên, exec, vé terminal, terminal WebSocket, sự kiện runtime.session.*", owner: m1, milestone: MA, labels: [m1, feature], refs: "CR-DOC-03 mục 2.3; R01-R03, R08, R11"}
-  - {title: "Image nền bài lab ubuntu-nginx và image bộ công cụ kiểm tra /opt/crucible/bin", owner: m1, milestone: MA, labels: [m1, feature], refs: "ADR-0011; CR-DOC-03 mục 7"}
+  - {title: "runtime-api chế độ docker: tạo, đọc, kết thúc phiên, exec, vé terminal, terminal WebSocket, sự kiện runtime.session.*", owner: m1, milestone: MA, labels: [m1, feature], refs: "CR-DOC-03 mục 2.3; R01-R03, R08, R11; specs/001-runtime-docker-mode", done: true}
+  - {title: "Image nền bài lab ubuntu-nginx và image bộ công cụ kiểm tra /opt/crucible/bin", owner: m1, milestone: MA, labels: [m1, feature], refs: "ADR-0011; CR-DOC-03 mục 7; specs/001-runtime-docker-mode", done: true}
   - {title: "Hạ tầng cụm chuẩn: Terraform, cloud-init, k3s, gVisor trên 4 máy ảo", owner: m1, milestone: MB, labels: [platform, infra], refs: "CR-DOC-04 mục 3; ADR-0009"}
   - {title: "GitOps: Argo CD, Helm chart các dịch vụ, Image Updater, Sealed Secrets", owner: m1, milestone: MB, labels: [platform, infra], refs: "CR-DOC-04 mục 5; ADR-0008"}
   - {title: "runtime-operator: LabSession, WarmPool, dọn tài nguyên mồ côi", owner: m1, milestone: MB, labels: [m1, feature], refs: "R01-R03, R06; AC-R1.1, AC-R1.2, AC-R4.2, AC-C1.9; BR-M1.12, BR-M1.26"}
