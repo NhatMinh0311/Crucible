@@ -8,7 +8,9 @@
     "main": "Main navigation",
     "openMenu": "Open menu",
     "notifications": "Notifications",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "skipToContent": "Skip to content",
+    "closeMenu": "Close menu"
   },
   "roles": {
     "STUDENT": "Student",
@@ -31,7 +33,12 @@
   },
   "pages": {
     "notFound": "Page not found.",
-    "comingSoon": "{{name}} ({{screen}}) — coming soon."
+    "comingSoon": "{{name}} ({{screen}}) — coming soon.",
+    "error": "Something went wrong while showing this page.",
+    "errorHint": "Reload the page; if the problem persists, contact an administrator.",
+    "backHome": "Back to home",
+    "desktopOnly": "This screen needs a computer",
+    "desktopOnlyHint": "Use a computer with a screen at least 1024 px wide to work on labs and author them."
   },
   "errors": {
     "VALIDATION_FAILED": "The submitted data is invalid. Check the fields you entered.",

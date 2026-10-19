@@ -1,5 +1,8 @@
 {
   "nav": {
     "classes": "Lớp học"
+  },
+  "pages": {
+    "notifications": "Thông báo"
   }
 }

@@ -8,7 +8,9 @@
     "main": "Điều hướng chính",
     "openMenu": "Mở menu",
     "notifications": "Thông báo",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "skipToContent": "Bỏ qua tới nội dung",
+    "closeMenu": "Đóng menu"
   },
   "roles": {
     "STUDENT": "Sinh viên",
@@ -31,7 +33,12 @@
   },
   "pages": {
     "notFound": "Không tìm thấy trang.",
-    "comingSoon": "{{name}} ({{screen}}) — sẽ được xây dựng."
+    "comingSoon": "{{name}} ({{screen}}) — sẽ được xây dựng.",
+    "error": "Đã xảy ra lỗi khi hiển thị trang.",
+    "errorHint": "Tải lại trang; nếu vẫn lỗi, báo quản trị.",
+    "backHome": "Về trang chủ",
+    "desktopOnly": "Màn hình này cần máy tính",
+    "desktopOnlyHint": "Dùng máy tính có màn hình rộng từ 1024 px để làm bài và soạn bài lab."
   },
   "errors": {
     "VALIDATION_FAILED": "Dữ liệu gửi lên không hợp lệ. Kiểm tra lại các trường đã nhập.",
