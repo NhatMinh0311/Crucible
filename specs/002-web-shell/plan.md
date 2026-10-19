@@ -43,6 +43,7 @@ dev/keycloak/realm-crucible.json  quyền account cho người dùng
 | Lưu `locale` | `GET` rồi `POST /realms/crucible/account` với `username`, `email`, `firstName`, `lastName`, `attributes.locale`; sau đó `signinSilent` để token mang claim mới | Account API của Keycloak; dịch vụ đọc claim `locale` (M3 gửi thông báo theo ngôn ngữ người nhận) |
 | Trang đăng nhập | `signinRedirect({ ui_locales })` | Keycloak hiển thị theo `ui_locales` khi realm bật đa ngôn ngữ |
 | Menu thả xuống | `@radix-ui/react-dropdown-menu` 2.1.24, mã thành phần theo shadcn/ui | Theo CR-DOC-11 mục 4; điều hướng bàn phím, ARIA có sẵn |
+| Định dạng ngày giờ | `Intl` với `vi-VN` và `en-GB`, múi giờ `Asia/Ho_Chi_Minh` | `en-GB` dùng giờ 24 tiếng, ngày trước tháng như tiếng Việt; giờ thi đọc giống nhau ở hai ngôn ngữ |
 | Chế độ màu | Lớp `dark` trên `<html>`; `localStorage` khóa `crucible.theme`; `matchMedia('(prefers-color-scheme: dark)')` | Token màu hiện có dùng lớp `dark` |
 
 Phiên bản thư viện là bản ổn định mới nhất đã phát hành ít nhất hai tuần.
