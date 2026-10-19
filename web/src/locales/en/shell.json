@@ -1,0 +1,6 @@
+{
+  "auth": {
+    "redirecting": "Redirecting to the sign-in page…",
+    "error": "Could not sign in: {{message}}"
+  }
+}

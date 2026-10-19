@@ -1,0 +1,6 @@
+{
+  "auth": {
+    "redirecting": "Đang chuyển tới trang đăng nhập…",
+    "error": "Không đăng nhập được: {{message}}"
+  }
+}
