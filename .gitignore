@@ -12,3 +12,23 @@ kubeconfig*
 .idea/
 .vscode/
 __pycache__/
+
+# Spec Kit: mỗi thành viên tự sinh bằng `specify init` (CONTRIBUTING mục 1.6); chỉ commit hiến pháp và mẫu ghi đè
+.specify/*
+!.specify/memory/
+.specify/memory/*
+!.specify/memory/constitution.md
+!.specify/templates/
+.specify/templates/*
+!.specify/templates/overrides/
+specs/*/checklists/
+# Lệnh, skill, sự kiện Spec Kit sinh cho từng trợ lý AI
+.claude/skills/speckit-*/
+.claude/settings.json
+.github/skills/speckit-*/
+.github/agents/speckit.*
+.github/prompts/speckit.*
+.github/hooks/speckit.json
+.agents/skills/speckit-*/
+.cursor/
+.gemini/

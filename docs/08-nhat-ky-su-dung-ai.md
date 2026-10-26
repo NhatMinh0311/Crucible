@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.12 |
+| Phiên bản | 1.13 |
 | Ngày ban hành | 26/10/2026 |
 
 ## 1. Mục đích
@@ -300,6 +300,8 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 32 | Hỏi cần học gì tiếp cho S2–S5; nhận định M1 quá nặng so với học phần; hỏi cách chia để phát triển tiếp ở các học phần sau | Lập danh mục học theo từng thử nghiệm; đề xuất phân kỳ theo học phần; ước lượng giờ học từng phương án | Yêu cầu cắt giảm thêm bằng giải pháp khác |
 | 33 | Yêu cầu cắt giảm hoặc chuyển giải pháp ở M1, giữ nghiệp vụ | Đề xuất Docker và gVisor trên máy phiên riêng dựa trên trình điều khiển đã có; bảng đánh đổi hiệu năng, bảo mật; so sánh mức học | Chọn phương án; yêu cầu sao lưu và dựng kho mã mới |
 | 34 | Dựng kho mã mới | Sao lưu; dựng kho mã theo khối; hỏi số máy ảo, cách triển khai, mục tiêu khôi phục; viết lại tài liệu | Chọn hai máy ảo, script triển khai, `pg_dump` mỗi giờ |
+| 35 | Hỏi Spec Kit là gì; đề nghị để mỗi thành viên tự khởi tạo Spec Kit, thêm bước vào hướng dẫn đóng góp | Giải thích quy trình theo đặc tả; đọc tài liệu và mã nguồn Spec Kit 1.2.3 để xác định tệp được sinh, thứ tự ưu tiên mẫu, việc giữ nguyên hiến pháp khi khởi tạo lại; viết hiến pháp, mẫu đặc tả, kế hoạch, danh sách việc bằng tiếng Việt, bước cài đặt | Chọn để thành viên tự khởi tạo, kho mã giữ hiến pháp và mẫu dùng chung |
+| 36 | Yêu cầu lộ trình gửi các thành viên dạng ma trận theo tuần; hỏi vì sao lộ trình mới khác CR-DOC-06 | Lập ma trận theo từng issue, mốc, phụ thuộc giữa module, điểm kiểm tra cuối tuần; đối chiếu và chỉ ra bảng trong CR-DOC-06 giữ khung tuần của bản thiết kế dùng Kubernetes, không khớp thời lượng học của người phụ trách M1 và milestone của issue | Yêu cầu cập nhật CR-DOC-06 theo lộ trình mới |
 
 ### 5.5. Các lần điều chỉnh hướng
 
@@ -325,3 +327,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.10 | 18/10/2026 | Vòng 26: chế độ docker, hai ngôn ngữ |
 | 1.11 | 18/10/2026 | Vòng 27: chế độ docker của runtime-api |
 | 1.12 | 26/10/2026 | Giai đoạn 3, vòng 32–34: rút gọn kiến trúc M1, kho mã mới |
+| 1.13 | 26/10/2026 | Vòng 35: Spec Kit do thành viên tự khởi tạo; vòng 36: lộ trình theo ngày duyệt |

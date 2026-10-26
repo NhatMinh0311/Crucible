@@ -11,7 +11,7 @@ milestones:
 issues:
   # Nền tảng và M1
   - {title: "Tạo kho mã GitHub, bật ruleset, cập nhật CODEOWNERS với tài khoản M2, M3", owner: m1, milestone: MA, labels: [platform, chore], refs: "CR-DOC-07 mục 4, 5"}
-  - {title: "Khởi tạo Spec Kit cho các trợ lý AI của nhóm", owner: m1, milestone: MA, labels: [platform, chore], refs: "CR-DOC-07 mục 7"}
+  - {title: "Khởi tạo Spec Kit cho các trợ lý AI của nhóm", owner: m1, milestone: MA, labels: [platform, chore], refs: "CR-DOC-07 mục 7", done: true}
   - {title: "Khung giao diện chung: đăng nhập OIDC, điều hướng theo vai trò, theme, thư mục module", owner: m1, milestone: MA, labels: [platform, web], refs: "CR-DOC-11 mục 4, 5; P02; specs/002-web-shell", done: true}
   - {title: "Giao diện hai ngôn ngữ: i18next, tệp dịch theo module, kiểm tra khóa trong CI, chọn ngôn ngữ lưu vào Keycloak", owner: m1, milestone: MA, labels: [platform, web], refs: "P05; US-P2; AC-P2.1-AC-P2.3; CR-DOC-11 mục 4.1; specs/002-web-shell", done: true}
   - {title: "SCR-42 Tham số hệ thống: gom tham số ba module, xác nhận thay đổi, lịch sử", owner: m1, milestone: MC, labels: [platform, web], refs: "P04; UC22; AC-P1.1-AC-P1.4; CR-DOC-11 mục 7.6"}
