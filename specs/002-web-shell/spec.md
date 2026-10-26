@@ -21,10 +21,10 @@ dịch không bị dồn về cuối dự án.
 | Thuộc phạm vi | Ngoài phạm vi |
 |---|---|
 | i18next với bốn không gian `shell`, `runtime`, `content`, `learning`; tệp dịch `vi`, `en` | Bản dịch lỗi riêng của M2, M3 (mỗi module điền vào không gian của mình) |
-| Chọn ngôn ngữ lần đầu theo trình duyệt; đổi ở menu tài khoản; lưu thuộc tính `locale` qua Account API của Keycloak | Mẫu email, thông báo hai ngôn ngữ (M3, #43) |
+| Chọn ngôn ngữ lần đầu theo trình duyệt; đổi ở menu tài khoản; lưu thuộc tính `locale` qua Account API của Keycloak | Mẫu email, thông báo hai ngôn ngữ (M3, #44) |
 | Trang đăng nhập Keycloak hiển thị theo ngôn ngữ đang chọn | Theme riêng cho trang đăng nhập (dùng theme mặc định, đã có tiếng Việt) |
-| Hiển thị lỗi API theo `code`, kèm mã tra cứu | Ngôn ngữ nội dung bài lab (M2, #35) |
-| Định dạng ngày giờ, số theo ngôn ngữ, múi giờ Việt Nam | Nội dung trang thông báo và số thông báo chưa đọc (M3, #42) |
+| Hiển thị lỗi API theo `code`, kèm mã tra cứu | Ngôn ngữ nội dung bài lab (M2, #36) |
+| Định dạng ngày giờ, số theo ngôn ngữ, múi giờ Việt Nam | Nội dung trang thông báo và số thông báo chưa đọc (M3, #43) |
 | Menu tài khoản: tên, email, vai trò, ngôn ngữ, chế độ màu, đăng xuất | Nguyên mẫu SCR-12, SCR-13, SCR-24, SCR-27 (CR-DOC-11 mục 9) |
 | Chế độ sáng, tối, theo hệ thống | |
 | Điều hướng trên điện thoại, liên kết bỏ qua tới nội dung, chuông thông báo dẫn tới `/notifications` | |
