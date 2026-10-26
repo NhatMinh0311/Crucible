@@ -23,15 +23,15 @@ users:
 
 ssh_pwauth: false
 
-# Đĩa thứ hai dành riêng cho /var/lib/docker
+# Đĩa thứ hai cho image và lớp ghi của container: Docker 29 lưu chúng qua containerd tại /var/lib/containerd
 fs_setup:
-  - label: docker
+  - label: containerd
     filesystem: ext4
     device: /dev/vdb
     partition: none
     overwrite: false
 mounts:
-  - [LABEL=docker, /var/lib/docker, ext4, "defaults,nofail", "0", "2"]
+  - [LABEL=containerd, /var/lib/containerd, ext4, "defaults,nofail", "0", "2"]
 
 package_update: true
 packages: [ca-certificates, curl, gnupg, ufw, prometheus-node-exporter]
@@ -42,7 +42,10 @@ write_files:
     content: |
       {
         "runtimes": {
-          "runsc": {"path": "/usr/bin/runsc", "runtimeArgs": ["--platform=systrap"]}
+          "runsc": {
+            "path": "/usr/bin/runsc",
+            "runtimeArgs": ["--platform=systrap", "--overlay2=root:self,size=1g"]
+          }
         },
         "default-runtime": "runsc",
         "no-new-privileges": true,

@@ -40,7 +40,7 @@ write_files:
         User crucible
         IdentityFile /opt/crucible/ssh/runtime-api
         IdentitiesOnly yes
-        StrictHostKeyChecking accept-new
+        StrictHostKeyChecking yes
   - path: /opt/crucible/bootstrap.sh
     permissions: "0755"
     content: |

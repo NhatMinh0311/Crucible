@@ -85,7 +85,7 @@ for name in cr-server cr-lab; do
       "$HERE/cloud-init/$name.yaml" > "$WORK/$name.yaml"
 done
 
-# 6. Máy ảo: đĩa hệ điều hành là lớp qcow2 trên image gốc; cr-lab thêm đĩa riêng cho /var/lib/docker
+# 6. Máy ảo: đĩa hệ điều hành là lớp qcow2 trên image gốc; cr-lab thêm đĩa riêng cho /var/lib/containerd
 create_vm() {
   local name=$1 vcpus=$2 mem=$3 mac=$4; shift 4
   if virsh dominfo "$name" >/dev/null 2>&1; then
@@ -103,7 +103,7 @@ create_vm() {
 }
 create_vm cr-server "$SERVER_VCPUS" "$SERVER_MEMORY_MIB" 52:54:00:77:00:10 60
 create_vm cr-lab "$LAB_VCPUS" "$LAB_MEMORY_MIB" 52:54:00:77:00:11 30 \
-  --disk "pool=$POOL,size=40,format=qcow2,bus=virtio"
+  --disk "pool=$POOL,size=60,format=qcow2,bus=virtio"
 
 # 7. Chờ cloud-init chạy xong trên cả hai máy
 for ip in 10.77.0.10 10.77.0.11; do
@@ -114,3 +114,8 @@ for ip in 10.77.0.10 10.77.0.11; do
   done
   ssh "ops@$ip" cloud-init status --wait --long | tail -n 3
 done
+
+# 8. cr-server chỉ tin khóa máy của cr-lab do máy quản trị đọc qua kết nối quản trị (dựng lại cr-lab thì khóa đổi)
+LAB_HOSTKEY="$(ssh ops@10.77.0.11 cat /etc/ssh/ssh_host_ed25519_key.pub | cut -d' ' -f1,2)"
+ssh ops@10.77.0.10 "umask 077; echo 'cr-lab $LAB_HOSTKEY' > ~/.ssh/known_hosts"
+log "Xong: cr-server 10.77.0.10, cr-lab 10.77.0.11 (đăng nhập: ssh ops@<địa chỉ>)"
