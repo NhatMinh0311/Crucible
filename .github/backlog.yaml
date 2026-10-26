@@ -1,0 +1,64 @@
+# Backlog khởi đầu, sinh từ lộ trình (CR-DOC-06 mục 4) và chức năng, tiêu chí chấp nhận (CR-DOC-01).
+# Tạo issue trên GitHub bằng: GITHUB_TOKEN=<token> python3 scripts/create-issues.py <chủ sở hữu>/<kho mã>
+# Trường owner: m1, m2, m3 (ánh xạ sang tài khoản GitHub khi chạy script). done: true thì issue được đóng.
+
+milestones:
+  MA: "Luồng luyện tập đầu cuối trên môi trường phát triển (cuối tuần 3)"
+  MB: "Luồng luyện tập trên môi trường chuẩn với gVisor, phát hành v0.1.0 (cuối tuần 6)"
+  MC: "Kỳ thi đầy đủ trên môi trường chuẩn (cuối tuần 9)"
+  MD: "Đo Q1-Q14, thí nghiệm sự cố, khôi phục, phát hành v1.0.0 (cuối tuần 11)"
+
+issues:
+  # Nền tảng và M1
+  - {title: "Tạo kho mã GitHub, bật ruleset, cập nhật CODEOWNERS với tài khoản M2, M3", owner: m1, milestone: MA, labels: [platform, chore], refs: "CR-DOC-07 mục 4, 5"}
+  - {title: "Khởi tạo Spec Kit cho các trợ lý AI của nhóm", owner: m1, milestone: MA, labels: [platform, chore], refs: "CR-DOC-07 mục 7"}
+  - {title: "Khung giao diện chung: đăng nhập OIDC, điều hướng theo vai trò, theme, thư mục module", owner: m1, milestone: MA, labels: [platform, web], refs: "CR-DOC-11 mục 4, 5; P02; specs/002-web-shell", done: true}
+  - {title: "Giao diện hai ngôn ngữ: i18next, tệp dịch theo module, kiểm tra khóa trong CI, chọn ngôn ngữ lưu vào Keycloak", owner: m1, milestone: MA, labels: [platform, web], refs: "P05; US-P2; AC-P2.1-AC-P2.3; CR-DOC-11 mục 4.1; specs/002-web-shell", done: true}
+  - {title: "SCR-42 Tham số hệ thống: gom tham số ba module, xác nhận thay đổi, lịch sử", owner: m1, milestone: MC, labels: [platform, web], refs: "P04; UC22; AC-P1.1-AC-P1.4; CR-DOC-11 mục 7.6"}
+  - {title: "Thử nghiệm S1: gVisor với Docker trên máy phiên, điều khiển qua SSH", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0003"}
+  - {title: "Thử nghiệm S2: thời gian dựng môi trường mới khi image đã kéo sẵn", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0007"}
+  - {title: "Thử nghiệm S3: terminal qua Docker exec trên SSH và ghi asciicast", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0006"}
+  - {title: "Thử nghiệm S4: image nền và bài lab mẫu trong gVisor", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
+  - {title: "Thử nghiệm S5: bộ nhớ thực tế của thành phần nền tảng và chi phí sandbox", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
+  - {title: "runtime-api chạy phiên bằng Docker: tạo, đọc, kết thúc phiên, exec, vé terminal, terminal WebSocket, sự kiện runtime.session.*", owner: m1, milestone: MA, labels: [m1, feature], refs: "CR-DOC-03 mục 2.3; R01-R03, R08, R11; specs/001-runtime-docker", done: true}
+  - {title: "Image nền bài lab ubuntu-nginx và image bộ công cụ kiểm tra /opt/crucible/bin", owner: m1, milestone: MA, labels: [m1, feature], refs: "ADR-0011; CR-DOC-03 mục 7; specs/001-runtime-docker", done: true}
+  - {title: "Phiên chạy bằng gVisor: SESSION_RUNTIME, chi phí sandbox, ghi tệp qua exec tar, mạng internal riêng của phiên, máy chủ gói nội bộ", owner: m1, milestone: MB, labels: [m1, feature], refs: "ADR-0003; CR-MOD-M1 mục 3, 5.3; BR-M1.15, BR-M1.26"}
+  - {title: "Ghi phiên asciicast lên SeaweedFS, runtime.recording.available, tái dựng dòng lệnh", owner: m1, milestone: MB, labels: [m1, feature], refs: "R10; AC-R3.4; CR-MOD-M1 mục 6"}
+  - {title: "Hạ tầng môi trường chuẩn: script và cloud-init cho cr-server, cr-lab; Docker, gVisor, ufw", owner: m1, milestone: MB, labels: [platform, infra], refs: "CR-DOC-04 mục 3; ADR-0009"}
+  - {title: "Triển khai: deploy/compose.yaml, Caddy, deploy.sh, build image lên GHCR trong CI", owner: m1, milestone: MB, labels: [platform, infra], refs: "CR-DOC-04 mục 5; ADR-0008"}
+  - {title: "Giám sát và sao lưu: Prometheus, Grafana, Dozzle, dashboard phiên và sức chứa, pg_dump mỗi giờ", owner: m1, milestone: MB, labels: [platform, infra], refs: "CR-DOC-04 mục 7, 8; ADR-0012"}
+  - {title: "Bộ kiểm thử cách ly I1-I13 và cấu hình bắt buộc của máy phiên", owner: m1, milestone: MB, labels: [m1, security], refs: "CR-DOC-05 mục 4.1, 5, 6.1; ADR-0016"}
+  - {title: "Hàng đợi ưu tiên, hạn mức giờ máy, sức chứa, đặt trước tài nguyên cho kỳ thi, kéo sẵn image", owner: m1, milestone: MB, labels: [m1, feature], refs: "R04-R07; AC-R2.1-AC-R2.5, AC-L2.13; BR-M1.4-BR-M1.8, BR-M1.28; ADR-0007"}
+  - {title: "Tham số hệ thống M1: /v1/settings, lịch sử, bộ nhớ đệm; thay biến môi trường nghiệp vụ", owner: m1, milestone: MC, labels: [m1, feature], refs: "P04; US-P1; AC-P1.1-AC-P1.4; BR-M1.27; CR-DOC-01 mục 5.6; CR-DOC-03 mục 3.6"}
+  - {title: "Trần hạn mức theo giảng viên, ngân sách đặt trước, gợi ý khung giờ còn đủ chỗ", owner: m1, milestone: MC, labels: [m1, feature], refs: "R05; AC-R2.6-AC-R2.8; BR-M1.18-BR-M1.21; CR-MOD-M1 mục 5.1; SCR-41"}
+  - {title: "Lấy mẫu tài nguyên phiên: bộ nhớ cao nhất, OUT_OF_MEMORY, ENVIRONMENT_FAILED, phát hiện dùng CPU bất thường", owner: m1, milestone: MC, labels: [m1, feature], refs: "R16; US-R5; BR-M1.17, BR-M1.22-BR-M1.25; CR-MOD-M1 mục 5.5; SCR-40"}
+  - {title: "Mất máy phiên, đối soát và dọn tài nguyên mồ côi, dòng lệnh cho phân tích gian lận", owner: m1, milestone: MC, labels: [m1, feature], refs: "R10, R12; AC-R4.1, AC-R4.2; BR-M1.11, BR-M1.12; CR-MOD-M1 mục 3.3"}
+  - {title: "Trang quản trị phiên và sức chứa", owner: m1, milestone: MC, labels: [m1, web], refs: "R13; SCR-40; CR-MOD-M1 mục 9"}
+  - {title: "Chương trình đo Q1-Q3, thí nghiệm sự cố CH1-CH7, diễn tập khôi phục, phát hành v1.0.0, cài đặt thử", owner: m1, milestone: MD, labels: [platform, test], refs: "CR-DOC-04 mục 8, 9, 11; Q1-Q14"}
+
+  # M2
+  - {title: "Viết tài liệu thiết kế module M2 (docs/modules/m2-content.md)", owner: m2, milestone: MA, labels: [m2, docs], refs: "CR-DOC-06 mục 5; docs/modules/_mau.md"}
+  - {title: "Lưu trữ bài lab, phiên bản nháp và xuất bản, kiểm tra đặc tả theo lược đồ và quy tắc ngữ nghĩa", owner: m2, milestone: MA, labels: [m2, feature], refs: "C01, C04; AC-C1.1, AC-C1.3, AC-C1.4, AC-C1.9"}
+  - {title: "Sinh biến thể tất định theo seed HMAC, lỗi cài sẵn", owner: m2, milestone: MA, labels: [m2, feature], refs: "C02, C03, C06; AC-C2.1, AC-C2.2; CR-DOC-03 mục 4.4"}
+  - {title: "Lượt làm bài qua content-api: tạo, đọc, nộp; yêu cầu phiên từ runtime-api", owner: m2, milestone: MA, labels: [m2, feature], refs: "C07; contracts/content-api.yaml"}
+  - {title: "Kiểm tra bước, điểm thành phần, gợi ý có trừ điểm, trang làm bài", owner: m2, milestone: MA, labels: [m2, feature], refs: "C08, C09; AC-C2.3-AC-C2.6; SCR-12"}
+  - {title: "Bước trả lời: so khớp đáp án, giới hạn số lần, chế độ phản hồi, ô trả lời trên trang làm bài", owner: m2, milestone: MB, labels: [m2, feature], refs: "C17; AC-C2.10-AC-C2.13; CR-DOC-03 mục 4.3, 4.6; SCR-12"}
+  - {title: "Form soạn bài lab đồng bộ YAML, xem trước biến thể, chạy thử", owner: m2, milestone: MB, labels: [m2, feature], refs: "C01, C13; AC-C1.5, AC-C1.6; SCR-24, SCR-25"}
+  - {title: "Kiểm thử bài lab khi xuất bản với 5 seed", owner: m2, milestone: MC, labels: [m2, feature], refs: "C05; AC-C1.2, AC-C1.8; CR-DOC-03 mục 4.5"}
+  - {title: "Chấm cuối, tiếp tục và khôi phục tiến độ, chấm ngầm, chế độ phản hồi", owner: m2, milestone: MC, labels: [m2, feature], refs: "C10, C14-C16; AC-C2.5, AC-C2.7-AC-C2.9, AC-L2.11"}
+  - {title: "Thư viện bài lab: riêng tư, chia sẻ, nhân bản", owner: m2, milestone: MC, labels: [m2, feature], refs: "C11; AC-C1.7; SCR-23"}
+  - {title: "Ngôn ngữ nội dung bài lab: metadata.language, lọc thư viện theo ngôn ngữ", owner: m2, milestone: MB, labels: [m2, feature], refs: "P05; AC-P2.5; CR-DOC-03 mục 4.1"}
+  - {title: "Tham số hệ thống M2: /v1/settings, maxTries mặc định khi xuất bản, chu kỳ chấm ngầm", owner: m2, milestone: MC, labels: [m2, feature], refs: "P04; AC-P1.1-AC-P1.4; CR-DOC-01 mục 5.6; CR-DOC-03 mục 3.6"}
+  - {title: "Bộ 10 bài lab mẫu đủ các dạng và mẫu kịch bản", owner: m2, milestone: MD, labels: [m2, content], refs: "CR-DOC-01 mục 5.4; CR-DOC-12 mục 6"}
+
+  # M3
+  - {title: "Viết tài liệu thiết kế module M3 (docs/modules/m3-learning.md)", owner: m3, milestone: MA, labels: [m3, docs], refs: "CR-DOC-06 mục 5; docs/modules/_mau.md"}
+  - {title: "Lớp học, nhập danh sách CSV, giảng viên phụ trách và trợ giảng", owner: m3, milestone: MA, labels: [m3, feature], refs: "L01, L12; AC-L1.5, AC-R2.6; UC11; SCR-21; CR-DOC-03 mục 3.5"}
+  - {title: "Lộ trình luyện tập, điều kiện tiên quyết, bắt đầu bài qua content-api", owner: m3, milestone: MA, labels: [m3, feature], refs: "L02; AC-L1.1; UC03; SCR-11"}
+  - {title: "Bài tập: hạn nộp, số lượt, chính sách quá hạn, gia hạn riêng, điểm lượt cao nhất", owner: m3, milestone: MB, labels: [m3, feature], refs: "L03; AC-L1.2-AC-L1.4, AC-L1.6; UC13; SCR-22"}
+  - {title: "Thông báo trong ứng dụng và email qua outbox", owner: m3, milestone: MB, labels: [m3, feature], refs: "L15; CR-DOC-11 mục 8.2"}
+  - {title: "Mẫu thông báo và email hai ngôn ngữ theo locale của người nhận", owner: m3, milestone: MB, labels: [m3, feature], refs: "P05; AC-P2.4; CR-DOC-11 mục 8.2"}
+  - {title: "Kỳ thi: lên lịch có đặt trước, phòng chờ, vào thi, nộp tự động, bù giờ, cộng giờ", owner: m3, milestone: MC, labels: [m3, feature], refs: "L04-L06, L16; AC-L2.1-AC-L2.4, AC-L2.7, AC-L2.8, AC-L2.11-AC-L2.13, AC-R2.7; UC14; SCR-13, SCR-26; CR-DOC-03 mục 4.1 (warmCapabilities)"}
+  - {title: "Tham số hệ thống M3: /v1/settings, kỳ thi chốt tham số exam.* khi lên lịch, sessionUntil", owner: m3, milestone: MC, labels: [m3, feature], refs: "P04; AC-P1.1-AC-P1.4; CR-DOC-01 mục 5.6; CR-DOC-03 mục 3.6"}
+  - {title: "Giám sát kỳ thi, xem trực tiếp, xem lại bản ghi", owner: m3, milestone: MC, labels: [m3, feature], refs: "L07, L08; AC-L2.5, AC-L2.6, AC-L2.10; SCR-27, SCR-28"}
+  - {title: "Tín hiệu gian lận, biên bản, công bố điểm, phúc khảo, bảng điểm", owner: m3, milestone: MC, labels: [m3, feature], refs: "L09-L11, L13, L14; AC-L2.9, AC-L3.1-AC-L3.5; SCR-29, SCR-30"}
