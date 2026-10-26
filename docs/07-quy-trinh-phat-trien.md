@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-07 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 26/10/2026 |
 | Tài liệu liên quan | CR-DOC-03 mục 2 (quản lý hợp đồng), CR-DOC-04 mục 5 (triển khai), `CONTRIBUTING.md`, `.github/` |
 
@@ -119,7 +119,7 @@ và mã do AI viết tuân theo cùng một chuẩn.
 | Thành phần | Nội dung |
 |---|---|
 | `AGENTS.md` | Quy tắc bắt buộc cho mọi trợ lý AI: phạm vi sửa mã, không tự quyết định nghiệp vụ, kiểm thử mang mã tiêu chí, quy ước mã nguồn. `CLAUDE.md` nạp lại nội dung này cho Claude Code |
-| GitHub Spec Kit | Mỗi tính năng có `specs/<số>-<tên>/spec.md`, `plan.md`, `tasks.md`. Pull request đặc tả và kế hoạch được duyệt trước; pull request hiện thực dẫn tới thư mục `specs/` tương ứng. Phiên bản Spec Kit được cố định khi khởi tạo |
+| GitHub Spec Kit | Mỗi tính năng có `specs/<số>-<tên>/spec.md`, `plan.md`, `tasks.md`. Pull request đặc tả và kế hoạch được duyệt trước; pull request hiện thực dẫn tới thư mục `specs/` tương ứng. Spec Kit cố định ở phiên bản 1.2.3; mỗi thành viên tự khởi tạo cho trợ lý AI của mình (CONTRIBUTING mục 1.6). Kho mã chỉ chứa hiến pháp (`.specify/memory/constitution.md`) và mẫu tiếng Việt (`.specify/templates/overrides/`) |
 | Skill `frontend-design` (Anthropic) | Dùng khi tạo màn hình mới để có định hướng thẩm mỹ thống nhất; kết hợp shadcn/ui và theme chung |
 | Review | Pull request do AI viết được người review theo CODEOWNERS đọc như mã do người viết; người mở pull request chịu trách nhiệm về nội dung |
 
@@ -152,3 +152,4 @@ flowchart LR
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
+| 1.1 | 26/10/2026 | Spec Kit 1.2.3: thành viên tự khởi tạo; hiến pháp và mẫu tiếng Việt dùng chung |

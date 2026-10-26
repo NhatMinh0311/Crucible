@@ -40,6 +40,10 @@ Mỗi tính năng mới đi qua ba tệp trong `specs/<số>-<tên-ngắn>/`, đ
 
 Mục "điểm cần làm rõ" trong `spec.md` phải được người dùng trả lời trước khi lập kế hoạch.
 
+Khi thành viên đã cài Spec Kit (CONTRIBUTING mục 1.6), ba tệp được sinh bằng các lệnh `specify`, `clarify`, `plan`,
+`tasks` theo mẫu tiếng Việt tại `.specify/templates/overrides/` và hiến pháp tại `.specify/memory/constitution.md`.
+Danh sách việc dùng định dạng `- [ ] T001 [P] [US1] ...`; đặc tả 001, 002 viết trước khi có mẫu nên giữ định dạng bảng.
+
 ## 4. Quy ước mã nguồn
 
 | Phạm vi | Quy ước |

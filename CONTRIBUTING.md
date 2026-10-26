@@ -19,6 +19,7 @@ Các lệnh dùng shell bash. Trên Windows, chạy trong WSL2 và đặt mã ng
 | JDK | 25 | `content-service`, `learning-service` | Phụ trách M2, M3 |
 | Go | 1.27 | `runtime-api` | Phụ trách M1 |
 | Tailscale | Bản hiện hành | Truy cập môi trường chuẩn (CR-DOC-04 mục 4) | Mọi thành viên |
+| uv, Spec Kit (`specify-cli`) | uv bản hiện hành; Spec Kit 1.2.3 | Lệnh đặc tả cho trợ lý AI (mục 1.6) | Mọi thành viên |
 
 ### 1.1a. Dev Container (khuyến nghị)
 
@@ -84,6 +85,40 @@ Phát triển M2, M3 và giao diện trên Windows được hỗ trợ đầy đ
 
 Toàn bộ dịch vụ phụ thuộc (mục 5.1) dùng khoảng 0,9 GB bộ nhớ (đo ngày 17/10/2026, Keycloak chiếm khoảng 0,67 GB), nên máy
 8 GB vẫn chạy được dịch vụ phụ thuộc cùng một module và IDE.
+
+### 1.6. Spec Kit cho trợ lý AI
+
+Mỗi thành viên tự cài Spec Kit cho trợ lý AI mình dùng. Kho mã chỉ chứa phần dùng chung: hiến pháp
+(`.specify/memory/constitution.md`) và mẫu đặc tả, kế hoạch, danh sách việc bằng tiếng Việt
+(`.specify/templates/overrides/`). Phần Spec Kit sinh ra trên máy đã có trong `.gitignore`.
+
+1. Cài uv (nếu chưa có) và Spec Kit đúng phiên bản của nhóm:
+
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v1.2.3
+   specify version                     # phải là 1.2.3
+   ```
+
+2. Khởi tạo tại gốc kho mã, chọn khóa của trợ lý đang dùng (`claude`, `copilot`, `codex`, `gemini`, `cursor-agent`;
+   danh sách đầy đủ: `specify integration list`):
+
+   ```bash
+   specify init --here --force --integration <khóa> --script sh
+   git status --short                  # không được có thay đổi nào
+   ```
+
+   `--force` chỉ ghi đè tệp do Spec Kit quản lý; hiến pháp và mẫu ghi đè được giữ nguyên. Nếu `git status` còn hiện
+   tệp của trợ lý chưa có trong `.gitignore`, thêm đường dẫn đó vào `.git/info/exclude` của máy mình và báo trưởng
+   nhóm để bổ sung `.gitignore`.
+
+3. Dùng trong trợ lý AI theo thứ tự ở CR-DOC-07 mục 7. Tên lệnh tùy trợ lý: `/speckit-specify` (Claude Code,
+   Copilot), `$speckit-specify` (Codex), `/speckit.specify` (Gemini CLI); các bước khác tương tự với `clarify`, `plan`,
+   `tasks`, `analyze`, `implement`, `converge`. Trước khi chạy `specify`, cập nhật `main` để số thứ tự của thư mục
+   `specs/` không trùng với đặc tả của thành viên khác.
+
+Nâng phiên bản Spec Kit là thay đổi của cả nhóm: trưởng nhóm cập nhật phiên bản trong mục này và CR-DOC-07 qua pull
+request, sau đó mỗi thành viên chạy lại bước 1, 2.
 
 ## 2. Thực hiện một thay đổi
 
