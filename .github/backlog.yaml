@@ -15,7 +15,7 @@ issues:
   - {title: "Khung giao diện chung: đăng nhập OIDC, điều hướng theo vai trò, theme, thư mục module", owner: m1, milestone: MA, labels: [platform, web], refs: "CR-DOC-11 mục 4, 5; P02; specs/002-web-shell", done: true}
   - {title: "Giao diện hai ngôn ngữ: i18next, tệp dịch theo module, kiểm tra khóa trong CI, chọn ngôn ngữ lưu vào Keycloak", owner: m1, milestone: MA, labels: [platform, web], refs: "P05; US-P2; AC-P2.1-AC-P2.3; CR-DOC-11 mục 4.1; specs/002-web-shell", done: true}
   - {title: "SCR-42 Tham số hệ thống: gom tham số ba module, xác nhận thay đổi, lịch sử", owner: m1, milestone: MC, labels: [platform, web], refs: "P04; UC22; AC-P1.1-AC-P1.4; CR-DOC-11 mục 7.6"}
-  - {title: "Thử nghiệm S1: gVisor với Docker trên máy phiên, điều khiển qua SSH", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0003"}
+  - {title: "Thử nghiệm S1: gVisor với Docker trên máy phiên, điều khiển qua SSH", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0003; docs/spikes/S1.md", done: true}
   - {title: "Thử nghiệm S2: thời gian dựng môi trường mới khi image đã kéo sẵn", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0007"}
   - {title: "Thử nghiệm S3: terminal qua Docker exec trên SSH và ghi asciicast", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3; ADR-0006"}
   - {title: "Thử nghiệm S4: image nền và bài lab mẫu trong gVisor", owner: m1, milestone: MA, labels: [m1, spike], refs: "CR-DOC-06 mục 3"}
