@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Dựng mạng crucible-net, pool lưu trữ và hai máy ảo cr-server, cr-lab (CR-DOC-04 mục 3; ADR-0009).
 # Cấu hình bên trong máy ảo do cloud-init đảm nhận (infra/cloud-init/). Chạy lại an toàn: bỏ qua phần đã có.
+# Không dùng `grep -q` sau `virsh`: grep thoát sớm làm virsh nhận SIGPIPE, pipefail coi cả ống là lỗi.
 #
 # Biến môi trường (giá trị mặc định theo CR-DOC-04 mục 3.2):
 #   CRUCIBLE_POOL_DIR      thư mục pool lưu trữ (mặc định $HOME/crucible-vms; qemu cần quyền đi qua $HOME)
@@ -42,7 +43,7 @@ if ! virsh net-info crucible-net >/dev/null 2>&1; then
   virsh net-define "$HERE/libvirt/crucible-net.xml"
   virsh net-autostart crucible-net
 fi
-virsh net-info crucible-net | grep -q 'Active: *yes' || virsh net-start crucible-net
+virsh net-info crucible-net | grep 'Active: *yes' >/dev/null || virsh net-start crucible-net
 
 # 2. Pool lưu trữ dạng thư mục; libvirtd (root) tạo thư mục
 if ! virsh pool-info "$POOL" >/dev/null 2>&1; then
@@ -51,7 +52,7 @@ if ! virsh pool-info "$POOL" >/dev/null 2>&1; then
   virsh pool-build "$POOL"
   virsh pool-autostart "$POOL"
 fi
-virsh pool-info "$POOL" | grep -q 'State: *running' || virsh pool-start "$POOL"
+virsh pool-info "$POOL" | grep 'State: *running' >/dev/null || virsh pool-start "$POOL"
 
 # 3. Image gốc Ubuntu Server 24.04 cloud, kiểm tra SHA-256 rồi đưa vào pool
 if ! virsh vol-info --pool "$POOL" "$BASE_VOL" >/dev/null 2>&1; then
