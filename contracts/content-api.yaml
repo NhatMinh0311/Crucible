@@ -1,0 +1,649 @@
+openapi: 3.1.0
+info:
+  title: Crucible Content API (M2) — phần dành cho module khác
+  version: 1.0.0
+  description: |
+    Các operation của module M2 (bài lab và chấm điểm) được module M3 sử dụng. Các operation chỉ phục vụ
+    giao diện của M2 (soạn bài lab, kiểm tra bước, gợi ý) thuộc thiết kế nội bộ của M2 và không nằm trong hợp đồng này.
+    Quy ước chung tại CR-DOC-03.
+  license:
+    name: AGPL-3.0-only
+    identifier: AGPL-3.0-only
+servers:
+  - url: https://crucible.local/api/content
+    description: Môi trường chuẩn
+security:
+  - oidc: []
+tags:
+  - name: labs
+    description: Thông tin bài lab cho module khác hiển thị
+  - name: attempts
+    description: Lượt làm bài
+  - name: settings
+    description: Tham số hệ thống do quản trị viên chỉnh
+
+paths:
+  /v1/labs:
+    get:
+      tags: [labs]
+      operationId: listPublishedLabs
+      summary: Danh sách bài lab đã xuất bản
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+            maxLength: 100
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Trang kết quả
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, page, size, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LabSummary'
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/Problem'
+
+  /v1/labs/{labId}:
+    get:
+      tags: [labs]
+      operationId: getLabSummary
+      summary: Thông tin phiên bản mới nhất đã xuất bản của bài lab
+      parameters:
+        - $ref: '#/components/parameters/LabId'
+      responses:
+        '200':
+          description: Bài lab
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabSummary'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/attempts:
+    post:
+      tags: [attempts]
+      operationId: createAttempt
+      summary: Tạo lượt làm bài
+      description: |
+        Scope `content.attempts.write` (cấp cho M3). M3 chịu trách nhiệm kiểm tra ghi danh, tiên quyết, số lượt
+        và khung giờ trước khi gọi. M2 sinh biến thể, kết xuất đặc tả và yêu cầu M1 tạo phiên.
+        Với `context.type = EXAM`, gọi lại cho cùng (học viên, kỳ thi, bài lab) trả về lượt làm bài đã có.
+      security:
+        - oidc: [content.attempts.write]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttemptCreate'
+      responses:
+        '201':
+          description: Lượt làm bài
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '402':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+    get:
+      tags: [attempts]
+      operationId: listAttemptsByContext
+      summary: Danh sách lượt làm bài theo ngữ cảnh
+      description: Scope `content.attempts.read`. `include=variant` yêu cầu thêm scope `content.variants.read` (phân tích gian lận sau kỳ thi).
+      parameters:
+        - name: contextRef
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Ref'
+        - name: include
+          in: query
+          schema:
+            type: string
+            enum: [variant]
+      responses:
+        '200':
+          description: Danh sách
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attempt'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+
+  /v1/attempts/{attemptId}:
+    get:
+      tags: [attempts]
+      operationId: getAttempt
+      summary: Đọc lượt làm bài
+      description: Học viên chủ lượt làm bài hoặc tài khoản dịch vụ có scope `content.attempts.read`.
+      parameters:
+        - $ref: '#/components/parameters/AttemptId'
+      responses:
+        '200':
+          description: Lượt làm bài
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/attempts/{attemptId}/submit:
+    post:
+      tags: [attempts]
+      operationId: submitAttempt
+      summary: Nộp bài
+      description: Học viên chủ lượt làm bài hoặc M3 (hết giờ). Chạy chấm cuối bất đồng bộ; kết quả qua sự kiện `content.attempt.graded`. Idempotent.
+      parameters:
+        - $ref: '#/components/parameters/AttemptId'
+      responses:
+        '202':
+          description: Đang chấm cuối
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+  /v1/attempts/{attemptId}/resume:
+    post:
+      tags: [attempts]
+      operationId: resumeAttempt
+      summary: Tiếp tục lượt làm bài bằng phiên mới
+      description: Áp dụng cho trạng thái `ENV_LOST`, `SUSPENDED`, `ENV_FAILED`. Các bước đã đạt được giữ điểm; phiên mới được khôi phục bằng lời giải mẫu của các bước đã đạt (trạng thái `RESTORING`) trước khi giao cho học viên.
+      parameters:
+        - $ref: '#/components/parameters/AttemptId'
+      responses:
+        '200':
+          description: Lượt làm bài với phiên mới
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+  /v1/attempts/{attemptId}/score-adjustments:
+    post:
+      tags: [attempts]
+      operationId: adjustScore
+      summary: Điều chỉnh điểm sau phúc khảo
+      description: Scope `content.attempts.write`; M3 truyền mã giảng viên thực hiện. Lưu điểm cũ, điểm mới và lý do.
+      security:
+        - oidc: [content.attempts.write]
+      parameters:
+        - $ref: '#/components/parameters/AttemptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [newScore, reason, adjustedBy]
+              properties:
+                newScore:
+                  type: number
+                  minimum: 0
+                reason:
+                  type: string
+                  minLength: 10
+                  maxLength: 1000
+                adjustedBy:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Lượt làm bài sau điều chỉnh
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings:
+    get:
+      tags: [settings]
+      operationId: listSettings
+      summary: Danh sách tham số hệ thống của module
+      description: Chỉ vai trò `ADMIN`. Quy ước chung về tham số hệ thống tại CR-DOC-03 mục 3.6.
+      responses:
+        '200':
+          description: Tham số của module
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Setting'
+        '403':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings/{key}:
+    parameters:
+      - $ref: '#/components/parameters/SettingKeyPath'
+    put:
+      tags: [settings]
+      operationId: updateSetting
+      summary: Sửa giá trị tham số
+      description: >-
+        Chỉ vai trò `ADMIN`. Giá trị ngoài khoảng [`minimum`, `maximum`] bị từ chối với 422 `SETTING_OUT_OF_RANGE`.
+        Giá trị mới áp dụng cho thao tác mới trong vòng 60 giây, không cần khởi động lại dịch vụ; đối tượng đã tạo
+        trước đó không đổi theo (CR-DOC-03 mục 3.6).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingUpdate'
+      responses:
+        '200':
+          description: Tham số sau khi sửa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/settings/{key}/history:
+    parameters:
+      - $ref: '#/components/parameters/SettingKeyPath'
+    get:
+      tags: [settings]
+      operationId: listSettingChanges
+      summary: Lịch sử thay đổi của một tham số
+      description: Chỉ vai trò `ADMIN`. Mới nhất trước.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Các lần thay đổi
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SettingChange'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://crucible.local/auth/realms/crucible/.well-known/openid-configuration
+
+  parameters:
+    LabId:
+      name: labId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AttemptId:
+      name: attemptId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    SettingKeyPath:
+      name: key
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/SettingKey'
+
+  responses:
+    Problem:
+      description: Lỗi theo RFC 9457; mã lỗi trong trường `code` (CR-DOC-03 mục 3)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    Ref:
+      type: string
+      pattern: '^[a-z]+:[A-Za-z0-9-]{1,64}$'
+
+    LabSummary:
+      type: object
+      required: [labId, versionId, version, slug, title, difficulty, estimatedMinutes, maxScore, stepCount, tags, image, profile]
+      properties:
+        labId:
+          type: string
+          format: uuid
+        versionId:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        slug:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        language:
+          description: Ngôn ngữ của nội dung bài lab (`metadata.language` của đặc tả).
+          type: string
+          enum: [vi, en]
+          default: vi
+        difficulty:
+          type: string
+          enum: [BEGINNER, INTERMEDIATE, ADVANCED]
+        estimatedMinutes:
+          type: integer
+        maxScore:
+          type: number
+        stepCount:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        image:
+          description: Image môi trường của phiên bản; M3 dùng khi đặt trước tài nguyên cho kỳ thi.
+          type: string
+        profile:
+          type: string
+          enum: [small, medium]
+        capabilities:
+          description: Capability bổ sung của môi trường (`environment.capabilities`); M3 chuyển vào `warmCapabilities` khi đặt trước tài nguyên cho kỳ thi.
+          type: array
+          items:
+            type: string
+            enum: [NET_ADMIN]
+
+    AttemptContext:
+      type: object
+      additionalProperties: false
+      required: [type, ref]
+      properties:
+        type:
+          type: string
+          enum: [PRACTICE, ASSIGNMENT, EXAM]
+        ref:
+          description: Mã ngữ cảnh của M3, quyết định seed của biến thể (ví dụ `exam:7`, `assignment:15`, `track:3`).
+          $ref: '#/components/schemas/Ref'
+
+    AttemptCreate:
+      type: object
+      additionalProperties: false
+      required: [labId, userId, context, quotaAccountRef]
+      properties:
+        labId:
+          type: string
+          format: uuid
+        versionId:
+          description: Bỏ trống để dùng phiên bản mới nhất đã xuất bản. Kỳ thi cố định phiên bản khi lên lịch.
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        context:
+          $ref: '#/components/schemas/AttemptContext'
+        quotaAccountRef:
+          $ref: '#/components/schemas/Ref'
+        reservationRef:
+          $ref: '#/components/schemas/Ref'
+        deadline:
+          description: >-
+            Giờ kết thúc chung của kỳ thi hoặc hạn nộp, do M3 quản lý. Ngữ cảnh khác `EXAM`: thời hạn phiên không vượt quá
+            `deadline`.
+          type: string
+          format: date-time
+        sessionUntil:
+          description: >-
+            Chỉ với ngữ cảnh `EXAM` và bắt buộc khi đó. Thời điểm muộn nhất lượt thi có thể kéo dài: giờ kết thúc chung
+            cộng trần bù giờ tự động và trần cộng giờ đã chốt khi lên lịch kỳ thi. M2 đặt thời hạn phiên tới thời điểm này
+            (`ttlMinutes` tại runtime-api); M3 nộp bài khi hết giờ của từng sinh viên.
+          type: string
+          format: date-time
+        hintsEnabled:
+          type: boolean
+          default: true
+        checkFeedback:
+          description: |
+            Phản hồi khi học viên kiểm tra bước. FULL: hiện đạt hay chưa đạt; RECORDED_ONLY: chỉ báo đã ghi nhận;
+            DISABLED: không cho kiểm tra. Ngữ cảnh EXAM do giảng viên chọn; ngữ cảnh khác luôn là FULL.
+          type: string
+          enum: [FULL, RECORDED_ONLY, DISABLED]
+          default: FULL
+
+    StepResult:
+      type: object
+      required: [stepId, type, title, points, passed, pointsAwarded, hintsUsed]
+      properties:
+        stepId:
+          type: string
+        type:
+          description: Loại bước (CR-DOC-03 mục 4.6).
+          type: string
+          enum: [CHECK, ANSWER]
+        triesUsed:
+          description: Số lần đã trả lời; chỉ có với bước ANSWER.
+          type: integer
+        points:
+          type: integer
+        passed:
+          type: boolean
+        pointsAwarded:
+          type: number
+        hintsUsed:
+          type: integer
+        lastCheckedAt:
+          type: string
+          format: date-time
+
+    Attempt:
+      type: object
+      required: [id, labId, versionId, userId, context, state, score, maxScore, steps, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        labId:
+          type: string
+          format: uuid
+        versionId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        context:
+          $ref: '#/components/schemas/AttemptContext'
+        state:
+          type: string
+          enum: [ENV_PENDING, RESTORING, IN_PROGRESS, ENV_FAILED, ENV_LOST, SUSPENDED, GRADING, GRADED]
+        sessionId:
+          description: Phiên hiện tại; thay đổi khi lượt làm bài được tiếp tục.
+          type: string
+          format: uuid
+        score:
+          type: number
+        maxScore:
+          type: number
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/StepResult'
+        variant:
+          description: Chỉ có khi `include=variant`. Khóa là tên tham số.
+          type: object
+          additionalProperties:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        submittedAt:
+          type: string
+          format: date-time
+        gradedAt:
+          type: string
+          format: date-time
+
+    Problem:
+      type: object
+      required: [type, title, status, code]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+        traceId:
+          type: string
+
+    SettingKey:
+      description: Khóa tham số hệ thống của module; ý nghĩa, mặc định và khoảng hợp lệ tại CR-DOC-01 mục 5.6.
+      type: string
+      enum: [grading.backgroundIntervalMinutes, publish.memoryWarningRatio, answer.defaultMaxTries, choice.defaultMaxTries]
+
+    Setting:
+      type: object
+      required: [key, value, defaultValue, minimum, maximum, unit, description, updatedAt]
+      properties:
+        key:
+          $ref: '#/components/schemas/SettingKey'
+        value:
+          type: number
+        defaultValue:
+          type: number
+        minimum:
+          type: number
+        maximum:
+          type: number
+        unit:
+          type: string
+          enum: [MINUTES, DAYS, RATIO, COUNT, SLOT_HOURS]
+        description:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          description: Người sửa gần nhất; không có khi tham số chưa từng được sửa.
+          type: string
+          format: uuid
+
+    SettingUpdate:
+      type: object
+      additionalProperties: false
+      required: [value]
+      properties:
+        value:
+          type: number
+
+    SettingChange:
+      type: object
+      required: [key, oldValue, newValue, changedAt, changedBy]
+      properties:
+        key:
+          $ref: '#/components/schemas/SettingKey'
+        oldValue:
+          type: number
+        newValue:
+          type: number
+        changedAt:
+          type: string
+          format: date-time
+        changedBy:
+          type: string
+          format: uuid

@@ -1,0 +1,92 @@
+apiVersion: crucible.dev/v1
+kind: Lab
+metadata:
+  slug: harden-server
+  title: Gia cố máy chủ sau khi bàn giao
+  summary: Máy chủ được bàn giao với nhiều cấu hình không an toàn. Sửa từng điểm theo danh sách kiểm tra.
+  tags: [linux, security, hardening]
+  difficulty: INTERMEDIATE
+  estimatedMinutes: 35
+
+params:
+  helper:
+    pattern: { charset: lower, length: 6, prefix: sys- }
+  backdoorPort:
+    range: { min: 9000, max: 9099 }
+
+environment:
+  image: ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0
+  profile: small
+  ttlMinutes: 60
+  network: none
+  files:
+    - path: /etc/ssh/sshd_config
+      mode: '0644'
+      content: |
+        Port 22
+        PermitRootLogin yes
+        PasswordAuthentication yes
+        X11Forwarding yes
+    - path: /root/BAN-GIAO.txt
+      content: |
+        Danh sách kiểm tra bảo mật trước khi đưa máy chủ vào sử dụng:
+        1. Không cho đăng nhập root và đăng nhập bằng mật khẩu qua SSH.
+        2. /etc/shadow chỉ root và nhóm shadow đọc được.
+        3. Không còn chương trình setuid lạ trong /usr/local/bin.
+        4. Không còn dịch vụ lạ lắng nghe ngoài nginx.
+  setup: |
+    chmod 644 /etc/shadow
+    cp /bin/bash /usr/local/bin/{{helper}}
+    chmod 4755 /usr/local/bin/{{helper}}
+    mkdir -p /tmp/.x && echo ok > /tmp/.x/index.html
+    busybox httpd -p {{backdoorPort}} -h /tmp/.x
+    service nginx start
+
+steps:
+  - id: sshConfig
+    title: Cấu hình SSH an toàn
+    description: Trong `/etc/ssh/sshd_config`, tắt đăng nhập root và đăng nhập bằng mật khẩu.
+    points: 25
+    check:
+      run: |
+        grep -Eq '^PermitRootLogin[[:space:]]+no$' /etc/ssh/sshd_config &&
+        grep -Eq '^PasswordAuthentication[[:space:]]+no$' /etc/ssh/sshd_config &&
+        ! grep -Eq '^(PermitRootLogin|PasswordAuthentication)[[:space:]]+yes' /etc/ssh/sshd_config
+      failureMessage: sshd_config vẫn cho phép đăng nhập root hoặc đăng nhập bằng mật khẩu.
+  - id: shadowPerm
+    title: Quyền của /etc/shadow
+    description: Người dùng khác không được đọc `/etc/shadow`.
+    points: 25
+    check:
+      run: test "$(stat -c %a /etc/shadow | tail -c 2)" = 0
+      failureMessage: Người dùng khác vẫn có quyền trên /etc/shadow.
+  - id: noSetuid
+    title: Gỡ chương trình setuid lạ
+    description: Trong `/usr/local/bin` không còn tệp nào có bit setuid.
+    points: 25
+    check:
+      run: test -z "$(find /usr/local/bin -type f -perm -4000)"
+      failureMessage: Vẫn còn tệp setuid trong /usr/local/bin.
+    hints:
+      - text: Tìm bằng `find / -perm -4000 -type f 2>/dev/null` và so với danh sách chương trình hệ thống.
+        penalty: 0.2
+  - id: noBackdoor
+    title: Dừng dịch vụ lạ
+    description: Chỉ nginx được lắng nghe kết nối; trang web của nginx vẫn hoạt động.
+    points: 25
+    check:
+      run: |
+        test -z "$(netstat -ltnp | grep LISTEN | grep -v nginx)" &&
+        curl -sf -o /dev/null http://127.0.0.1/
+      failureMessage: Còn tiến trình khác nginx đang lắng nghe, hoặc nginx không còn phục vụ.
+
+solution:
+  - step: sshConfig
+    run: |
+      sed -i -E 's/^PermitRootLogin.*/PermitRootLogin no/; s/^PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - step: shadowPerm
+    run: chmod 640 /etc/shadow
+  - step: noSetuid
+    run: rm -f /usr/local/bin/{{helper}}
+  - step: noBackdoor
+    run: pkill -f 'httpd -p {{backdoorPort}}' || true

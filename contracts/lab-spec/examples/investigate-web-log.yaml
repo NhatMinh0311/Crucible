@@ -1,0 +1,86 @@
+apiVersion: crucible.dev/v1
+kind: Lab
+metadata:
+  slug: investigate-web-log
+  title: Điều tra truy cập bất thường vào máy chủ web
+  summary: Đọc nhật ký truy cập và trạng thái tiến trình để trả lời câu hỏi về một sự cố.
+  tags: [linux, investigation, logs]
+  difficulty: BEGINNER
+  estimatedMinutes: 25
+
+params:
+  attacker:
+    pick: [203.0.113.17, 203.0.113.42, 198.51.100.7, 198.51.100.88, 192.0.2.55]
+  hits:
+    range: { min: 40, max: 90 }
+  notFound:
+    range: { min: 10, max: 30 }
+  port:
+    range: { min: 9100, max: 9199 }
+
+environment:
+  image: ghcr.io/crucible-project/crucible-labs/ubuntu-nginx:1.0.0
+  profile: small
+  ttlMinutes: 45
+  network: none
+  files:
+    - path: /root/SU-CO.txt
+      content: |
+        Đêm qua máy chủ web bị truy cập dồn dập. Nhật ký nằm tại /var/log/nginx/access.log.
+        Ngoài nginx, có một tiến trình lạ đang lắng nghe cổng {{port}}.
+  setup: |
+    log=/var/log/nginx/access.log
+    : > "$log"
+    for ip in 10.0.0.5 10.0.0.9 172.16.4.2 172.16.4.8; do
+      for i in $(seq 1 12); do
+        echo "$ip - - [17/Oct/2026:22:0$((i % 10)):00 +0700] \"GET /index.html HTTP/1.1\" 200 512 \"-\" \"Mozilla/5.0\"" >> "$log"
+      done
+    done
+    for i in $(seq 1 {{notFound}}); do
+      echo "{{attacker}} - - [17/Oct/2026:23:10:$((i % 60)) +0700] \"GET /wp-login.php?x=$i HTTP/1.1\" 404 162 \"-\" \"curl/8.5\"" >> "$log"
+    done
+    for i in $(seq 1 $(( {{hits}} - {{notFound}} ))); do
+      echo "{{attacker}} - - [17/Oct/2026:23:20:$((i % 60)) +0700] \"GET /index.html HTTP/1.1\" 200 512 \"-\" \"curl/8.5\"" >> "$log"
+    done
+    shuf "$log" -o "$log"
+    mkdir -p /srv/.cache && echo ok > /srv/.cache/index.html
+    busybox httpd -p {{port}} -h /srv/.cache
+
+steps:
+  - id: topIp
+    type: answer
+    title: Nguồn truy cập nhiều nhất
+    description: Địa chỉ IP nào gửi nhiều yêu cầu nhất trong `/var/log/nginx/access.log`?
+    points: 30
+    answer:
+      accepted: ['{{attacker}}']
+      placeholder: Địa chỉ IPv4
+  - id: notFoundCount
+    type: answer
+    title: Số yêu cầu không tìm thấy
+    description: Địa chỉ ở câu trước nhận về bao nhiêu phản hồi mã `404`?
+    points: 30
+    answer:
+      accepted: ['{{notFound}}']
+      maxTries: 2
+      placeholder: Số nguyên
+    hints:
+      - text: Lọc theo địa chỉ IP trước, sau đó theo trường mã trạng thái (trường thứ 9 khi tách theo khoảng trắng).
+        penalty: 0.2
+  - id: rogueProcess
+    type: answer
+    title: Tiến trình lạ
+    description: Tiến trình đang lắng nghe cổng `{{port}}` có PID là bao nhiêu?
+    points: 40
+    answer:
+      from:
+        run: netstat -ltnp | grep ':{{port}} ' | sed -E 's#.* ([0-9]+)/.*#\1#' | head -n 1
+      placeholder: Số nguyên
+
+solution:
+  - step: topIp
+    answer: '{{attacker}}'
+  - step: notFoundCount
+    run: awk '$1 == "{{attacker}}" && $9 == 404' /var/log/nginx/access.log | wc -l
+  - step: rogueProcess
+    run: pgrep -f 'httpd -p {{port}}' | head -n 1
