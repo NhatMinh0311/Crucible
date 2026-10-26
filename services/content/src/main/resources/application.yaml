@@ -1,0 +1,53 @@
+# Cấu hình mặc định trỏ tới dịch vụ phụ thuộc của môi trường phát triển (dev/compose.yaml).
+# Môi trường khác ghi đè bằng biến môi trường.
+server:
+  port: ${PORT:8082}
+
+spring:
+  application:
+    name: content-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/content}
+    username: ${DB_USER:content}
+    password: ${DB_PASSWORD:content-dev}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: classpath:db/migration,classpath:db/crucible-platform
+  rabbitmq:
+    host: ${AMQP_HOST:localhost}
+    port: ${AMQP_PORT:5672}
+    username: ${AMQP_USER:crucible}
+    password: ${AMQP_PASSWORD:rabbitmq-dev}
+    publisher-confirm-type: simple
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OIDC_ISSUER:http://localhost:8180/realms/crucible}
+          audiences: content-service
+      client:
+        provider:
+          keycloak:
+            # Khai báo token-uri thay cho issuer-uri để dịch vụ khởi động được khi Keycloak chưa sẵn sàng.
+            token-uri: ${OIDC_ISSUER:http://localhost:8180/realms/crucible}/protocol/openid-connect/token
+        registration:
+          runtime-api:
+            provider: keycloak
+            client-id: content-service
+            client-secret: ${OIDC_CLIENT_SECRET:content-service-dev-secret}
+            authorization-grant-type: client_credentials
+
+crucible:
+  events:
+    source: /crucible/content-service
+  services:
+    runtime-api: ${RUNTIME_API_URL:http://localhost:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
