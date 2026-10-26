@@ -2,7 +2,7 @@
 
 | Thuộc tính | Giá trị |
 |---|---|
-| Trạng thái | Đã chấp nhận (chờ kết quả thử nghiệm S1) |
+| Trạng thái | Đã chấp nhận; kiểm chứng ở thử nghiệm S1 ngày 27/10/2026 (`docs/spikes/S1.md`) |
 | Ngày | 26/10/2026 |
 
 ## Bối cảnh
@@ -29,10 +29,15 @@ chạy máy ảo cho mỗi phiên.
 | Docker chế độ rootless | Hỗ trợ của gVisor với Docker rootless hạn chế; gVisor đã là ranh giới chính |
 
 ## Hệ quả
-- (+) Nhân riêng trong không gian người dùng cho mỗi phiên; chi phí bộ nhớ thấp (khoảng 64 MiB mỗi phiên, đo ở S5).
+- (+) Nhân riêng trong không gian người dùng cho mỗi phiên; chi phí bộ nhớ thấp (11–27 MiB mỗi sandbox khi rảnh theo
+  S1; số đo dưới tải ở S5).
 - (+) Runtime mặc định của Docker trên máy phiên là lớp bảo vệ độc lập với mã của `runtime-api`.
 - (−) Một số lời gọi hệ thống và công cụ nhân không có trong gVisor; bài lab về nhân hệ điều hành không làm được.
 - (−) Hiệu năng vào ra thấp hơn runc; không ảnh hưởng bài thực hành cơ bản.
 - (−) Vượt giới hạn bộ nhớ hoặc số tiến trình làm dừng cả sandbox thay vì chỉ tiến trình vi phạm; phiên mất môi trường.
+- (−) Lớp ghi của hệ thống tệp nằm trong sandbox: tệp chỉ đưa vào hoặc lấy ra được qua exec, không qua thao tác sao
+  chép của Docker; dung lượng phải giới hạn bằng cấu hình của runsc.
+- (−) Exec có TTY nhận PTY của máy dưới dạng tệp, không có tên `/dev/pts/N` trong sandbox; shell của terminal chạy qua
+  `script` để có PTY trong sandbox.
 - (−) Không có lớp chính sách ở tầng điều phối như admission của Kubernetes; quyền điều khiển Docker của `runtime-api`
   tương đương quyền root trên máy phiên (CR-DOC-05 mục 3).

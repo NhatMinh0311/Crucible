@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 1.0 |
-| Ngày ban hành | 26/10/2026 |
+| Phiên bản | 1.1 |
+| Ngày ban hành | 27/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
 
@@ -44,7 +44,7 @@ cùng chương trình gọi Docker Engine cục bộ với runtime `runc` (CR-DO
 | Nhãn | `crucible.dev/session=<sessionId>`, `crucible.dev/managed-by=runtime-api` |
 | Runtime | `runsc` trên môi trường chuẩn (`SESSION_RUNTIME`), `runc` trên máy phát triển |
 | Lệnh | Theo image (`tini -- sleep infinity`); terminal và lệnh kiểm tra đều đi qua exec |
-| Giới hạn | `Memory` bằng `MemorySwap` = bộ nhớ của mức tài nguyên + `SANDBOX_OVERHEAD_MEMORY` (giới hạn áp dụng cho cả sandbox gVisor, CR-DOC-04 mục 10); `NanoCPUs` theo mức tài nguyên; `PidsLimit` 512 |
+| Giới hạn | `Memory` bằng `MemorySwap` = bộ nhớ của mức tài nguyên + `SANDBOX_OVERHEAD_MEMORY` (giới hạn áp dụng cho cả sandbox gVisor, CR-DOC-04 mục 10); `NanoCPUs` theo mức tài nguyên; `PidsLimit` 512; lớp ghi của hệ thống tệp gốc tối đa 1 GiB do cấu hình runtime `runsc` của máy phiên (CR-DOC-04 mục 3.4) |
 | Bảo mật | Bộ capability mặc định của Docker, `CapAdd` theo BR-M1.26; `no-new-privileges`; không gắn socket Docker, không gắn thư mục của máy |
 | Bộ công cụ kiểm tra | Volume `crucible-tools-<phiên bản>` tạo một lần từ image `crucible-tools`, gắn `/opt/crucible/bin` chỉ đọc (ADR-0011) |
 | Mạng | `none`, hoặc mạng riêng của phiên với `network: mirror` (mục 3.2) |
@@ -151,7 +151,7 @@ sequenceDiagram
     end
     A->>D: Tạo container (runsc, giới hạn, nhãn, bộ công cụ chỉ đọc)
     A->>D: Khởi động container
-    A->>C: exec: /opt/crucible/bin/tar -x -C / (luồng tar các tệp của biến thể)
+    A->>C: exec: /opt/crucible/bin/tar -x --no-same-owner -C / (luồng tar các tệp của biến thể)
     A->>C: exec: chạy setup (thời hạn SETUP_TIMEOUT)
     alt Thành công
         A->>A: READY, readyAt, expiresAt, sự kiện vào outbox trong cùng transaction
@@ -161,8 +161,9 @@ sequenceDiagram
     end
 ```
 
-Tệp của biến thể được ghi qua exec bằng `tar` của bộ công cụ, không dùng thao tác sao chép tệp của Docker: gVisor giữ
-lớp ghi của hệ thống tệp gốc bên trong sandbox nên tệp sao chép từ máy vào không chắc hiện ra bên trong (S1).
+Tệp của biến thể được ghi qua exec bằng `tar` của bộ công cụ, không dùng `CopyToContainer`, `CopyFromContainer` của
+Docker: gVisor giữ lớp ghi của hệ thống tệp gốc bên trong sandbox, tệp sao chép từ máy vào không hiện ra bên trong và
+tệp tạo bên trong không đọc được từ máy (S1). `tar` giải nén với `--no-same-owner` để tệp thuộc người dùng chạy lệnh.
 
 Image của bài lab được kéo sẵn lên máy phiên khi bài lab được xuất bản và khi đặt trước được tạo (mục 8), nên thời gian
 dựng thường chỉ gồm khởi động sandbox và chạy setup (S2).
@@ -189,7 +190,7 @@ Phiên mới sẵn sàng chưa đủ 10 phút dữ liệu thì chưa được x�
 
 | Mục | Thiết kế |
 |---|---|
-| Kết nối | `runtime-api` tiêu thụ vé (`UPDATE ... SET used_at = now() WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now() RETURNING ...`), mở exec `bash -l` có TTY tới container phiên qua Docker Engine API |
+| Kết nối | `runtime-api` tiêu thụ vé (`UPDATE ... SET used_at = now() WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now() RETURNING ...`), mở exec có TTY chạy `script -qc "bash -l" /dev/null` tới container phiên qua Docker Engine API: PTY của exec dưới gVisor không có tên `/dev/pts/N`, `script` tạo PTY bên trong sandbox để `tty`, `gpg`, `screen` hoạt động (S1) |
 | Một kết nối tương tác | Giữ trong bộ nhớ theo mã phiên (một bản `runtime-api`); kết nối mới đóng kết nối cũ với mã 4009 (BR-M1.14) |
 | Xem trực tiếp | Đầu ra của kết nối tương tác được phát cho các kết nối xem trong cùng tiến trình. Khi mới kết nối, người xem nhận 64 KB đầu ra gần nhất. Không dùng `tmux` trong môi trường vì học viên có thể thoát hoặc dừng tiến trình đó |
 | Shell thoát | Học viên gõ `exit`: mở shell mới trong cùng kết nối |
@@ -374,7 +375,7 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | Biến | Ý nghĩa | Mặc định |
 |---|---|---|
 | `RUNTIME_DRIVER` | Trình điều khiển môi trường; hiện chỉ có `docker` | `docker` |
-| `DOCKER_HOST` | Docker Engine của máy phiên; môi trường chuẩn dùng `ssh://crucible@cr-lab` | Socket cục bộ |
+| `DOCKER_HOST` | Docker Engine của máy phiên; môi trường chuẩn dùng `ssh://crucible@cr-lab`. Moby client không hỗ trợ `ssh://`; với lược đồ này `runtime-api` tự kết nối bằng `ssh -T -- <đích> docker system dial-stdio` (S1) | Socket cục bộ |
 | `SESSION_RUNTIME` | Runtime của container phiên (BR-M1.15) | `runc` |
 | `LAB_RESERVED_MEMORY` | Bộ nhớ của máy phiên không dùng cho phiên (mục 5.1) | `2GiB` |
 | `SANDBOX_OVERHEAD_MEMORY` | Bộ nhớ cộng thêm vào giới hạn của container cho sandbox gVisor (mục 3.1) | `0` (môi trường chuẩn: `64MiB`) |
@@ -400,3 +401,4 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 26/10/2026 | Thiết kế phiên chạy bằng container Docker với gVisor trên máy phiên riêng, một bản `runtime-api` gồm API, vòng phiên và terminal |
+| 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: kết nối SSH do `runtime-api` thực hiện, shell của terminal qua `script`, `tar --no-same-owner`, giới hạn lớp ghi |

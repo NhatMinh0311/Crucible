@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-05 |
-| Phiên bản | 1.0 |
-| Ngày ban hành | 26/10/2026 |
+| Phiên bản | 1.1 |
+| Ngày ban hành | 27/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc, CR-DOC-03 Hợp đồng, CR-DOC-04 Vận hành, ADR-0003, ADR-0004, ADR-0011, ADR-0016 |
 
 ## 1. Phạm vi
@@ -70,7 +70,7 @@ flowchart LR
 | T1 | Thoát container, chiếm máy phiên | gVisor: lời gọi hệ thống được xử lý bởi nhân riêng trong không gian người dùng; `runsc` là runtime mặc định của Docker trên `cr-lab` (ADR-0003); không `privileged`, không thêm capability ngoài mặc định trừ `NET_ADMIN` cho bài lab khai báo (ADR-0016; capability chỉ có hiệu lực với nhân của sandbox), `no-new-privileges`, seccomp mặc định; không gắn thư mục của máy, không dùng mạng hay không gian tiến trình của máy. Thoát được khỏi gVisor chỉ chạm tới `cr-lab`, máy không chứa dữ liệu của nền tảng |
 | T2 | Điều khiển Docker Engine từ trong môi trường | Không gắn socket Docker vào container; Docker Engine trên `cr-lab` không mở cổng TCP; khóa SSH của `runtime-api` chỉ nằm trên `cr-server`, khai báo trong `authorized_keys` của `cr-lab` với `restrict` và `command="docker system dial-stdio"` |
 | T3 | Truy cập dịch vụ nền tảng, phiên khác, chính máy phiên | Phiên `network: none` không có mạng; phiên `network: mirror` dùng mạng Docker `internal` riêng chỉ có thêm máy chủ gói nội bộ (cổng 3142); `ufw` trên `cr-lab` chặn mọi kết nối vào máy, kể cả từ mạng của phiên. Máy chủ gói không được dùng làm proxy ra Internet: chỉ phục vụ các kho gói đã khai báo (`ForceManaged: 1`), không chuyển tiếp yêu cầu `CONNECT` (`PassThroughPattern` không khớp địa chỉ nào) |
-| T4 | Chiếm tài nguyên (fork bomb, đầy bộ nhớ, đầy đĩa) | Giới hạn bộ nhớ, CPU theo mức tài nguyên và 512 tiến trình cho mỗi container (CR-DOC-04 mục 3.4); vượt giới hạn bộ nhớ hoặc số tiến trình làm dừng cả sandbox của phiên đó, không ảnh hưởng phiên khác; dữ liệu của container nằm trên đĩa riêng của Docker (`data-root`), cảnh báo khi đĩa dùng trên 85%; cách gVisor lưu lớp ghi của hệ thống tệp và giới hạn dung lượng được xác định ở S1 |
+| T4 | Chiếm tài nguyên (fork bomb, đầy bộ nhớ, đầy đĩa) | Giới hạn bộ nhớ, CPU theo mức tài nguyên và 512 tiến trình cho mỗi container (CR-DOC-04 mục 3.4); vượt giới hạn bộ nhớ hoặc số tiến trình làm dừng cả sandbox của phiên đó, không ảnh hưởng phiên khác; lớp ghi của hệ thống tệp gốc giới hạn 1 GiB mỗi phiên (`--overlay2=root:self,size=1g`), ghi vượt mức nhận lỗi hết chỗ, phiên vẫn chạy; dữ liệu của container nằm trên đĩa riêng tại `/var/lib/containerd`, cảnh báo khi đĩa dùng trên 85% (S1) |
 | T4a | Dùng CPU kéo dài (đào tiền ảo, vòng lặp vô hạn) làm chậm phiên khác trên cùng máy phiên | Không có đường ra Internet nên không gửi được kết quả đào tới bên ngoài (T3, T5); giám sát CPU theo phiên: phiên luyện tập bị cảnh báo rồi kết thúc, phiên thi được báo giám thị, mọi lần phát hiện được ghi nhận (CR-MOD-M1 BR-M1.22–BR-M1.25) |
 | T5 | Tấn công từ chối dịch vụ ra ngoài Internet | Mặc định không có đường ra Internet |
 | T6 | Làm sai lệch kết quả chấm | Lệnh kiểm tra chạy bằng công cụ liên kết tĩnh từ volume chỉ đọc, môi trường biến sạch (ADR-0011); học viên không có `CAP_SYS_ADMIN` nên không gắn đè được volume |
@@ -105,9 +105,9 @@ khi `runtime-api` có lỗi. Các cấu hình ở tầng `runtime-api` được 
 
 | Tầng | Cấu hình |
 |---|---|
-| Docker Engine của `cr-lab` | `default-runtime: runsc`, `no-new-privileges: true`, `icc: false`, không mở cổng TCP (CR-DOC-04 mục 3.4) |
+| Docker Engine của `cr-lab` | `default-runtime: runsc`, lớp ghi 1 GiB mỗi container, `no-new-privileges: true`, `icc: false`, không mở cổng TCP (CR-DOC-04 mục 3.4). `default-runtime` chỉ áp dụng khi yêu cầu không khai báo runtime; Docker vẫn chấp nhận runtime `runc` khi được chỉ định (S1) |
 | Hệ điều hành của `cr-lab` | `ufw` chặn mọi kết nối vào trừ SSH từ `cr-server` và máy vật lý; khóa của `runtime-api` bị giới hạn ở `docker system dial-stdio` |
-| `runtime-api` | Kiểm tra runtime `runsc` khi khởi động (BR-M1.15); container phiên luôn có giới hạn bộ nhớ, CPU, số tiến trình, `CapAdd` chỉ gồm giá trị trong `SESSION_ALLOWED_CAPABILITIES`, không gắn thư mục của máy; image phải bắt đầu bằng tiền tố trong `SESSION_IMAGE_PREFIXES` |
+| `runtime-api` | Kiểm tra runtime `runsc` khi khởi động và luôn chỉ định runtime này cho container phiên (BR-M1.15); container phiên luôn có giới hạn bộ nhớ, CPU, số tiến trình, `CapAdd` chỉ gồm giá trị trong `SESSION_ALLOWED_CAPABILITIES`, không gắn thư mục của máy; image phải bắt đầu bằng tiền tố trong `SESSION_IMAGE_PREFIXES` |
 
 ## 6. Kiểm thử bảo mật
 
@@ -158,3 +158,4 @@ kiểm chứng Q6.
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
+| 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: giới hạn lớp ghi cho T4, phạm vi của `default-runtime` |
