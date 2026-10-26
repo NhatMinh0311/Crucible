@@ -1,0 +1,37 @@
+# Bổ sung cho dev/compose.yaml khi mở dự án bằng Dev Container.
+# Đường dẫn tương đối tính từ thư mục dev/ (thư mục của tệp compose đầu tiên).
+# Mọi dịch vụ phụ thuộc dùng chung không gian mạng với container làm việc `workspace`,
+# nên ứng dụng trong Dev Container kết nối qua localhost giống như khi chạy trên máy.
+
+services:
+  workspace:
+    build:
+      context: ../.devcontainer
+      dockerfile: Dockerfile
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/crucible:cached
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  postgres:
+    network_mode: service:workspace
+    ports: !reset []
+
+  rabbitmq:
+    network_mode: service:workspace
+    ports: !reset []
+
+  seaweedfs:
+    network_mode: service:workspace
+    ports: !reset []
+
+  keycloak:
+    network_mode: service:workspace
+    ports: !reset []
+    environment:
+      KC_DB_URL: jdbc:postgresql://localhost:5432/keycloak
+
+  mailpit:
+    network_mode: service:workspace
+    ports: !reset []

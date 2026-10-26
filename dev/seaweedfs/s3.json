@@ -1,0 +1,11 @@
+{
+  "identities": [
+    {
+      "name": "crucible-dev",
+      "credentials": [
+        { "accessKey": "crucible-dev", "secretKey": "crucible-dev-secret" }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

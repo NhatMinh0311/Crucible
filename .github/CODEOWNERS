@@ -1,0 +1,27 @@
+# Quyền sở hữu mã theo module (CR-DOC-07 mục 4).
+# Có hiệu lực khi ruleset của main bật "Require review from Code Owners".
+# M1: NhatMinh0311 (trưởng nhóm), M2: MinhBuiAnh, M3: quanpva62.
+# Các thư mục chưa tồn tại không gây lỗi; quy tắc có hiệu lực khi thư mục được tạo.
+
+*                             @NhatMinh0311 @MinhBuiAnh
+
+# M1 và nền tảng: chủ sở hữu M1, review chéo bởi M2
+/services/runtime/           @NhatMinh0311 @MinhBuiAnh
+/web/src/modules/runtime/    @NhatMinh0311 @MinhBuiAnh
+/infra/                      @NhatMinh0311 @MinhBuiAnh
+/deploy/                     @NhatMinh0311 @MinhBuiAnh
+/tests/                      @NhatMinh0311 @MinhBuiAnh
+
+# M2: chủ sở hữu M2, review chéo bởi M3
+/services/content/           @MinhBuiAnh @quanpva62
+/web/src/modules/content/    @MinhBuiAnh @quanpva62
+/labs/                       @MinhBuiAnh @quanpva62
+/docs/modules/m2-*           @MinhBuiAnh @quanpva62
+
+# M3: chủ sở hữu M3, review chéo bởi M1
+/services/learning/          @quanpva62 @NhatMinh0311
+/web/src/modules/learning/   @quanpva62 @NhatMinh0311
+/docs/modules/m3-*           @quanpva62 @NhatMinh0311
+
+# Hợp đồng: cả ba thành viên
+/contracts/                  @NhatMinh0311 @MinhBuiAnh @quanpva62
