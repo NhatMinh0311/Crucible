@@ -1,0 +1,87 @@
+// Package config đọc cấu hình triển khai từ biến môi trường (CR-MOD-M1 mục 12).
+package config
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+)
+
+// Config là cấu hình của runtime-api. Giá trị mặc định trỏ tới dịch vụ phụ thuộc của dev/compose.yaml.
+type Config struct {
+	Driver              string
+	Port                int
+	DBURL               string
+	AMQPURL             string
+	EventsExchange      string
+	EventsSource        string
+	OIDCIssuer          string
+	OIDCAudience        string
+	OIDCJWKSURL         string
+	TerminalPublicURL   string
+	SetupTimeout        time.Duration
+	ProvisionTimeout    time.Duration
+	AllowedCapabilities []string
+	ToolsImage          string
+	AllowedOrigins      []string
+	ImagePrefixes       []string
+}
+
+// Load đọc cấu hình; trả lỗi khi giá trị không hợp lệ.
+func Load() (Config, error) {
+	c := Config{
+		Driver:         env("RUNTIME_DRIVER", "docker"),
+		DBURL:          env("DB_URL", "postgres://runtime:runtime-dev@localhost:5432/runtime?sslmode=disable"),
+		AMQPURL:        env("AMQP_URL", "amqp://crucible:rabbitmq-dev@localhost:5672/"),
+		EventsExchange: env("EVENTS_EXCHANGE", "crucible.events"),
+		EventsSource:   env("EVENTS_SOURCE", "/crucible/runtime-api"),
+		OIDCIssuer:     env("OIDC_ISSUER", "http://localhost:8180/realms/crucible"),
+		OIDCAudience:   env("OIDC_AUDIENCE", "runtime-api"),
+		// Địa chỉ JWKS khi dịch vụ chạy trong container không tới được Keycloak qua địa chỉ issuer (localhost).
+		OIDCJWKSURL: env("OIDC_JWKS_URL", strings.TrimSuffix(env("OIDC_ISSUER", "http://localhost:8180/realms/crucible"), "/")+
+			"/protocol/openid-connect/certs"),
+		TerminalPublicURL: env("TERMINAL_PUBLIC_URL", "ws://localhost:8081/v1/terminal"),
+		ToolsImage:        env("TOOLS_IMAGE", "ghcr.io/crucible-project/crucible/tools:1.0.0"),
+	}
+	var err error
+	if c.Port, err = strconv.Atoi(env("PORT", "8081")); err != nil {
+		return c, fmt.Errorf("PORT: %w", err)
+	}
+	if c.SetupTimeout, err = time.ParseDuration(env("SETUP_TIMEOUT", "60s")); err != nil {
+		return c, fmt.Errorf("SETUP_TIMEOUT: %w", err)
+	}
+	if c.ProvisionTimeout, err = time.ParseDuration(env("PROVISION_TIMEOUT", "5m")); err != nil {
+		return c, fmt.Errorf("PROVISION_TIMEOUT: %w", err)
+	}
+	// Mặc định không cấp capability; chỉ cấp khi phiên chạy trong gVisor (BR-M1.26, ADR-0016).
+	for _, v := range strings.Split(env("SESSION_ALLOWED_CAPABILITIES", ""), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			c.AllowedCapabilities = append(c.AllowedCapabilities, v)
+		}
+	}
+	// Image bài lab được phép (CR-DOC-03 mục 3.4, ENVIRONMENT_NOT_ALLOWED; CR-DOC-05 session-image-allowlist).
+	for _, v := range strings.Split(env("SESSION_IMAGE_PREFIXES", "ghcr.io/crucible-project/crucible-labs/"), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			c.ImagePrefixes = append(c.ImagePrefixes, v)
+		}
+	}
+	// Origin của giao diện được mở terminal WebSocket; mặc định cho máy phát triển.
+	for _, v := range strings.Split(env("TERMINAL_ALLOWED_ORIGINS", "localhost:*,127.0.0.1:*"), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			c.AllowedOrigins = append(c.AllowedOrigins, v)
+		}
+	}
+	if c.Driver != "docker" {
+		return c, fmt.Errorf("RUNTIME_DRIVER phải là docker, nhận %q", c.Driver)
+	}
+	return c, nil
+}
+
+func env(key, def string) string {
+	if v, ok := os.LookupEnv(key); ok && v != "" {
+		return v
+	}
+	return def
+}
