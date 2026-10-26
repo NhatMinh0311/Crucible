@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-06 |
-| Phiên bản | 1.0 |
+| Phiên bản | 1.1 |
 | Ngày ban hành | 26/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 đến CR-DOC-05, CR-DOC-07 Quy trình phát triển |
 
@@ -43,37 +43,49 @@ theo quy trình bình thường.
 | S6 | Docker Engine chạy bên trong container gVisor | 1 ngày | Kết luận khả thi hay không |
 | S7 | Mô phỏng nhiều mạng con và router trong một container gVisor: không cấp `SYS_ADMIN`, `setup` tạo user namespace con chứa các namespace mạng có tên, nối bằng `veth` và `bridge`; tuyến tĩnh, `ip_forward` riêng từng namespace; bảng `filter`, `nat` của `iptables` trong namespace router; học viên và lệnh kiểm tra vào topo bằng `nsenter` | 1 ngày | Topo `client – r1 – r2 – server` thông khi tuyến đúng, không thông khi tuyến sai; `/opt/crucible/bin` không bị gắn đè từ trong topo; I1–I13 vẫn đạt; ghi rõ lệnh nào không dùng được |
 
-S1–S5 do người phụ trách M1 thực hiện trong tuần 1–2, song song với việc hai module còn lại bắt đầu trên mock. S6, S7
-thực hiện khi còn thời gian sau mốc MC.
+S1–S5 do người phụ trách M1 thực hiện trong tuần 1–5, mỗi thử nghiệm xong trước việc dùng kết luận của nó: S1, S4
+trước khi đưa gVisor vào `runtime-api`; S3 trước ghi phiên; S2, S5 trước đặt trước tài nguyên. Trong thời gian đó, hai
+module còn lại làm việc với `runtime-api` chạy phiên bằng Docker trên máy phát triển. S6, S7 thực hiện khi còn thời
+gian sau mốc MC.
 
 ## 4. Lộ trình
 
-Tuần 1 là tuần đề tài được duyệt.
+Tuần 1 là tuần đề tài được duyệt (26/10–01/11/2026); tuần 11 kết thúc ngày 10/01/2027. Mỗi tuần tính từ thứ Hai
+đến Chủ nhật.
 
 | Hạng mục | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | T10 | T11 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Chung: hợp đồng v1, kho mã, CI | ■ | | | | | | | | | | |
-| M1: thử nghiệm S1–S5 | ■ | ■ | | | | | | | | | |
-| M1: gVisor, mạng của phiên, ghi phiên | | ■ | ■ | | | | | | | | |
-| M1: môi trường chuẩn, script triển khai, giám sát, sao lưu | | | ■ | ■ | ■ | | | | | | |
-| M1: hạn mức, sức chứa, đặt trước, tham số hệ thống | | | | ■ | ■ | ■ | | | | | |
-| M1: mất máy phiên, đối soát, CPU bất thường, trang quản trị | | | | | | | ■ | ■ | ■ | | |
-| M1: đo, thí nghiệm sự cố, bảo mật, khôi phục, phát hành | | | | | | | | | | ■ | ■ |
-| M2: bài lab, phiên bản, biến thể, form soạn bài | ■ | ■ | ■ | | | | | | | | |
-| M2: lượt làm bài, chấm bước, gợi ý | | | ■ | ■ | ■ | ■ | | | | | |
-| M2: kiểm thử bài lab, chấm cuối, khôi phục, chấm ngầm | | | | | | | ■ | ■ | ■ | | |
-| M2: bài lab mẫu, hoàn thiện, kiểm thử | | | | | | | | | | ■ | ■ |
-| M3: lớp, nhập danh sách, lộ trình | ■ | ■ | ■ | | | | | | | | |
-| M3: bài tập, bắt đầu bài, bảng điểm | | | ■ | ■ | ■ | ■ | | | | | |
-| M3: kỳ thi, bù giờ, giám sát, gian lận, phúc khảo | | | | | | | ■ | ■ | ■ | | |
-| M3: hoàn thiện, kiểm thử | | | | | | | | | | ■ | ■ |
+| Chung: nhận quyền truy cập, môi trường phát triển, Spec Kit | ■ |  |  |  |  |  |  |  |  |  |  |
+| M1: thử nghiệm S1–S5 | ■ | ■ | ■ | ■ | ■ |  |  |  |  |  |  |
+| M1: gVisor, mạng của phiên, máy chủ gói nội bộ |  |  | ■ | ■ |  |  |  |  |  |  |  |
+| M1: hạ tầng hai máy ảo, script triển khai |  |  | ■ | ■ |  |  |  |  |  |  |  |
+| M1: ghi phiên, giám sát, sao lưu |  |  |  |  | ■ |  |  |  |  |  |  |
+| M1: kiểm thử cách ly; hàng đợi, hạn mức, sức chứa, đặt trước |  |  |  |  |  | ■ |  |  |  |  |  |
+| M1: tham số hệ thống, trần hạn mức, gợi ý khung giờ |  |  |  |  |  |  | ■ |  |  |  |  |
+| M1: lấy mẫu tài nguyên, mất máy phiên, đối soát |  |  |  |  |  |  |  | ■ |  |  |  |
+| M1: trang quản trị, tham số hệ thống của ba module |  |  |  |  |  |  |  |  | ■ |  |  |
+| M1: đo, thí nghiệm sự cố, khôi phục, phát hành |  |  |  |  |  |  |  |  |  | ■ | ■ |
+| M2: tài liệu module | ■ | ■ |  |  |  |  |  |  |  |  |  |
+| M2: lưu trữ bài lab, phiên bản, biến thể |  | ■ | ■ |  |  |  |  |  |  |  |  |
+| M2: lượt làm bài, kiểm tra bước, gợi ý |  |  | ■ |  |  |  |  |  |  |  |  |
+| M2: bước trả lời, form soạn bài |  |  |  | ■ | ■ |  |  |  |  |  |  |
+| M2: ngôn ngữ nội dung bài lab |  |  |  |  |  | ■ |  |  |  |  |  |
+| M2: kiểm thử bài lab, chấm cuối, khôi phục, chấm ngầm |  |  |  |  |  |  | ■ | ■ |  |  |  |
+| M2: thư viện bài lab, tham số hệ thống |  |  |  |  |  |  |  | ■ | ■ |  |  |
+| M2: bài lab mẫu, hoàn thiện |  |  |  |  |  |  |  |  |  | ■ | ■ |
+| M3: tài liệu module | ■ | ■ |  |  |  |  |  |  |  |  |  |
+| M3: lớp, nhập danh sách, lộ trình |  | ■ | ■ |  |  |  |  |  |  |  |  |
+| M3: bài tập, thông báo |  |  |  | ■ | ■ | ■ |  |  |  |  |  |
+| M3: kỳ thi, tham số hệ thống |  |  |  |  |  |  | ■ | ■ |  |  |  |
+| M3: giám sát kỳ thi, gian lận, phúc khảo, bảng điểm |  |  |  |  |  |  |  | ■ | ■ |  |  |
+| M3: hoàn thiện, kiểm thử |  |  |  |  |  |  |  |  |  | ■ | ■ |
 
-| Mốc | Cuối tuần | Tiêu chí |
+| Mốc | Hạn | Tiêu chí |
 |---|---|---|
-| MA | 3 | Trên môi trường phát triển: học viên bắt đầu bài lab từ lộ trình, có terminal (`runtime-api` chạy phiên bằng Docker trên máy phát triển), kiểm tra bước và thấy điểm. Ba module gọi nhau bằng API thật |
-| MB | 6 | Trên môi trường chuẩn qua script triển khai: cùng luồng như MA với gVisor, ghi phiên; hạn mức và đặt trước; dashboard phiên và sức chứa hoạt động; sao lưu chạy theo lịch; bộ kiểm thử cách ly đạt; phát hành `v0.1.0` |
-| MC | 9 | Kỳ thi đầy đủ trên môi trường chuẩn: lên lịch có đặt trước, bắt đầu đồng loạt, mất máy phiên và bù giờ, nộp tự động, tín hiệu gian lận, phúc khảo |
-| MD | 11 | Báo cáo đo toàn bộ Q1–Q14; biên bản thí nghiệm sự cố CH1–CH7; biên bản diễn tập khôi phục; biên bản cài đặt thử do người ngoài nhóm thực hiện; phát hành `v1.0.0` kèm hướng dẫn cài đặt và nâng cấp |
+| MA | Tuần 3 (15/11/2026) | Trên môi trường phát triển: học viên bắt đầu bài lab từ lộ trình, có terminal (`runtime-api` chạy phiên bằng Docker trên máy phát triển), kiểm tra bước và thấy điểm. Ba module gọi nhau bằng API thật |
+| MB | Tuần 6 (06/12/2026) | Trên môi trường chuẩn qua script triển khai: cùng luồng như MA với gVisor, ghi phiên; hạn mức và đặt trước; dashboard phiên và sức chứa hoạt động; sao lưu chạy theo lịch; bộ kiểm thử cách ly đạt; phát hành `v0.1.0` |
+| MC | Tuần 9 (27/12/2026) | Kỳ thi đầy đủ trên môi trường chuẩn: lên lịch có đặt trước, bắt đầu đồng loạt, mất máy phiên và bù giờ, nộp tự động, tín hiệu gian lận, phúc khảo |
+| MD | Tuần 11 (10/01/2027) | Báo cáo đo toàn bộ Q1–Q14; biên bản thí nghiệm sự cố CH1–CH7; biên bản diễn tập khôi phục; biên bản cài đặt thử do người ngoài nhóm thực hiện; phát hành `v1.0.0` kèm hướng dẫn cài đặt và nâng cấp |
 
 ## 5. Phân công
 
@@ -83,7 +95,7 @@ Tuần 1 là tuần đề tài được duyệt.
 | Thành viên phụ trách M2 | M2 | Mã M2 (`services/content/`, `web/src/modules/content/`); bài lab mẫu (`labs/`, tối thiểu 10 bài thuộc đủ các dạng); tài liệu `docs/modules/m2-content.md` |
 | Thành viên phụ trách M3 | M3 | Mã M3 (`services/learning/`, `web/src/modules/learning/`); tài liệu `docs/modules/m3-learning.md` |
 
-Khung giao diện chung (`web/src/shell/`: điều hướng, đăng nhập, thông báo) do trưởng nhóm dựng trong tuần 1.
+Khung giao diện chung (`web/src/shell/`: điều hướng, đăng nhập, thông báo, hai ngôn ngữ) do trưởng nhóm dựng trước tuần 1.
 
 Mỗi thành viên viết tài liệu thiết kế module của mình theo mẫu `docs/modules/_mau.md` trước khi bắt đầu viết mã
 (hạn cuối tuần 1). Tài liệu module mô tả mô hình dữ liệu, máy trạng thái, API nội bộ cho giao diện, quy tắc nghiệp vụ
@@ -104,3 +116,4 @@ Một chức năng được coi là hoàn thành khi:
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
+| 1.1 | 26/10/2026 | Lộ trình theo ngày duyệt đề tài: thử nghiệm S1–S5 trải trong tuần 1–5, thứ tự việc theo issue và milestone |
