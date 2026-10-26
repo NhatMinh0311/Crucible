@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-04 |
-| Phiên bản | 1.0 |
-| Ngày ban hành | 26/10/2026 |
+| Phiên bản | 1.1 |
+| Ngày ban hành | 27/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 8 (yêu cầu chất lượng), CR-DOC-02 Kiến trúc, CR-DOC-05 Cách ly và bảo mật, ADR-0003, ADR-0007, ADR-0008, ADR-0009, ADR-0012 |
 
 ## 1. Phạm vi
@@ -40,7 +40,7 @@ phiên bằng Docker với runtime `runc` (CR-DOC-03 mục 2.3).
 | Máy ảo | vCPU | Bộ nhớ | Đĩa | Thành phần |
 |---|---|---|---|---|
 | `cr-server` | 4 | 10 GB | 60 GB | Caddy, PostgreSQL, RabbitMQ, SeaweedFS, Keycloak, Prometheus, Grafana, Dozzle, dịch vụ M1–M3, giao diện, tác vụ sao lưu |
-| `cr-lab` | 8 | 16 GB | 30 GB hệ điều hành + 40 GB riêng cho `/var/lib/docker` | Docker Engine, gVisor, container phiên, máy chủ gói nội bộ `crucible-mirror` |
+| `cr-lab` | 8 | 16 GB | 30 GB hệ điều hành + 60 GB riêng cho `/var/lib/containerd` | Docker Engine, gVisor, container phiên, máy chủ gói nội bộ `crucible-mirror` |
 
 Ngân sách bộ nhớ ước tính của `cr-server`: hệ điều hành và Docker 0,5 GB; PostgreSQL 1,0 GB; Keycloak 0,8 GB;
 RabbitMQ, SeaweedFS 0,7 GB; Prometheus, Grafana 0,6 GB; dịch vụ M1–M3 và giao diện 1,6 GB; Caddy, Dozzle 0,1 GB; tổng
@@ -67,7 +67,9 @@ Hạ tầng được mô tả bằng mã trong `infra/`:
 
 | Đường dẫn | Công cụ | Nội dung |
 |---|---|---|
-| `infra/create-vms.sh` | `virsh`, `virt-install` | Pool lưu trữ trên `/home`, mạng `crucible-net`, hai máy ảo từ image Ubuntu Server 24.04 cloud |
+| `infra/create-vms.sh` | `virsh`, `virt-install` | Pool lưu trữ trên `/home`, mạng `crucible-net`, hai máy ảo từ image Ubuntu Server 24.04 cloud; khóa SSH của `runtime-api` sinh trên máy quản trị, ngoài kho mã; ghi khóa máy của `cr-lab` vào `known_hosts` của `cr-server` |
+| `infra/destroy-vms.sh` | `virsh` | Xóa hai máy ảo cùng đĩa, giữ mạng, pool và image gốc |
+| `infra/libvirt/crucible-net.xml` | libvirt | Mạng NAT `10.77.0.0/24`, địa chỉ tĩnh theo địa chỉ MAC |
 | `infra/cloud-init/cr-server.yaml` | cloud-init | Người dùng quản trị, khóa SSH, Docker Engine, Tailscale, khóa SSH của `runtime-api` để vào `cr-lab` |
 | `infra/cloud-init/cr-lab.yaml` | cloud-init | Người dùng quản trị, tài khoản `crucible` (nhóm `docker`) nhận khóa của `runtime-api`, Docker Engine, gVisor, cấu hình Docker, `ufw` |
 | `deploy/` | Docker Compose | Cấu hình ứng dụng trên `cr-server` (mục 5) |
@@ -84,14 +86,18 @@ Cấu hình Docker của `cr-lab` (`/etc/docker/daemon.json`) do cloud-init ghi:
 
 | Khóa | Giá trị | Lý do |
 |---|---|---|
-| `runtimes.runsc` | `path: /usr/local/bin/runsc`, `runtimeArgs: ["--platform=systrap"]` | Khai báo gVisor |
+| `runtimes.runsc` | `path: /usr/bin/runsc`, `runtimeArgs: ["--platform=systrap", "--overlay2=root:self,size=1g"]` | Khai báo gVisor; lớp ghi của hệ thống tệp gốc là tệp trên đĩa, mỗi container tối đa 1 GiB (S1) |
 | `default-runtime` | `runsc` | Mọi container trên máy phiên chạy trong gVisor (ADR-0003) |
 | `no-new-privileges` | `true` | Mặc định cho mọi container |
 | `icc` | `false` | Container trên mạng `bridge` mặc định không liên lạc với nhau |
 | `live-restore` | `true` | Khởi động lại Docker Engine không dừng container phiên |
 | `default-address-pools` | `[{"base": "172.30.0.0/16", "size": 28}]` | Đủ khối địa chỉ cho mạng riêng của từng phiên |
 | `log-driver`, `log-opts` | `local`, `max-size: 1m` | Đầu ra của container phiên không làm đầy đĩa |
-| `data-root` | `/var/lib/docker` trên đĩa riêng | Dữ liệu của container phiên không làm đầy đĩa hệ điều hành |
+
+Docker Engine 29 lưu image và lớp ghi của container qua containerd tại `/var/lib/containerd`; đĩa riêng 60 GB của
+`cr-lab` được gắn tại đường dẫn này nên dữ liệu của phiên không làm đầy đĩa hệ điều hành. Lớp ghi của gVisor mặc định
+không giới hạn dung lượng và không thu hồi phần đã xóa bên trong môi trường; giới hạn `size=1g` của runtime `runsc` áp
+dụng chung cho mọi container phiên, 44 phiên ghi đầy chiếm khoảng 44 GiB.
 
 Container phiên bị giới hạn 512 tiến trình (`PidsLimit`). Với gVisor, giới hạn áp dụng cho cả sandbox: mỗi tiến trình
 trong sandbox tốn khoảng hai tiến trình trên máy cộng phần cố định khoảng 45, nên số tiến trình học viên dùng được thấp
@@ -308,3 +314,4 @@ Sự cố được tạo bằng `virsh`, `docker` và `tc`.
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
+| 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: đĩa riêng của `cr-lab` gắn tại `/var/lib/containerd` (60 GB), giới hạn lớp ghi 1 GiB mỗi phiên, đường dẫn `runsc`, script `destroy-vms.sh`, khóa máy của `cr-lab` |

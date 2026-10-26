@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.13 |
-| Ngày ban hành | 26/10/2026 |
+| Phiên bản | 1.14 |
+| Ngày ban hành | 27/10/2026 |
 
 ## 1. Mục đích
 
@@ -302,6 +302,7 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 34 | Dựng kho mã mới | Sao lưu; dựng kho mã theo khối; hỏi số máy ảo, cách triển khai, mục tiêu khôi phục; viết lại tài liệu | Chọn hai máy ảo, script triển khai, `pg_dump` mỗi giờ |
 | 35 | Hỏi Spec Kit là gì; đề nghị để mỗi thành viên tự khởi tạo Spec Kit, thêm bước vào hướng dẫn đóng góp | Giải thích quy trình theo đặc tả; đọc tài liệu và mã nguồn Spec Kit 1.2.3 để xác định tệp được sinh, thứ tự ưu tiên mẫu, việc giữ nguyên hiến pháp khi khởi tạo lại; viết hiến pháp, mẫu đặc tả, kế hoạch, danh sách việc bằng tiếng Việt, bước cài đặt | Chọn để thành viên tự khởi tạo, kho mã giữ hiến pháp và mẫu dùng chung |
 | 36 | Yêu cầu lộ trình gửi các thành viên dạng ma trận theo tuần; hỏi vì sao lộ trình mới khác CR-DOC-06 | Lập ma trận theo từng issue, mốc, phụ thuộc giữa module, điểm kiểm tra cuối tuần; đối chiếu và chỉ ra bảng trong CR-DOC-06 giữ khung tuần của bản thiết kế dùng Kubernetes, không khớp thời lượng học của người phụ trách M1 và milestone của issue | Yêu cầu cập nhật CR-DOC-06 theo lộ trình mới |
+| 37 | Hỏi kiến trúc client–server của Docker và cổng TCP của Docker Engine; yêu cầu thực hiện S1, tự gõ lệnh theo hướng dẫn; hỏi cách cô lập `cr-lab` khỏi máy vật lý và cách dùng chung kết nối SSH | Giải thích Docker Engine API qua unix socket, lý do không mở cổng TCP; viết script dựng máy ảo và cloud-init; hướng dẫn từng chặng thử nghiệm và giải thích kết quả; kiểm tra thêm trên máy phiên, phát hiện moby client không hỗ trợ `ssh://`, dữ liệu nằm ở `/var/lib/containerd`, lớp ghi không giới hạn dung lượng, `docker cp` không thấy lớp ghi của gVisor, terminal thiếu tên `/dev/pts`; đo độ trễ khi dùng chung kết nối SSH; đề xuất ba mức cô lập `cr-lab` | Chọn xóa máy ảo cũ và dựng lại theo CR-DOC-04, đặt script trong `infra/`, tự chạy lệnh; chọn giới hạn lớp ghi 1 GiB mỗi phiên với đĩa riêng 60 GB; việc cô lập `cr-lab` khỏi máy vật lý chưa quyết định |
 
 ### 5.5. Các lần điều chỉnh hướng
 
@@ -328,3 +329,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.11 | 18/10/2026 | Vòng 27: chế độ docker của runtime-api |
 | 1.12 | 26/10/2026 | Giai đoạn 3, vòng 32–34: rút gọn kiến trúc M1, kho mã mới |
 | 1.13 | 26/10/2026 | Vòng 35: Spec Kit do thành viên tự khởi tạo; vòng 36: lộ trình theo ngày duyệt |
+| 1.14 | 27/10/2026 | Vòng 37: thử nghiệm S1 |

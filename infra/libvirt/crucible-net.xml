@@ -1,0 +1,13 @@
+<!-- Mạng libvirt của môi trường chuẩn (CR-DOC-04 mục 3.3): NAT, địa chỉ tĩnh theo MAC của hai máy ảo -->
+<network>
+  <name>crucible-net</name>
+  <forward mode='nat'/>
+  <bridge name='virbr-crucible' stp='on' delay='0'/>
+  <ip address='10.77.0.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='10.77.0.100' end='10.77.0.200'/>
+      <host mac='52:54:00:77:00:10' name='cr-server' ip='10.77.0.10'/>
+      <host mac='52:54:00:77:00:11' name='cr-lab' ip='10.77.0.11'/>
+    </dhcp>
+  </ip>
+</network>
