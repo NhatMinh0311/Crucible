@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 27/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
@@ -27,6 +27,11 @@ Một Go module `services/runtime` với một chương trình `runtime-api`, ch
 | API | `net/http`, oapi-codegen (sinh từ `contracts/runtime-api.yaml`), pgx, golang-migrate | API tại `contracts/runtime-api.yaml`; kiểm tra hạn mức; ghi phiên; cấp vé; chạy lệnh kiểm tra |
 | Vòng phiên | — | Xếp hàng và cấp chỗ; hết hạn, không hoạt động; lấy mẫu tài nguyên; đối soát với máy phiên; dọn tài nguyên mồ côi |
 | Trình điều khiển `docker` | Docker Engine API (`github.com/moby/moby/client`) | Dựng, exec, terminal, xóa container và mạng của phiên; kéo sẵn image; đọc số đo |
+
+Luồng exec của Docker Engine khác nhau theo chế độ: với `Tty: false` (lệnh kiểm tra, script khôi phục) hai luồng
+`stdout` và `stderr` được ghép kênh trên một kết nối, mỗi khung có tiêu đề 8 byte, nên phải tách bằng `stdcopy.StdCopy`;
+với `Tty: true` (terminal) luồng là byte thô. Nhật ký của tiến trình chính lấy qua `ContainerLogs`, đi đường khác với đầu
+ra của exec.
 | Terminal | `coder/websocket` | Terminal WebSocket, người xem trực tiếp, ghi asciicast, tái dựng dòng lệnh |
 | Sự kiện | `amqp091-go` | Chuyển tiếp outbox; nhận sự kiện của M2, M3 |
 | Lưu bản ghi | AWS SDK for Go v2 (S3) | Tải bản ghi phiên lên SeaweedFS |
@@ -105,6 +110,8 @@ trạng thái thực tế. `runtime-api` đối soát hai bên khi khởi độn
 | BR-M1.26 | `environment.capabilities` chỉ chứa giá trị có trong `SESSION_ALLOWED_CAPABILITIES`, nếu không từ chối tạo phiên với 422 `ENVIRONMENT_NOT_ALLOWED`. Capability được thêm vào `CapAdd` của container phiên; phiên không khai báo không có capability bổ sung (ADR-0016) | AC-C1.9 |
 | BR-M1.27 | Tham số hệ thống của M1 (CR-DOC-01 mục 5.6) đọc từ bảng `settings` qua bộ nhớ đệm làm mới mỗi 30 giây; chỉ `ADMIN` sửa, giá trị ngoài khoảng hợp lệ trả 422 `SETTING_OUT_OF_RANGE`; mỗi lần sửa ghi `settings_history` trong cùng transaction | AC-P1.1–AC-P1.4 |
 | BR-M1.28 | Đổi số chỗ của đặt trước chưa hủy và chưa qua `endsAt`: phần tăng được kiểm tra theo BR-M1.7 và BR-M1.20 như đặt trước mới, bị từ chối thì số chỗ giữ nguyên; giảm không xuống dưới số chỗ đang dùng; giảm trước `startsAt` hoàn lại chỗ × giờ của phần giảm | AC-L2.13 |
+| BR-M1.29 | `environment.setup` chạy một lần khi dựng môi trường, bằng `/bin/sh` của image, với `stdin` từ `/dev/null` và `stdout`, `stderr` vào `/var/log/crucible/setup.log` trong môi trường. Dịch vụ nền do script khởi động thừa hưởng ba bộ mô tả tệp này nên không giữ luồng của lệnh exec. Script không thoát trong `PROVISION_TIMEOUT` làm phiên chuyển `FAILED` với lý do `PROVISION_TIMEOUT`; nội dung tệp nhật ký được đọc tối đa 4 KiB và ghi vào bản ghi phiên | CR-DOC-03 mục 4.7 |
+| BR-M1.30 | Lệnh exec trả mã thoát 126 hoặc 127 được trả về với `invalidCommand = true`. Sau khi mọi lệnh exec trả về hoặc hết thời hạn, M1 kết thúc cả nhóm tiến trình của lệnh trong môi trường; hủy `context` của bên gọi không tự dừng tiến trình trong container | CR-DOC-03 mục 7 |
 
 ## 5. Cấp phát
 
@@ -366,6 +373,8 @@ Mọi tác vụ chạy trong `runtime-api`.
 | AC-C1.9, BR-M1.26 | Đơn vị: dựng cấu hình container theo capability; tích hợp: capability ngoài danh sách bị từ chối; môi trường chuẩn: `iptables` chạy được khi khai báo, kiểm thử cách ly I12 |
 | BR-M1.15 | Tích hợp: `runtime-api` không khởi động khi Docker không có runtime `runsc` mà cấu hình yêu cầu |
 | AC-P1.1–AC-P1.4, BR-M1.27 | Tích hợp: sửa tham số bằng vai trò khác `ADMIN` bị từ chối; giá trị ngoài khoảng bị từ chối; sau khi giảm `queue.timeoutMinutes`, phiên chờ mới bị hủy theo giá trị mới trong vòng 60 giây; lịch sử ghi đủ giá trị cũ và mới |
+| BR-M1.29 | Tích hợp: `setup` khởi động dịch vụ nền không chuyển hướng vẫn làm lệnh dựng trả về đúng hạn và dịch vụ còn chạy; `setup` kết thúc bằng dịch vụ ở tiền cảnh làm phiên `FAILED` với lý do `PROVISION_TIMEOUT` |
+| BR-M1.30 | Tích hợp: lệnh gọi chương trình không có trong bộ công cụ trả `invalidCommand = true` và mã thoát 127; lệnh để lại tiến trình nền không còn tiến trình nào sau khi trả về; đầu ra in trước khi thoát không bị cắt |
 
 ## 12. Cấu hình
 
@@ -402,3 +411,4 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 |---|---|---|
 | 1.0 | 26/10/2026 | Thiết kế phiên chạy bằng container Docker với gVisor trên máy phiên riêng, một bản `runtime-api` gồm API, vòng phiên và terminal |
 | 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: kết nối SSH do `runtime-api` thực hiện, shell của terminal qua `script`, `tar --no-same-owner`, giới hạn lớp ghi |
+| 1.2 | 27/10/2026 | BR-M1.29 lớp bọc bộ mô tả tệp cho `setup`; BR-M1.30 mã thoát 126, 127 và dọn nhóm tiến trình của lệnh exec; ghi chú luồng exec ghép kênh |

@@ -330,3 +330,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.12 | 26/10/2026 | Giai đoạn 3, vòng 32–34: rút gọn kiến trúc M1, kho mã mới |
 | 1.13 | 26/10/2026 | Vòng 35: Spec Kit do thành viên tự khởi tạo; vòng 36: lộ trình theo ngày duyệt |
 | 1.14 | 27/10/2026 | Vòng 37: thử nghiệm S1 |
+| 1.15 | 27/10/2026 | Vòng 38: quy tắc bộ mô tả tệp và mã thoát của lệnh trong môi trường phiên |
