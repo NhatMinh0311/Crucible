@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.0 |
-| Ngày ban hành | 26/10/2026 |
+| Phiên bản | 1.1 |
+| Ngày ban hành | 27/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
 ## 1. Phạm vi
@@ -227,6 +227,10 @@ M2 chỉ xuất bản một phiên bản khi các điều kiện sau đúng vớ
 2. Sau khi chạy toàn bộ lời giải mẫu theo thứ tự bước: mọi bước `check` đạt; câu trả lời trong lời giải của mỗi bước
    `answer` (viết sẵn, hoặc stdout của script lời giải) được chấp nhận theo mục 4.6.
 3. Không phiên nào kết thúc vì vượt giới hạn bộ nhớ (`OUT_OF_MEMORY`).
+4. Không lần chạy nào trả `invalidCommand = true` (mục 7): lệnh kiểm tra hoặc lời giải gọi chương trình không có
+   trong môi trường hoặc không chạy được là lỗi đặc tả, không phải kết quả của học viên.
+5. Không phiên nào kết thúc vì môi trường dừng (`ENVIRONMENT_FAILED`): `setup` kết thúc bằng dịch vụ chạy ở tiền
+   cảnh, hoặc script tạo tiến trình vượt giới hạn 512 tác vụ, đều biểu hiện ở đây (mục 4.7).
 
 Sau khi kết thúc các phiên kiểm thử, M2 đọc `resourceUsage` của từng phiên. Nếu bộ nhớ cao nhất của một seed vượt 80%
 giới hạn của mức tài nguyên đã chọn, phiên bản vẫn được xuất bản nhưng kết quả kiểm thử kèm cảnh báo và đề xuất mức
@@ -247,6 +251,20 @@ bộ nhớ của bài lab. Số đo dựa trên lời giải mẫu nên chỉ l�
 | Gợi ý | Như bước `check` |
 | Khôi phục khi tiếp tục | Bước `answer` không cần khôi phục môi trường; kết quả đã ghi được giữ |
 | Chấm cuối | Bước `answer` lấy kết quả của câu trả lời đúng hoặc câu trả lời cuối cùng đã ghi; không chạy lại `from.run` |
+
+### 4.7. Môi trường khi script của bài lab chạy
+
+Áp dụng cho `environment.setup`, script lỗi cài sẵn (`faults[].inject`) và lời giải mẫu chạy với `purpose = RESTORE`.
+
+| Mục | Quy định |
+|---|---|
+| Hệ thống khởi tạo | Môi trường không có `systemd`. `systemctl` không dùng được; `service` và `/etc/init.d/*` dùng được vì chỉ gọi `start-stop-daemon`. Tiến trình `init` của môi trường là `tini`, có chuyển tiếp tín hiệu và thu dọn tiến trình mồ côi |
+| Dịch vụ nền | Script được chạy với `stdin` từ `/dev/null` và `stdout`, `stderr` vào `/var/log/crucible/setup.log` của môi trường, do M1 đặt trước khi chạy (BR-M1.29). Dịch vụ nền thừa hưởng ba bộ mô tả tệp này, nên đặc tả bài lab không cần tự chuyển hướng |
+| Dịch vụ chạy nền hay chạy trước | Dịch vụ phải tự chuyển sang chạy nền (`service nginx start`, `busybox httpd -p …`, `cron`) hoặc được đưa ra nền trong script. Script không được kết thúc bằng một dịch vụ chạy ở tiền cảnh: script không thoát thì phiên bị hủy khi hết `PROVISION_TIMEOUT` |
+| Nhật ký của dịch vụ | Không có `rsyslog` và không có trình gửi thư trong môi trường. Dịch vụ ghi nhật ký qua syslog hoặc cron gửi đầu ra qua thư đều mất dấu; đặc tả bài lab cần dịch vụ ghi vào tệp thì phải chuyển hướng tường minh trong script |
+| `cron` | `cron` không tự chạy. Script phải tự khởi động (`/usr/sbin/cron`). `cron` đặt `PATH=/usr/bin:/bin` và không giữ biến môi trường của script, nên dòng trong `crontab` dùng đường dẫn tuyệt đối và tự chuyển hướng đầu ra vào tệp |
+| Múi giờ | Môi trường chạy theo UTC. Bài lab có yếu tố thời gian (mốc giờ trong nhật ký, công việc định kỳ) phải tự đặt `TZ` trong script hoặc `CRON_TZ` trong `crontab`; giờ của môi trường không trùng giờ Việt Nam dùng ở giao diện và sổ giờ máy |
+| Số tiến trình | Môi trường giới hạn 512 tác vụ, tính cả luồng và tiến trình đã kết thúc chưa được thu dọn. Script tạo tiến trình trong vòng lặp phải chờ chúng kết thúc |
 
 ## 5. Sự kiện
 
@@ -314,8 +332,10 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | Trình thông dịch | `/opt/crucible/bin/sh` (BusyBox liên kết tĩnh) |
 | Công cụ | BusyBox, `curl`, `jq` liên kết tĩnh trong `/opt/crucible/bin`, gắn vào container từ volume chỉ đọc |
 | Môi trường | Biến môi trường rỗng ngoài `PATH=/opt/crucible/bin`, `LANG=C.UTF-8`; không nạp tệp cấu hình shell; chạy bằng `root` |
-| Kết quả | Mã thoát 0 là đạt; khác 0 là không đạt; hết thời gian là không đạt và `timedOut = true` |
+| Kết quả | Mã thoát 0 là đạt; khác 0 là không đạt; hết thời gian là không đạt và `timedOut = true`. Mã thoát 126 (tìm thấy nhưng không chạy được) và 127 (không tìm thấy lệnh) nghĩa là script chưa từng chạy: M1 trả `invalidCommand = true`, M2 không ghi bước là không đạt mà ghi lỗi đặc tả bài lab và báo tác giả; bài lab có lỗi này không được xuất bản (mục 4.5) |
 | Giới hạn | Thời gian theo `timeoutSeconds`: tối đa 15 giây với `purpose = CHECK`, 60 giây với `purpose = RESTORE`; `stdout`, `stderr` cắt ở 4 KB; mỗi phiên chạy tối đa một lệnh tại một thời điểm |
+| Thu nhận đầu ra | Chỉ đầu ra sinh ra trước khi tiến trình chính của script thoát được bảo đảm. Docker Engine đóng luồng sau một khoảng ngắn kể từ lúc tiến trình đó thoát, nên đầu ra của tiến trình nền sinh sau mốc đó bị mất trong khi mã thoát vẫn là 0. Script phải in xong kết luận trước khi thoát và không để lại tiến trình nền giữ `stdout`, `stderr`. Khác với `setup` (mục 4.7), lệnh kiểm tra không được chuyển hướng ra tệp trong môi trường: học viên có quyền `root` nên tệp đó sửa được, và kết quả kiểm tra phải không phụ thuộc trạng thái do học viên tạo ra |
+| Dọn tiến trình | Sau khi lệnh trả về, M1 kết thúc cả nhóm tiến trình của lệnh (BR-M1.30), nên lệnh kiểm tra không để lại tiến trình chạy tiếp trong môi trường của học viên |
 | Khôi phục | Script khôi phục là lời giải mẫu của các bước đã đạt, nối theo thứ tự bước, chạy với `purpose = RESTORE` bằng `/bin/sh` của môi trường với `PATH` chuẩn của hệ điều hành, vì mục đích là tạo trạng thái chứ không phải đánh giá. Kiểm thử bài lab (mục 4.5) chạy lời giải theo cùng cách |
 | Phạm vi bảo đảm | Kết quả không bị ảnh hưởng khi học viên sửa hoặc thay công cụ của hệ thống, biến môi trường, tệp cấu hình shell, `/etc/ld.so.preload`. Lệnh kiểm tra không nên gọi chương trình nằm ngoài `/opt/crucible/bin` (ADR-0011) |
 
@@ -324,3 +344,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
+| 1.1 | 27/10/2026 | Mục 4.7 môi trường khi script bài lab chạy; mục 7 bổ sung mã 126, 127, phạm vi thu nhận đầu ra, dọn nhóm tiến trình |
