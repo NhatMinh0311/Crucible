@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-06 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 26/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 đến CR-DOC-05, CR-DOC-07 Quy trình phát triển |
 
@@ -38,7 +38,7 @@ theo quy trình bình thường.
 | S1 | gVisor chạy được với Docker trên `cr-lab` trong máy ảo KVM; `runtime-api` điều khiển qua `DOCKER_HOST=ssh://`; exec có TTY, giới hạn bộ nhớ, CPU, số tiến trình, mạng `internal` riêng hoạt động với `runsc`; cách gVisor lưu lớp ghi của hệ thống tệp; tệp ghi qua exec `tar` hiện ra trong môi trường | 2 ngày | Container `runsc` chạy bash, exec và terminal thành công qua SSH; các kiểm thử I1–I9, I13 tại CR-DOC-05 cho kết quả mong đợi; ghi rõ hành vi khi vượt bộ nhớ và số tiến trình |
 | S2 | Thời gian từ khi được cấp chỗ tới khi sẵn sàng (tạo container, ghi tệp, chạy setup) khi image đã có trên máy phiên | 1 ngày | Số đo p50, p95 trên 50 lần với bài `linux-user-nginx`; kết luận có cần nhóm môi trường ấm (RK2) |
 | S3 | Terminal của `runtime-api` qua Docker exec trên kết nối SSH và ghi asciicast | 2 ngày | Gõ lệnh tương tác qua trình duyệt với xterm.js; độ trễ khứ hồi p95 đo được với 20 kết nối đồng thời; bản ghi phát lại được |
-| S4 | Image nền và bốn bài mẫu chạy đúng trong gVisor; các cơ chế mẫu kịch bản cần: `cron`, tiến trình nền tách khỏi phiên, `/proc/<PID>/fd`, `netstat -ltnp` hiện PID; với `NET_ADMIN` (ADR-0016): `iptables`, `nftables`, `ip addr`, `ip route`; `ping` khi không có `NET_RAW`; số tiến trình của dịch vụ đa luồng so với giới hạn 512 của container (CR-DOC-04 mục 3.4) | 3 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công; ghi rõ cơ chế nào không dùng được |
+| S4 | Image nền và bốn bài mẫu chạy đúng trong gVisor; các cơ chế mẫu kịch bản cần: `cron`, tiến trình nền tách khỏi phiên, `/proc/<PID>/fd`, `netstat -ltnp` hiện PID; lớp bọc bộ mô tả tệp của `setup` (BR-M1.29) với dịch vụ tự chuyển nền và dịch vụ chạy ở tiền cảnh; đầu ra của lệnh kiểm tra bị cắt khi tiến trình nền giữ luồng; với `NET_ADMIN` (ADR-0016): `iptables`, `nftables`, `ip addr`, `ip route`; `ping` khi không có `NET_RAW`; số tiến trình của dịch vụ đa luồng so với giới hạn 512 của container (CR-DOC-04 mục 3.4) | 3 ngày | Lời giải mẫu đạt và môi trường mới dựng không đạt với 5 seed, chạy thủ công; ghi rõ cơ chế nào không dùng được |
 | S5 | Toàn bộ thành phần nền tảng vừa bộ nhớ của `cr-server`; chi phí bộ nhớ của sandbox gVisor | 1 ngày | Số đo bộ nhớ thực tế của từng thành phần sau khi triển khai; giá trị `SANDBOX_OVERHEAD_MEMORY` |
 | S6 | Docker Engine chạy bên trong container gVisor | 1 ngày | Kết luận khả thi hay không |
 | S7 | Mô phỏng nhiều mạng con và router trong một container gVisor: không cấp `SYS_ADMIN`, `setup` tạo user namespace con chứa các namespace mạng có tên, nối bằng `veth` và `bridge`; tuyến tĩnh, `ip_forward` riêng từng namespace; bảng `filter`, `nat` của `iptables` trong namespace router; học viên và lệnh kiểm tra vào topo bằng `nsenter` | 1 ngày | Topo `client – r1 – r2 – server` thông khi tuyến đúng, không thông khi tuyến sai; `/opt/crucible/bin` không bị gắn đè từ trong topo; I1–I13 vẫn đạt; ghi rõ lệnh nào không dùng được |
@@ -117,3 +117,4 @@ Một chức năng được coi là hoàn thành khi:
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
 | 1.1 | 26/10/2026 | Lộ trình theo ngày duyệt đề tài: thử nghiệm S1–S5 trải trong tuần 1–5, thứ tự việc theo issue và milestone |
+| 1.2 | 27/10/2026 | Thử nghiệm S4 bổ sung lớp bọc bộ mô tả tệp của `setup` và đầu ra lệnh kiểm tra bị cắt |
