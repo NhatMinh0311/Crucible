@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Crucible Runtime API (M1)
-  version: 1.0.0
+  version: 1.1.0
   description: |
     API của module M1 (phiên thực hành và tài nguyên) dành cho module M2, M3 và giao diện.
     Quy ước chung (xác thực, lỗi, lặp lại an toàn, phiên bản) tại CR-DOC-03.
@@ -184,6 +184,9 @@ paths:
       description: |
         Chỉ tài khoản dịch vụ có scope `runtime.exec` (cấp cho M2). Với `purpose = CHECK`, script chạy bằng
         `/opt/crucible/bin/sh`, `PATH=/opt/crucible/bin`, không nạp tệp cấu hình shell, môi trường biến rỗng (ADR-0011).
+
+        Script phải in xong kết luận trước khi tiến trình chính của nó thoát và không để lại tiến trình nền giữ đầu ra;
+        quy định và lý do tại CR-DOC-03 mục 7.
       security:
         - oidc: [runtime.exec]
       requestBody:
@@ -1118,18 +1121,24 @@ components:
 
     ExecResult:
       type: object
-      required: [exitCode, timedOut, stdout, stderr, durationMs]
+      required: [exitCode, timedOut, invalidCommand, stdout, stderr, durationMs]
       properties:
         exitCode:
           description: -1 khi hết thời gian.
           type: integer
         timedOut:
           type: boolean
+        invalidCommand:
+          description: >-
+            Mã thoát 126 (tìm thấy nhưng không chạy được) hoặc 127 (không tìm thấy lệnh). Script không chạy, nên kết quả
+            không phản ánh trạng thái môi trường: bên gọi xử lý như lỗi đặc tả bài lab, không ghi là chưa đạt
+            (CR-DOC-03 mục 7).
+          type: boolean
         stdout:
-          description: Tối đa 4096 byte đầu.
+          description: Tối đa 4096 byte đầu. Đầu ra sinh sau khi tiến trình chính của script thoát không được bảo đảm.
           type: string
         stderr:
-          description: Tối đa 4096 byte đầu.
+          description: Tối đa 4096 byte đầu. Đầu ra sinh sau khi tiến trình chính của script thoát không được bảo đảm.
           type: string
         durationMs:
           type: integer
