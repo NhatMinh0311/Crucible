@@ -80,6 +80,20 @@ func TestProvisionAndExec(t *testing.T) {
 		}
 	})
 
+	t.Run("D3 BR-M1.31 PID 1 thu dọn tiến trình mồ côi", func(t *testing.T) {
+		// Zombie không xuất hiện trong cgroup.procs nhưng vẫn tính trong pids.current,
+		// nên PID 1 không thu dọn làm hạn mức tác vụ của phiên hao dần mà không báo lỗi.
+		res := check(t, d, h, `cat /proc/1/comm; for i in 1 2 3; do sleep 1 & done; exit 0`)
+		if strings.TrimSpace(res.Stdout) != "docker-init" {
+			t.Fatalf("PID 1 phải do M1 đặt, không theo image: %q", res.Stdout)
+		}
+		time.Sleep(3 * time.Second)
+		res = check(t, d, h, `awk '{print $3}' /proc/[0-9]*/stat | grep -c '^Z'`)
+		if n := strings.TrimSpace(res.Stdout); n != "0" {
+			t.Errorf("còn %s tiến trình chưa được thu dọn", n)
+		}
+	})
+
 	t.Run("D3 không capability bổ sung, công cụ chỉ đọc", func(t *testing.T) {
 		res := check(t, d, h, `grep CapEff /proc/self/status; touch /opt/crucible/bin/x`)
 		if !strings.Contains(res.Stdout, "00000000a80425fb") && !strings.Contains(res.Stdout, "00000000a80405fb") {
