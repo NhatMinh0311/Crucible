@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-04 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 27/10/2026 |
 | Tài liệu liên quan | CR-DOC-01 mục 8 (yêu cầu chất lượng), CR-DOC-02 Kiến trúc, CR-DOC-05 Cách ly và bảo mật, ADR-0003, ADR-0007, ADR-0008, ADR-0009, ADR-0012 |
 
@@ -101,7 +101,9 @@ dụng chung cho mọi container phiên, 44 phiên ghi đầy chiếm khoảng 4
 
 Container phiên bị giới hạn 512 tiến trình (`PidsLimit`). Với gVisor, giới hạn áp dụng cho cả sandbox: mỗi tiến trình
 trong sandbox tốn khoảng hai tiến trình trên máy cộng phần cố định khoảng 45, nên số tiến trình học viên dùng được thấp
-hơn 512. Giá trị được kiểm tra lại với các bài mẫu ở thử nghiệm S4. Lệnh cài gói trong cloud-init chạy với
+hơn 512. Giới hạn đếm tác vụ nên mỗi luồng của một tiến trình chiếm một suất, và tiến trình đã kết thúc chưa được
+thu dọn cũng vậy; PID 1 của container phiên là tiến trình khởi tạo của Docker (BR-M1.31) nên các suất này được
+trả lại. Đỉnh thực tế của từng bài mẫu được đọc từ `pids.peak` ở thử nghiệm S4. Lệnh cài gói trong cloud-init chạy với
 `DEBIAN_FRONTEND=noninteractive`.
 
 ### 3.5. Dịch vụ trên `cr-server`
@@ -315,3 +317,4 @@ Sự cố được tạo bằng `virsh`, `docker` và `tc`.
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
 | 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: đĩa riêng của `cr-lab` gắn tại `/var/lib/containerd` (60 GB), giới hạn lớp ghi 1 GiB mỗi phiên, đường dẫn `runsc`, script `destroy-vms.sh`, khóa máy của `cr-lab` |
+| 1.2 | 28/10/2026 | Cách đếm tác vụ của `PidsLimit` và tiến trình khởi tạo của container phiên |
