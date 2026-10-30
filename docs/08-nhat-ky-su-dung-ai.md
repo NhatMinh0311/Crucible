@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.14 |
+| Phiên bản | 1.16 |
 | Ngày ban hành | 27/10/2026 |
 
 ## 1. Mục đích
@@ -303,6 +303,8 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 35 | Hỏi Spec Kit là gì; đề nghị để mỗi thành viên tự khởi tạo Spec Kit, thêm bước vào hướng dẫn đóng góp | Giải thích quy trình theo đặc tả; đọc tài liệu và mã nguồn Spec Kit 1.2.3 để xác định tệp được sinh, thứ tự ưu tiên mẫu, việc giữ nguyên hiến pháp khi khởi tạo lại; viết hiến pháp, mẫu đặc tả, kế hoạch, danh sách việc bằng tiếng Việt, bước cài đặt | Chọn để thành viên tự khởi tạo, kho mã giữ hiến pháp và mẫu dùng chung |
 | 36 | Yêu cầu lộ trình gửi các thành viên dạng ma trận theo tuần; hỏi vì sao lộ trình mới khác CR-DOC-06 | Lập ma trận theo từng issue, mốc, phụ thuộc giữa module, điểm kiểm tra cuối tuần; đối chiếu và chỉ ra bảng trong CR-DOC-06 giữ khung tuần của bản thiết kế dùng Kubernetes, không khớp thời lượng học của người phụ trách M1 và milestone của issue | Yêu cầu cập nhật CR-DOC-06 theo lộ trình mới |
 | 37 | Hỏi kiến trúc client–server của Docker và cổng TCP của Docker Engine; yêu cầu thực hiện S1, tự gõ lệnh theo hướng dẫn; hỏi cách cô lập `cr-lab` khỏi máy vật lý và cách dùng chung kết nối SSH | Giải thích Docker Engine API qua unix socket, lý do không mở cổng TCP; viết script dựng máy ảo và cloud-init; hướng dẫn từng chặng thử nghiệm và giải thích kết quả; kiểm tra thêm trên máy phiên, phát hiện moby client không hỗ trợ `ssh://`, dữ liệu nằm ở `/var/lib/containerd`, lớp ghi không giới hạn dung lượng, `docker cp` không thấy lớp ghi của gVisor, terminal thiếu tên `/dev/pts`; đo độ trễ khi dùng chung kết nối SSH; đề xuất ba mức cô lập `cr-lab` | Chọn xóa máy ảo cũ và dựng lại theo CR-DOC-04, đặt script trong `infra/`, tự chạy lệnh; chọn giới hạn lớp ghi 1 GiB mỗi phiên với đĩa riêng 60 GB; việc cô lập `cr-lab` khỏi máy vật lý chưa quyết định |
+| 38 | Hỏi cách chạy dịch vụ trong môi trường không có `systemd`; yêu cầu sửa hợp đồng ngay vì hai thành viên có hạn 01/11 | Giảng cơ chế PID 1, `cron`, tách tiến trình; đo trên máy và phát hiện dockerd cắt luồng của lệnh exec sau 2 giây, luồng exec không có TTY phải tách bằng `stdcopy`, mã 126 và 127 là lỗi đặc tả bài lab, môi trường chạy giờ UTC; soạn mục 4.7 của CR-DOC-03, BR-M1.29, BR-M1.30 | Chọn sửa hợp đồng bằng một thay đổi riêng; chọn cưỡng chế quy tắc bộ mô tả tệp bằng lớp bọc của M1; chọn coi mã 126 và 127 là lỗi hệ thống |
+| 39 | Hỏi khác biệt giữa các tệp giao diện của bộ điều khiển `pids`; yêu cầu giảng lại phần giới hạn số tiến trình | Giảng cách đếm tác vụ, luồng và tiến trình chưa được thu dọn; đo trên máy và phát hiện phép đo bằng lệnh exec tự cộng vào số đếm, lệnh kiểm tra có đường ống treo theo tuổi tiến trình nền, 58 tiến trình chưa được thu dọn chiếm vĩnh viễn hạn mức khi PID 1 không thu dọn; đề xuất đặt tiến trình khởi tạo trong trình điều khiển | Chọn cưỡng chế bằng mã của M1 thay vì chỉ yêu cầu trong đặc tả image |
 
 ### 5.5. Các lần điều chỉnh hướng
 
@@ -331,3 +333,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.13 | 26/10/2026 | Vòng 35: Spec Kit do thành viên tự khởi tạo; vòng 36: lộ trình theo ngày duyệt |
 | 1.14 | 27/10/2026 | Vòng 37: thử nghiệm S1 |
 | 1.15 | 27/10/2026 | Vòng 38: quy tắc bộ mô tả tệp và mã thoát của lệnh trong môi trường phiên |
+| 1.16 | 28/10/2026 | Vòng 39: cách đếm tác vụ của `PidsLimit`, tiến trình khởi tạo của container phiên |

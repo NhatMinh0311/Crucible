@@ -159,6 +159,9 @@ func (d *Driver) Provision(ctx context.Context, spec driver.Spec) (string, error
 		network = "bridge"
 	}
 	pids := int64(pidsLimit)
+	// Tiến trình mồ côi chưa được thu dọn vẫn chiếm một suất của PidsLimit tới khi hủy
+	// phiên, nên PID 1 phải thu dọn. Đặt ở đây để bảo đảm không phụ thuộc image (BR-M1.31).
+	reapInit := true
 	created, err := d.cli.ContainerCreate(ctx, client.ContainerCreateOptions{
 		Name: "crucible-session-" + spec.SessionID.String(),
 		Config: &container.Config{
@@ -173,6 +176,7 @@ func (d *Driver) Provision(ctx context.Context, spec driver.Spec) (string, error
 				NanoCPUs:   spec.NanoCPUs,
 				PidsLimit:  &pids,
 			},
+			Init:          &reapInit,
 			CapAdd:        spec.Capabilities,
 			SecurityOpt:   []string{"no-new-privileges"},
 			NetworkMode:   container.NetworkMode(network),

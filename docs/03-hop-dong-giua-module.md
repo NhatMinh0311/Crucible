@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.1 |
+| Phiên bản | 1.2 |
 | Ngày ban hành | 27/10/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
@@ -258,7 +258,7 @@ bộ nhớ của bài lab. Số đo dựa trên lời giải mẫu nên chỉ l�
 
 | Mục | Quy định |
 |---|---|
-| Hệ thống khởi tạo | Môi trường không có `systemd`. `systemctl` không dùng được; `service` và `/etc/init.d/*` dùng được vì chỉ gọi `start-stop-daemon`. Tiến trình `init` của môi trường là `tini`, có chuyển tiếp tín hiệu và thu dọn tiến trình mồ côi |
+| Hệ thống khởi tạo | Môi trường không có `systemd`. `systemctl` không dùng được; `service` và `/etc/init.d/*` dùng được vì chỉ gọi `start-stop-daemon`. Tiến trình `init` của môi trường do M1 đặt khi dựng phiên (BR-M1.31), có chuyển tiếp tín hiệu và thu dọn tiến trình mồ côi; đặc tả bài lab không cần và không được thay `ENTRYPOINT` để lấy bảo đảm này |
 | Dịch vụ nền | Script được chạy với `stdin` từ `/dev/null` và `stdout`, `stderr` vào `/var/log/crucible/setup.log` của môi trường, do M1 đặt trước khi chạy (BR-M1.29). Dịch vụ nền thừa hưởng ba bộ mô tả tệp này, nên đặc tả bài lab không cần tự chuyển hướng |
 | Dịch vụ chạy nền hay chạy trước | Dịch vụ phải tự chuyển sang chạy nền (`service nginx start`, `busybox httpd -p …`, `cron`) hoặc được đưa ra nền trong script. Script không được kết thúc bằng một dịch vụ chạy ở tiền cảnh: script không thoát thì phiên bị hủy khi hết `PROVISION_TIMEOUT` |
 | Nhật ký của dịch vụ | Không có `rsyslog` và không có trình gửi thư trong môi trường. Dịch vụ ghi nhật ký qua syslog hoặc cron gửi đầu ra qua thư đều mất dấu; đặc tả bài lab cần dịch vụ ghi vào tệp thì phải chuyển hướng tường minh trong script |
@@ -345,3 +345,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 |---|---|---|
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
 | 1.1 | 27/10/2026 | Mục 4.7 môi trường khi script bài lab chạy; mục 7 bổ sung mã 126, 127, phạm vi thu nhận đầu ra, dọn nhóm tiến trình |
+| 1.2 | 28/10/2026 | Mục 4.7 nêu rõ tiến trình `init` do M1 đặt, không phụ thuộc image bài lab |

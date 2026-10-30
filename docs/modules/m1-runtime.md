@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 1.2 |
+| Phiên bản | 1.3 |
 | Ngày ban hành | 27/10/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
@@ -48,7 +48,7 @@ cùng chương trình gọi Docker Engine cục bộ với runtime `runc` (CR-DO
 | Tên | `crucible-session-<sessionId>` |
 | Nhãn | `crucible.dev/session=<sessionId>`, `crucible.dev/managed-by=runtime-api` |
 | Runtime | `runsc` trên môi trường chuẩn (`SESSION_RUNTIME`), `runc` trên máy phát triển |
-| Lệnh | Theo image (`tini -- sleep infinity`); terminal và lệnh kiểm tra đều đi qua exec |
+| Lệnh | Theo image (`tini -- sleep infinity`); PID 1 là tiến trình khởi tạo do M1 chèn (`Init`, BR-M1.31); terminal và lệnh kiểm tra đều đi qua exec |
 | Giới hạn | `Memory` bằng `MemorySwap` = bộ nhớ của mức tài nguyên + `SANDBOX_OVERHEAD_MEMORY` (giới hạn áp dụng cho cả sandbox gVisor, CR-DOC-04 mục 10); `NanoCPUs` theo mức tài nguyên; `PidsLimit` 512; lớp ghi của hệ thống tệp gốc tối đa 1 GiB do cấu hình runtime `runsc` của máy phiên (CR-DOC-04 mục 3.4) |
 | Bảo mật | Bộ capability mặc định của Docker, `CapAdd` theo BR-M1.26; `no-new-privileges`; không gắn socket Docker, không gắn thư mục của máy |
 | Bộ công cụ kiểm tra | Volume `crucible-tools-<phiên bản>` tạo một lần từ image `crucible-tools`, gắn `/opt/crucible/bin` chỉ đọc (ADR-0011) |
@@ -112,6 +112,7 @@ trạng thái thực tế. `runtime-api` đối soát hai bên khi khởi độn
 | BR-M1.28 | Đổi số chỗ của đặt trước chưa hủy và chưa qua `endsAt`: phần tăng được kiểm tra theo BR-M1.7 và BR-M1.20 như đặt trước mới, bị từ chối thì số chỗ giữ nguyên; giảm không xuống dưới số chỗ đang dùng; giảm trước `startsAt` hoàn lại chỗ × giờ của phần giảm | AC-L2.13 |
 | BR-M1.29 | `environment.setup` chạy một lần khi dựng môi trường, bằng `/bin/sh` của image, với `stdin` từ `/dev/null` và `stdout`, `stderr` vào `/var/log/crucible/setup.log` trong môi trường. Dịch vụ nền do script khởi động thừa hưởng ba bộ mô tả tệp này nên không giữ luồng của lệnh exec. Script không thoát trong `PROVISION_TIMEOUT` làm phiên chuyển `FAILED` với lý do `PROVISION_TIMEOUT`; nội dung tệp nhật ký được đọc tối đa 4 KiB và ghi vào bản ghi phiên | CR-DOC-03 mục 4.7 |
 | BR-M1.30 | Lệnh exec trả mã thoát 126 hoặc 127 được trả về với `invalidCommand = true`. Sau khi mọi lệnh exec trả về hoặc hết thời hạn, M1 kết thúc cả nhóm tiến trình của lệnh trong môi trường; hủy `context` của bên gọi không tự dừng tiến trình trong container | CR-DOC-03 mục 7 |
+| BR-M1.31 | Container phiên được tạo với tiến trình khởi tạo của Docker (`HostConfig.Init`) làm PID 1, để tiến trình mồ côi luôn được thu dọn mà không phụ thuộc `ENTRYPOINT` của image bài lab. Tiến trình đã kết thúc chưa được thu dọn vẫn chiếm một suất của `PidsLimit` cho tới khi hủy phiên | CR-DOC-03 mục 4.7, mục 7 |
 
 ## 5. Cấp phát
 
@@ -375,6 +376,7 @@ Mọi tác vụ chạy trong `runtime-api`.
 | AC-P1.1–AC-P1.4, BR-M1.27 | Tích hợp: sửa tham số bằng vai trò khác `ADMIN` bị từ chối; giá trị ngoài khoảng bị từ chối; sau khi giảm `queue.timeoutMinutes`, phiên chờ mới bị hủy theo giá trị mới trong vòng 60 giây; lịch sử ghi đủ giá trị cũ và mới |
 | BR-M1.29 | Tích hợp: `setup` khởi động dịch vụ nền không chuyển hướng vẫn làm lệnh dựng trả về đúng hạn và dịch vụ còn chạy; `setup` kết thúc bằng dịch vụ ở tiền cảnh làm phiên `FAILED` với lý do `PROVISION_TIMEOUT` |
 | BR-M1.30 | Tích hợp: lệnh gọi chương trình không có trong bộ công cụ trả `invalidCommand = true` và mã thoát 127; lệnh để lại tiến trình nền không còn tiến trình nào sau khi trả về; đầu ra in trước khi thoát không bị cắt |
+| BR-M1.31 | Tích hợp: `/proc/1/comm` trong môi trường là tiến trình khởi tạo của Docker, không phải `ENTRYPOINT` của image; sau khi lệnh exec để lại tiến trình nền kết thúc, môi trường không còn tiến trình chưa được thu dọn |
 
 ## 12. Cấu hình
 
@@ -412,3 +414,4 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | 1.0 | 26/10/2026 | Thiết kế phiên chạy bằng container Docker với gVisor trên máy phiên riêng, một bản `runtime-api` gồm API, vòng phiên và terminal |
 | 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: kết nối SSH do `runtime-api` thực hiện, shell của terminal qua `script`, `tar --no-same-owner`, giới hạn lớp ghi |
 | 1.2 | 27/10/2026 | BR-M1.29 lớp bọc bộ mô tả tệp cho `setup`; BR-M1.30 mã thoát 126, 127 và dọn nhóm tiến trình của lệnh exec; ghi chú luồng exec ghép kênh |
+| 1.3 | 28/10/2026 | BR-M1.31 tiến trình khởi tạo của container do M1 đặt |
