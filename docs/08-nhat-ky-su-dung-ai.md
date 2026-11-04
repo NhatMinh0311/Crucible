@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.16 |
-| Ngày ban hành | 27/10/2026 |
+| Phiên bản | 1.17 |
+| Ngày ban hành | 04/11/2026 |
 
 ## 1. Mục đích
 
@@ -313,6 +313,37 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | Phân kỳ theo học phần nhưng giữ k3s và operator ở học phần đầu | Cắt giảm thêm: bỏ Kubernetes ở học phần đầu, chấp nhận đánh đổi hiệu năng và một phần bảo mật |
 | Sửa tài liệu trên kho mã cũ, gắn tag cho bản thiết kế cũ | Dựng kho mã mới cho gọn, lịch sử commit thưa hơn |
 
+## 6. Giai đoạn 4 — Thiết kế chi tiết module M3 (Học tập và kỳ thi)
+
+| Mục | Nội dung |
+|---|---|
+| Thời gian | 04/11/2026 |
+| Người sử dụng công cụ | Thành viên phụ trách M3 (`quanpva62`) |
+| Phạm vi | Xây dựng tài liệu thiết kế chi tiết module M3 (`docs/modules/m3-learning.md`) theo mẫu chuẩn `docs/modules/_mau.md` cho Issue #39 |
+
+### 6.1. Phần việc của thành viên
+
+| Hạng mục | Nội dung | Loại |
+|---|---|---|
+| Bám sát lộ trình | Đặt bài toán hoàn thành tài liệu thiết kế module M3 để kịp tiến độ merge trong Tuần 2 theo bảng kiểm tra cuối tuần của nhóm | TV-QĐ |
+| Định hướng thiết kế | Yêu cầu thiết kế bám sát các yêu cầu L01–L16 tại CR-DOC-01, các ca sử dụng tại CR-DOC-10, bảo đảm kiến trúc 4 tầng của Spring Boot và tích hợp với `crucible-platform` | TV-QĐ |
+| Duyệt tài liệu | Đọc duyệt sơ đồ ERD, máy trạng thái kỳ thi, bảng 26 quy tắc nghiệp vụ `BR-M3.01` đến `BR-M3.26`, bảng ánh xạ kiểm thử và cấu hình | TV-QĐ |
+
+### 6.2. Phần việc của công cụ
+
+| Hạng mục | Nội dung | Loại |
+|---|---|---|
+| Rà soát yêu cầu | Tổng hợp toàn bộ tiêu chí chấp nhận `AC-L1.1`–`AC-L3.5`, `AC-P1.*`, `AC-P2.*` và các quy tắc nghiệp vụ liên quan đến M3 từ CR-DOC-01, 02, 03, 10, 11 | AI-TH |
+| Thiết kế dữ liệu & trạng thái | Xây dựng sơ đồ ERD Mermaid chi tiết cho CSDL `learning` (11 bảng nghiệp vụ, ShedLock, outbox/inbox); xây dựng máy trạng thái vòng đời kỳ thi và luồng bù giờ/cộng giờ thi | AI-TH |
+| Quy tắc nghiệp vụ | Hệ thống hóa 26 quy tắc nghiệp vụ `BR-M3.01`–`BR-M3.26` gắn mã rõ ràng; xây dựng danh mục API nội bộ cho giao diện và sự kiện CloudEvents | AI-TH |
+| Soạn thảo tài liệu | Soạn thảo hoàn chỉnh tệp `docs/modules/m3-learning.md` theo đúng cấu trúc mẫu `docs/modules/_mau.md` | AI-TH |
+
+### 6.3. Quá trình làm việc
+
+| Vòng | Thành viên đặt ra | Công cụ thực hiện | Kết quả đánh giá của thành viên |
+|---|---|---|---|
+| 40 | Rà soát lộ trình cá nhân, kiểm tra các việc cần làm của Tuần 1 và yêu cầu thực hiện Issue #39 (Tài liệu thiết kế M3) | Phân tích lộ trình từ hình ảnh và văn bản; tạo nhánh `docs/m3-thiet-ke-module`; soạn thảo toàn bộ tài liệu thiết kế `docs/modules/m3-learning.md` gồm 11 mục chuẩn; cập nhật nhật ký AI | Duyệt tài liệu thiết kế; chuẩn bị mở PR |
+
 ## Lịch sử thay đổi
 
 | Phiên bản | Ngày | Nội dung |
@@ -334,3 +365,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.14 | 27/10/2026 | Vòng 37: thử nghiệm S1 |
 | 1.15 | 27/10/2026 | Vòng 38: quy tắc bộ mô tả tệp và mã thoát của lệnh trong môi trường phiên |
 | 1.16 | 28/10/2026 | Vòng 39: cách đếm tác vụ của `PidsLimit`, tiến trình khởi tạo của container phiên |
+| 1.17 | 04/11/2026 | Giai đoạn 4, vòng 40: Thiết kế chi tiết module M3 (Issue #39) |
