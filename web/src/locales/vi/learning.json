@@ -4,5 +4,42 @@
   },
   "pages": {
     "notifications": "Thông báo"
+  },
+  "classes": {
+    "title": "Danh sách lớp học",
+    "create": "Tạo lớp học",
+    "createTitle": "Tạo lớp học mới",
+    "code": "Mã lớp",
+    "name": "Tên lớp",
+    "semester": "Học kỳ",
+    "quotaRef": "Mã hạn mức",
+    "sessionLimit": "Giới hạn phiên mỗi SV",
+    "empty": "Chưa có lớp học nào",
+    "members": "Thành viên",
+    "students": "Sinh viên",
+    "instructors": "Giảng viên",
+    "assistants": "Trợ giảng",
+    "importCsv": "Nhập danh sách CSV",
+    "addInstructor": "Thêm giảng viên / Trợ giảng",
+    "detail": "Chi tiết lớp học",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "status": {
+      "active": "Đang hoạt động",
+      "archived": "Đã lưu trữ"
+    }
+  },
+  "csv": {
+    "title": "Nhập sinh viên từ tệp CSV",
+    "dragDrop": "Kéo thả tệp CSV vào đây hoặc bấm để chọn tệp",
+    "preview": "Xem trước",
+    "commit": "Xác nhận nhập",
+    "total": "Tổng số dòng",
+    "valid": "Hợp lệ",
+    "errors": "Dòng lỗi",
+    "line": "Dòng",
+    "field": "Trường",
+    "message": "Chi tiết lỗi",
+    "success": "Đã nhập thành công {{count}} sinh viên vào lớp"
   }
 }

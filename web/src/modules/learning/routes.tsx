@@ -4,10 +4,13 @@ import type { RouteObject } from 'react-router'
 import type { RouteHandle } from '@/shell/auth/RoleGate'
 import type { NavItem } from '@/shell/navigation'
 import { ComingSoon } from '@/shell/pages/ComingSoon'
+import { ClassListPage } from './pages/ClassListPage'
+import { ClassDetailPage } from './pages/ClassDetailPage'
 
 export const learningNav: NavItem[] = [{ to: '/classes', labelKey: 'learning:nav.classes', icon: GraduationCap, roles: ['STUDENT', 'INSTRUCTOR'] }]
 
 export const learningRoutes: RouteObject[] = [
   { path: 'notifications', element: <ComingSoon labelKey="learning:pages.notifications" screen="SCR-02" /> },
-  { path: 'classes', handle: { roles: ['STUDENT', 'INSTRUCTOR'] } satisfies RouteHandle, element: <ComingSoon labelKey="learning:nav.classes" screen="SCR-11, SCR-21" /> },
+  { path: 'classes', handle: { roles: ['STUDENT', 'INSTRUCTOR'] } satisfies RouteHandle, element: <ClassListPage /> },
+  { path: 'classes/:classId', handle: { roles: ['STUDENT', 'INSTRUCTOR'] } satisfies RouteHandle, element: <ClassDetailPage /> },
 ]

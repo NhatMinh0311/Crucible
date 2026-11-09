@@ -4,5 +4,42 @@
   },
   "pages": {
     "notifications": "Notifications"
+  },
+  "classes": {
+    "title": "Classes",
+    "create": "Create class",
+    "createTitle": "Create new class",
+    "code": "Class code",
+    "name": "Class name",
+    "semester": "Semester",
+    "quotaRef": "Quota reference",
+    "sessionLimit": "Session limit per student",
+    "empty": "No classes available",
+    "members": "Members",
+    "students": "Students",
+    "instructors": "Instructors",
+    "assistants": "Teaching assistants",
+    "importCsv": "Import CSV",
+    "addInstructor": "Add instructor / assistant",
+    "detail": "Class details",
+    "cancel": "Cancel",
+    "save": "Save",
+    "status": {
+      "active": "Active",
+      "archived": "Archived"
+    }
+  },
+  "csv": {
+    "title": "Import students from CSV",
+    "dragDrop": "Drag and drop CSV file here or click to select",
+    "preview": "Preview",
+    "commit": "Confirm import",
+    "total": "Total rows",
+    "valid": "Valid rows",
+    "errors": "Error rows",
+    "line": "Line",
+    "field": "Field",
+    "message": "Error details",
+    "success": "Successfully imported {{count}} students to class"
   }
 }
