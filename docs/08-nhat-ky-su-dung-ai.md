@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.17 |
-| Ngày ban hành | 04/11/2026 |
+| Phiên bản | 1.18 |
+| Ngày ban hành | 11/11/2026 |
 
 ## 1. Mục đích
 
@@ -334,15 +334,25 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | Hạng mục | Nội dung | Loại |
 |---|---|---|
 | Rà soát yêu cầu | Tổng hợp toàn bộ tiêu chí chấp nhận `AC-L1.1`–`AC-L3.5`, `AC-P1.*`, `AC-P2.*` và các quy tắc nghiệp vụ liên quan đến M3 từ CR-DOC-01, 02, 03, 10, 11 | AI-TH |
-| Thiết kế dữ liệu & trạng thái | Xây dựng sơ đồ ERD Mermaid chi tiết cho CSDL `learning` (11 bảng nghiệp vụ, ShedLock, outbox/inbox); xây dựng máy trạng thái vòng đời kỳ thi và luồng bù giờ/cộng giờ thi | AI-TH |
-| Quy tắc nghiệp vụ | Hệ thống hóa 26 quy tắc nghiệp vụ `BR-M3.01`–`BR-M3.26` gắn mã rõ ràng; xây dựng danh mục API nội bộ cho giao diện và sự kiện CloudEvents | AI-TH |
-| Soạn thảo tài liệu | Soạn thảo hoàn chỉnh tệp `docs/modules/m3-learning.md` theo đúng cấu trúc mẫu `docs/modules/_mau.md` | AI-TH |
+| Thiết kế dữ liệu & trạng thái | Xây dựng sơ đồ ERD Mermaid chi tiết cho CSDL `learning` (15 bảng nghiệp vụ và tham số, cùng bảng `outbox`, `inbox`, `email_outbox`, `shedlock`); xây dựng máy trạng thái vòng đời kỳ thi và luồng bù giờ/cộng giờ thi | AI-TH |
+| Quy tắc nghiệp vụ | Hệ thống hóa 26 quy tắc nghiệp vụ `BR-M3.01`–`BR-M3.26` gắn mã rõ ràng; đối chiếu khớp 100% sự kiện tại `contracts/events.asyncapi.yaml`, operation của M1/M2 tại `contracts/runtime-api.yaml`, `contracts/content-api.yaml` và biến môi trường tại `application.yaml` | AI-TH |
+| Soạn thảo tài liệu | Soạn thảo và hiệu đính tệp `docs/modules/m3-learning.md` theo đúng cấu trúc mẫu `docs/modules/_mau.md` và mã màn hình tại CR-DOC-11 | AI-TH |
 
 ### 6.3. Quá trình làm việc
 
 | Vòng | Thành viên đặt ra | Công cụ thực hiện | Kết quả đánh giá của thành viên |
 |---|---|---|---|
-| 40 | Rà soát lộ trình cá nhân, kiểm tra các việc cần làm của Tuần 1 và yêu cầu thực hiện Issue #39 (Tài liệu thiết kế M3) | Phân tích lộ trình từ hình ảnh và văn bản; tạo nhánh `docs/m3-thiet-ke-module`; soạn thảo toàn bộ tài liệu thiết kế `docs/modules/m3-learning.md` gồm 11 mục chuẩn; cập nhật nhật ký AI | Duyệt tài liệu thiết kế; chuẩn bị mở PR |
+| 40 | Rà soát lộ trình cá nhân, kiểm tra các việc cần làm của Tuần 1 và yêu cầu thực hiện Issue #39 (Tài liệu thiết kế M3) | Phân tích lộ trình từ hình ảnh và văn bản; tạo nhánh `docs/m3-thiet-ke-module`; soạn thảo bản đầu tài liệu thiết kế `docs/modules/m3-learning.md` gồm 11 mục; cập nhật nhật ký AI | Chưa đạt ở phần khớp hợp đồng đã merge và mô hình dữ liệu lượt làm bài khi trưởng nhóm duyệt PR |
+| 41 | Gửi nhận xét duyệt PR của trưởng nhóm: lệch tên sự kiện AsyncAPI, nhầm trách nhiệm thu hồi phiên, sai giá trị `feedback_mode`, sai đường dẫn `/v1/settings`, lệch biến môi trường `application.yaml`, thiếu bảng lượt làm bài và cột chốt tham số kỳ thi, lệch mã màn hình CR-DOC-11 | Đọc lại `contracts/events.asyncapi.yaml`, `contracts/content-api.yaml`, `contracts/runtime-api.yaml`, CR-DOC-03 mục 3, CR-DOC-11 và `services/learning/src/main/resources/application.yaml`; cập nhật toàn bộ mục 3, 4, 5, 6, 7, 8, 9, 10, 11 của `docs/modules/m3-learning.md` (phiên bản 1.1) | Đạt; khớp hợp đồng đã merge và đầy đủ bảng truy vết |
+
+### 6.4. Các lần điều chỉnh hướng
+
+| Đề xuất ban đầu của công cụ | Điều chỉnh của thành viên |
+|---|---|
+| Tự đặt tên các sự kiện `learning.exam.scheduled/started/ended/published`, `runtime.session.ended`, `content.attempt.scored/submitted` | Đối chiếu đúng `contracts/events.asyncapi.yaml`: M3 chỉ phát `learning.exam.closed` và nhận 10 sự kiện chuẩn từ M1, M2 (`runtime.session.lost`, `runtime.session.terminated`, `runtime.terminal.connected`, `runtime.terminal.input-line`, `runtime.recording.available`, `content.lab.published`, `content.attempt.step-checked`, `content.attempt.resumed`, `content.attempt.graded`) |
+| Để M3 gọi trực tiếp `DELETE /sessions/{id}` sang M1 khi hết giờ hoặc nộp bài sớm | Bỏ lời gọi trực tiếp sang M1 vì M3 không có scope `runtime.sessions.write`; M3 chỉ gọi `submitAttempt` của M2 và M2 chịu trách nhiệm chấm cuối, kết thúc phiên |
+| Không có bảng lượt làm bài phía M3 và thiếu các cột chốt tham số `exam.*` trên bảng `exams` | Bổ sung bảng `learning_attempts`, bảng `published_labs`, các cột chốt tham số `exam.*`, trạng thái đề xuất cộng giờ của trợ giảng (`PENDING`, `APPROVED`, `REJECTED`, `EXPIRED`) và tài khoản hạn mức lớp `class:<id>` |
+| Đánh số lại mã màn hình của M3 trùng với màn hình của M2 (`SCR-23`–`SCR-25`) | Dùng đúng mã màn hình tại CR-DOC-11 (`SCR-02`, `SCR-10`–`SCR-14`, `SCR-20`–`SCR-22`, `SCR-26`–`SCR-30`, `SCR-42`) |
 
 ## Lịch sử thay đổi
 
@@ -366,3 +376,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.15 | 27/10/2026 | Vòng 38: quy tắc bộ mô tả tệp và mã thoát của lệnh trong môi trường phiên |
 | 1.16 | 28/10/2026 | Vòng 39: cách đếm tác vụ của `PidsLimit`, tiến trình khởi tạo của container phiên |
 | 1.17 | 04/11/2026 | Giai đoạn 4, vòng 40: Thiết kế chi tiết module M3 (Issue #39) |
+| 1.18 | 11/11/2026 | Vòng 41: Hiệu đính thiết kế module M3 khớp hợp đồng đã merge và nhận xét PR |
