@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Crucible Runtime API (M1)
-  version: 1.1.0
+  version: 1.2.0
   description: |
     API của module M1 (phiên thực hành và tài nguyên) dành cho module M2, M3 và giao diện.
     Quy ước chung (xác thực, lỗi, lặp lại an toàn, phiên bản) tại CR-DOC-03.
@@ -389,13 +389,17 @@ paths:
     patch:
       tags: [reservations]
       operationId: resizeReservation
-      summary: Đổi số chỗ của đặt trước
+      summary: Đổi số chỗ hoặc khung giờ của đặt trước
       description: >-
-        Scope `runtime.reservations.write`. Dùng khi sĩ số lớp thay đổi sau khi kỳ thi được lên lịch. Tăng chỗ được kiểm
-        tra như tạo đặt trước: sức chứa khả dụng trong khung giờ (409 `CAPACITY_UNAVAILABLE`) và ngân sách chỗ × giờ của
-        tài khoản gốc cho phần tăng thêm (402 `RESERVATION_BUDGET_EXHAUSTED`); khi bị từ chối, số chỗ giữ nguyên. Giảm chỗ
-        không xuống dưới `slotsInUse` (409 `RESERVATION_SLOTS_IN_USE`); giảm trước `startsAt` hoàn lại ngân sách của phần
-        giảm. Đặt trước đã hủy hoặc đã qua `endsAt` trả 409 `RESERVATION_CLOSED`.
+        Scope `runtime.reservations.write`. Dùng khi sĩ số lớp thay đổi hoặc khi kỳ thi đổi giờ sau khi đã lên lịch.
+        Các trường được gửi áp dụng cùng nhau trong một thao tác; bị từ chối thì đặt trước giữ nguyên mọi trường.
+        Tăng chỗ được kiểm tra như tạo đặt trước: sức chứa khả dụng trong khung giờ (409 `CAPACITY_UNAVAILABLE`) và
+        ngân sách chỗ × giờ của tài khoản gốc cho phần tăng thêm (402 `RESERVATION_BUDGET_EXHAUSTED`). Giảm chỗ không
+        xuống dưới `slotsInUse` (409 `RESERVATION_SLOTS_IN_USE`); giảm trước `startsAt` hoàn lại ngân sách của phần
+        giảm. Đổi `startsAt` hoặc `endsAt` chỉ được trước khi bắt đầu giữ chỗ, tức trước `startsAt` hiện tại trừ
+        `reservation.leadMinutes`, nếu không trả 409 `RESERVATION_STARTED`. Khung giờ mới được kiểm tra sức chứa như
+        tạo đặt trước nhưng không tính chính đặt trước này; ngân sách của khung cũ được hoàn lại và khung mới được tính
+        vào tháng chứa `startsAt` mới. Đặt trước đã hủy hoặc đã qua `endsAt` trả 409 `RESERVATION_CLOSED`.
       requestBody:
         required: true
         content:
@@ -403,12 +407,20 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [slots]
+              minProperties: 1
               properties:
                 slots:
                   type: integer
                   minimum: 1
                   maximum: 200
+                startsAt:
+                  description: Giờ bắt đầu mới. Không gửi thì giữ giờ hiện tại; khung giờ sau khi đổi phải có `startsAt` trước `endsAt`.
+                  type: string
+                  format: date-time
+                endsAt:
+                  description: Giờ kết thúc mới. Không gửi thì giữ giờ hiện tại.
+                  type: string
+                  format: date-time
       responses:
         '200':
           description: Đặt trước sau khi đổi
