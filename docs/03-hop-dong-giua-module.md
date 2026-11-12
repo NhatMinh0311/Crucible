@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.2 |
-| Ngày ban hành | 27/10/2026 |
+| Phiên bản | 1.3 |
+| Ngày ban hành | 12/11/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
 ## 1. Phạm vi
@@ -69,7 +69,7 @@ dịch vụ trong Keycloak. Scope được cấp cho từng tài khoản dịch 
 | `runtime.exec` | `content-service` | Chạy lệnh kiểm tra trong phiên |
 | `runtime.view` | `learning-service` | Cấp vé xem chỉ đọc |
 | `runtime.recordings.read` | `learning-service` | Lấy bản ghi phiên |
-| `runtime.reservations.write` | `learning-service` | Đặt trước và hủy đặt trước tài nguyên |
+| `runtime.reservations.write` | `learning-service` | Đặt trước, đổi số chỗ hoặc khung giờ và hủy đặt trước tài nguyên |
 | `runtime.quota.write` | `learning-service` | Thiết lập hạn mức của lớp trong trần của giảng viên; không sửa được trần |
 | `content.attempts.write` | `learning-service` | Tạo lượt làm bài, nộp bài thay học viên khi hết giờ, điều chỉnh điểm |
 | `content.attempts.read` | `learning-service` | Đọc lượt làm bài |
@@ -106,6 +106,7 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `EXEC_BUSY` | 409 | M1 | Phiên đang chạy một lệnh kiểm tra khác |
 | `RESERVATION_SLOTS_IN_USE` | 409 | M1 | Giảm số chỗ đặt trước xuống dưới số chỗ đang dùng |
 | `RESERVATION_CLOSED` | 409 | M1 | Đặt trước đã hủy hoặc đã qua giờ kết thúc |
+| `RESERVATION_STARTED` | 409 | M1 | Đổi khung giờ của đặt trước sau khi đã bắt đầu giữ chỗ |
 | `CAPACITY_UNAVAILABLE` | 409 | M1, M3 | Không đủ sức chứa cho đặt trước; kèm trường `capacity` gồm số chỗ cần và số chỗ còn |
 | `ENVIRONMENT_NOT_ALLOWED` | 422 | M1 | Image ngoài danh sách cho phép, mức tài nguyên không tồn tại hoặc capability không được cấp trong bản cài đặt |
 | `LAB_NOT_PUBLISHED` | 409 | M2 | Bài lab hoặc phiên bản chưa xuất bản |
@@ -346,3 +347,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.0 | 26/10/2026 | Ban hành lần đầu |
 | 1.1 | 27/10/2026 | Mục 4.7 môi trường khi script bài lab chạy; mục 7 bổ sung mã 126, 127, phạm vi thu nhận đầu ra, dọn nhóm tiến trình |
 | 1.2 | 28/10/2026 | Mục 4.7 nêu rõ tiến trình `init` do M1 đặt, không phụ thuộc image bài lab |
+| 1.3 | 12/11/2026 | Mục 3.4 bổ sung mã `RESERVATION_STARTED`; scope `runtime.reservations.write` gồm đổi khung giờ của đặt trước |

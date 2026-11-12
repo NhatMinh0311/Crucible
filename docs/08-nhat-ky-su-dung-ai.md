@@ -3,7 +3,7 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
-| Phiên bản | 1.18 |
+| Phiên bản | 1.19 |
 | Ngày ban hành | 12/11/2026 |
 
 ## 1. Mục đích
@@ -305,6 +305,7 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 37 | Hỏi kiến trúc client–server của Docker và cổng TCP của Docker Engine; yêu cầu thực hiện S1, tự gõ lệnh theo hướng dẫn; hỏi cách cô lập `cr-lab` khỏi máy vật lý và cách dùng chung kết nối SSH | Giải thích Docker Engine API qua unix socket, lý do không mở cổng TCP; viết script dựng máy ảo và cloud-init; hướng dẫn từng chặng thử nghiệm và giải thích kết quả; kiểm tra thêm trên máy phiên, phát hiện moby client không hỗ trợ `ssh://`, dữ liệu nằm ở `/var/lib/containerd`, lớp ghi không giới hạn dung lượng, `docker cp` không thấy lớp ghi của gVisor, terminal thiếu tên `/dev/pts`; đo độ trễ khi dùng chung kết nối SSH; đề xuất ba mức cô lập `cr-lab` | Chọn xóa máy ảo cũ và dựng lại theo CR-DOC-04, đặt script trong `infra/`, tự chạy lệnh; chọn giới hạn lớp ghi 1 GiB mỗi phiên với đĩa riêng 60 GB; việc cô lập `cr-lab` khỏi máy vật lý chưa quyết định |
 | 38 | Hỏi cách chạy dịch vụ trong môi trường không có `systemd`; yêu cầu sửa hợp đồng ngay vì hai thành viên có hạn 01/11 | Giảng cơ chế PID 1, `cron`, tách tiến trình; đo trên máy và phát hiện dockerd cắt luồng của lệnh exec sau 2 giây, luồng exec không có TTY phải tách bằng `stdcopy`, mã 126 và 127 là lỗi đặc tả bài lab, môi trường chạy giờ UTC; soạn mục 4.7 của CR-DOC-03, BR-M1.29, BR-M1.30 | Chọn sửa hợp đồng bằng một thay đổi riêng; chọn cưỡng chế quy tắc bộ mô tả tệp bằng lớp bọc của M1; chọn coi mã 126 và 127 là lỗi hệ thống |
 | 39 | Hỏi khác biệt giữa các tệp giao diện của bộ điều khiển `pids`; yêu cầu giảng lại phần giới hạn số tiến trình | Giảng cách đếm tác vụ, luồng và tiến trình chưa được thu dọn; đo trên máy và phát hiện phép đo bằng lệnh exec tự cộng vào số đếm, lệnh kiểm tra có đường ống treo theo tuổi tiến trình nền, 58 tiến trình chưa được thu dọn chiếm vĩnh viễn hạn mức khi PID 1 không thu dọn; đề xuất đặt tiến trình khởi tạo trong trình điều khiển | Chọn cưỡng chế bằng mã của M1 thay vì chỉ yêu cầu trong đặc tả image |
+| 43 | Yêu cầu duyệt pull request thiết kế M3 qua các lần sửa | Đối chiếu tên sự kiện, operation, mã lỗi, biến môi trường của tài liệu với `contracts/`, CR-DOC-03 và mã khung; phát hiện đổi giờ kỳ thi không thực hiện được vì hợp đồng của M1 không có thao tác đổi khung giờ và `reservation_ref` là khóa duy nhất; soạn nhận xét duyệt, sửa `resizeReservation` (runtime-api 1.2.0), BR-M1.32 | Chọn để M1 mở rộng `resizeReservation` thay vì để M3 tạo lại đặt trước; chọn chỉ cho đổi khung giờ trước khi bắt đầu giữ chỗ |
 
 ### 5.5. Các lần điều chỉnh hướng
 
@@ -382,3 +383,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.16 | 28/10/2026 | Vòng 39: cách đếm tác vụ của `PidsLimit`, tiến trình khởi tạo của container phiên |
 | 1.17 | 04/11/2026 | Giai đoạn 4, vòng 40: Thiết kế chi tiết module M3 (Issue #39) |
 | 1.18 | 12/11/2026 | Vòng 41, 42: Hiệu đính thiết kế module M3 theo nhận xét PR, đổi tên Giai đoạn 4 |
+| 1.19 | 12/11/2026 | Vòng 43: duyệt thiết kế M3, đổi khung giờ của đặt trước |
