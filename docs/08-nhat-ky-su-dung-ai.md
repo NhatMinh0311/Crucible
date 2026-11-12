@@ -4,7 +4,7 @@
 |---|---|
 | Mã tài liệu | CR-DOC-08 |
 | Phiên bản | 1.18 |
-| Ngày ban hành | 11/11/2026 |
+| Ngày ban hành | 12/11/2026 |
 
 ## 1. Mục đích
 
@@ -313,13 +313,13 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | Phân kỳ theo học phần nhưng giữ k3s và operator ở học phần đầu | Cắt giảm thêm: bỏ Kubernetes ở học phần đầu, chấp nhận đánh đổi hiệu năng và một phần bảo mật |
 | Sửa tài liệu trên kho mã cũ, gắn tag cho bản thiết kế cũ | Dựng kho mã mới cho gọn, lịch sử commit thưa hơn |
 
-## 6. Giai đoạn 4 — Thiết kế chi tiết module M3 (Học tập và kỳ thi)
+## 6. Giai đoạn 4 — Thiết kế chi tiết các module
 
 | Mục | Nội dung |
 |---|---|
-| Thời gian | 04/11/2026 |
+| Thời gian | 04/11/2026 – 12/11/2026 |
 | Người sử dụng công cụ | Thành viên phụ trách M3 (`quanpva62`) |
-| Phạm vi | Xây dựng tài liệu thiết kế chi tiết module M3 (`docs/modules/m3-learning.md`) theo mẫu chuẩn `docs/modules/_mau.md` cho Issue #39 |
+| Phạm vi | Xây dựng và hiệu đính tài liệu thiết kế chi tiết module M3 (`docs/modules/m3-learning.md`) theo mẫu chuẩn `docs/modules/_mau.md` cho Issue #39 |
 
 ### 6.1. Phần việc của thành viên
 
@@ -343,7 +343,8 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | Vòng | Thành viên đặt ra | Công cụ thực hiện | Kết quả đánh giá của thành viên |
 |---|---|---|---|
 | 40 | Rà soát lộ trình cá nhân, kiểm tra các việc cần làm của Tuần 1 và yêu cầu thực hiện Issue #39 (Tài liệu thiết kế M3) | Phân tích lộ trình từ hình ảnh và văn bản; tạo nhánh `docs/m3-thiet-ke-module`; soạn thảo bản đầu tài liệu thiết kế `docs/modules/m3-learning.md` gồm 11 mục; cập nhật nhật ký AI | Chưa đạt ở phần khớp hợp đồng đã merge và mô hình dữ liệu lượt làm bài khi trưởng nhóm duyệt PR |
-| 41 | Gửi nhận xét duyệt PR của trưởng nhóm: lệch tên sự kiện AsyncAPI, nhầm trách nhiệm thu hồi phiên, sai giá trị `feedback_mode`, sai đường dẫn `/v1/settings`, lệch biến môi trường `application.yaml`, thiếu bảng lượt làm bài và cột chốt tham số kỳ thi, lệch mã màn hình CR-DOC-11 | Đọc lại `contracts/events.asyncapi.yaml`, `contracts/content-api.yaml`, `contracts/runtime-api.yaml`, CR-DOC-03 mục 3, CR-DOC-11 và `services/learning/src/main/resources/application.yaml`; cập nhật toàn bộ mục 3, 4, 5, 6, 7, 8, 9, 10, 11 của `docs/modules/m3-learning.md` (phiên bản 1.1) | Đạt; khớp hợp đồng đã merge và đầy đủ bảng truy vết |
+| 41 | Gửi nhận xét duyệt PR của trưởng nhóm: lệch tên sự kiện AsyncAPI, nhầm trách nhiệm thu hồi phiên, sai giá trị `feedback_mode`, sai đường dẫn `/v1/settings`, lệch biến môi trường `application.yaml`, thiếu bảng lượt làm bài và cột chốt tham số kỳ thi, lệch mã màn hình CR-DOC-11 | Đọc lại `contracts/events.asyncapi.yaml`, `contracts/content-api.yaml`, `contracts/runtime-api.yaml`, CR-DOC-03 mục 3, CR-DOC-11 và `services/learning/src/main/resources/application.yaml`; cập nhật toàn bộ mục 3, 4, 5, 6, 7, 8, 9, 10, 11 của `docs/modules/m3-learning.md` (phiên bản 1.1) | Trưởng nhóm ghi nhận phần lớn đã đạt, còn 5 điểm tinh chỉnh về đổi giờ, tiền tố Ref phòng chờ, điều kiện ENDED, mốc bù giờ và giảm sĩ số |
+| 42 | Gửi nhận xét lần 2: đổi giờ thi qua một thao tác resizeReservation, tiền tố Ref của phòng chờ đổi thành lobby:<id>, điều kiện chuyển ENDED (AND), mốc bù giờ theo thuộc tính time của CloudEvent, xử lý các trường hợp giảm sĩ số đặt trước, đổi tên Giai đoạn 4 | Hiệu chỉnh m3-learning.md mục 3.1, 4.1, 4.2, 4.3, 5, 6, 9.2; cập nhật nhật ký AI đổi tên giai đoạn và thêm vòng 42 | Đạt toàn bộ nhận xét |
 
 ### 6.4. Các lần điều chỉnh hướng
 
@@ -353,6 +354,10 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | Để M3 gọi trực tiếp `DELETE /sessions/{id}` sang M1 khi hết giờ hoặc nộp bài sớm | Bỏ lời gọi trực tiếp sang M1 vì M3 không có scope `runtime.sessions.write`; M3 chỉ gọi `submitAttempt` của M2 và M2 chịu trách nhiệm chấm cuối, kết thúc phiên |
 | Không có bảng lượt làm bài phía M3 và thiếu các cột chốt tham số `exam.*` trên bảng `exams` | Bổ sung bảng `learning_attempts`, bảng `published_labs`, các cột chốt tham số `exam.*`, trạng thái đề xuất cộng giờ của trợ giảng (`PENDING`, `APPROVED`, `REJECTED`, `EXPIRED`) và tài khoản hạn mức lớp `class:<id>` |
 | Đánh số lại mã màn hình của M3 trùng với màn hình của M2 (`SCR-23`–`SCR-25`) | Dùng đúng mã màn hình tại CR-DOC-11 (`SCR-02`, `SCR-10`–`SCR-14`, `SCR-20`–`SCR-22`, `SCR-26`–`SCR-30`, `SCR-42`) |
+| Đổi giờ kỳ thi bằng tạo đặt trước mới rồi hủy đặt trước cũ | Sửa thành một lời gọi `resizeReservation` với `startsAt`, `endsAt` mới (chờ PR hợp đồng của M1), giữ giờ cũ và gợi ý khung giờ nếu bị từ chối |
+| Dùng tiền tố `waiting-room:<examId>` cho ngữ cảnh kiểm tra kết nối | Đổi thành `lobby:<examId>` để thỏa mãn mẫu biểu thức chính quy `Ref` (`^[a-z]+:...`) trong `content-api.yaml` |
+| Điều kiện chuyển kỳ thi sang `ENDED` ghi là "hoặc" giữa hết giờ và nộp bài | Đổi thành "VÀ" (`now >= end_time` VÀ mọi lượt thi đã nộp) để không đóng đặt trước sớm khi còn thí sinh được bù giờ |
+| Dùng `now - lost_at` hoặc `resumedAt` khi tính thời gian gián đoạn bù giờ | Dùng thuộc tính `time` của CloudEvent `content.attempt.resumed` (`event.time - lost_at`) để không phụ thuộc độ trễ xử lý |
 
 ## Lịch sử thay đổi
 
@@ -376,4 +381,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.15 | 27/10/2026 | Vòng 38: quy tắc bộ mô tả tệp và mã thoát của lệnh trong môi trường phiên |
 | 1.16 | 28/10/2026 | Vòng 39: cách đếm tác vụ của `PidsLimit`, tiến trình khởi tạo của container phiên |
 | 1.17 | 04/11/2026 | Giai đoạn 4, vòng 40: Thiết kế chi tiết module M3 (Issue #39) |
-| 1.18 | 11/11/2026 | Vòng 41: Hiệu đính thiết kế module M3 khớp hợp đồng đã merge và nhận xét PR |
+| 1.18 | 12/11/2026 | Vòng 41, 42: Hiệu đính thiết kế module M3 theo nhận xét PR, đổi tên Giai đoạn 4 |
