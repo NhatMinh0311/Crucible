@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M1 |
-| Phiên bản | 1.3 |
-| Ngày ban hành | 27/10/2026 |
+| Phiên bản | 1.4 |
+| Ngày ban hành | 12/11/2026 |
 | Người phụ trách | Trưởng nhóm (`NhatMinh0311`) |
 | Tài liệu liên quan | CR-DOC-01 mục 5.1, 7.1; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-05; ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0016 |
 
@@ -113,6 +113,7 @@ trạng thái thực tế. `runtime-api` đối soát hai bên khi khởi độn
 | BR-M1.29 | `environment.setup` chạy một lần khi dựng môi trường, bằng `/bin/sh` của image, với `stdin` từ `/dev/null` và `stdout`, `stderr` vào `/var/log/crucible/setup.log` trong môi trường. Dịch vụ nền do script khởi động thừa hưởng ba bộ mô tả tệp này nên không giữ luồng của lệnh exec. Script không thoát trong `PROVISION_TIMEOUT` làm phiên chuyển `FAILED` với lý do `PROVISION_TIMEOUT`; nội dung tệp nhật ký được đọc tối đa 4 KiB và ghi vào bản ghi phiên | CR-DOC-03 mục 4.7 |
 | BR-M1.30 | Lệnh exec trả mã thoát 126 hoặc 127 được trả về với `invalidCommand = true`. Sau khi mọi lệnh exec trả về hoặc hết thời hạn, M1 kết thúc cả nhóm tiến trình của lệnh trong môi trường; hủy `context` của bên gọi không tự dừng tiến trình trong container | CR-DOC-03 mục 7 |
 | BR-M1.31 | Container phiên được tạo với tiến trình khởi tạo của Docker (`HostConfig.Init`) làm PID 1, để tiến trình mồ côi luôn được thu dọn mà không phụ thuộc `ENTRYPOINT` của image bài lab. Tiến trình đã kết thúc chưa được thu dọn vẫn chiếm một suất của `PidsLimit` cho tới khi hủy phiên | CR-DOC-03 mục 4.7, mục 7 |
+| BR-M1.32 | Đổi khung giờ của đặt trước chỉ được trước `startsAt` − `reservation.leadMinutes` của khung hiện tại, sau mốc này trả `RESERVATION_STARTED`. Khung giờ mới được kiểm tra theo BR-M1.7 không tính chính đặt trước đó; chỗ × giờ của khung cũ được hoàn lại và khung mới được tính theo BR-M1.20. Đổi số chỗ cùng lúc thì áp dụng cùng một thao tác, có khóa dòng đặt trước và tài khoản gốc; bị từ chối thì mọi trường giữ nguyên | CR-DOC-01 mục 5.6 |
 
 ## 5. Cấp phát
 
@@ -377,6 +378,7 @@ Mọi tác vụ chạy trong `runtime-api`.
 | BR-M1.29 | Tích hợp: `setup` khởi động dịch vụ nền không chuyển hướng vẫn làm lệnh dựng trả về đúng hạn và dịch vụ còn chạy; `setup` kết thúc bằng dịch vụ ở tiền cảnh làm phiên `FAILED` với lý do `PROVISION_TIMEOUT` |
 | BR-M1.30 | Tích hợp: lệnh gọi chương trình không có trong bộ công cụ trả `invalidCommand = true` và mã thoát 127; lệnh để lại tiến trình nền không còn tiến trình nào sau khi trả về; đầu ra in trước khi thoát không bị cắt |
 | BR-M1.31 | Tích hợp: `/proc/1/comm` trong môi trường là tiến trình khởi tạo của Docker, không phải `ENTRYPOINT` của image; sau khi lệnh exec để lại tiến trình nền kết thúc, môi trường không còn tiến trình chưa được thu dọn |
+| BR-M1.32 | Đơn vị và tích hợp: dời khung giờ sang khoảng chồng lấn một phần với chính nó không bị từ chối vì chính đặt trước đó; khung mới vượt sức chứa hoặc ngân sách bị từ chối và khung cũ giữ nguyên; dời sang tháng khác chuyển chỗ × giờ sang tháng mới; đổi sau `startsAt` − `reservation.leadMinutes` trả `RESERVATION_STARTED` |
 
 ## 12. Cấu hình
 
@@ -415,3 +417,4 @@ Cấu hình triển khai qua biến môi trường. Tham số nghiệp vụ (`qu
 | 1.1 | 27/10/2026 | Kết quả thử nghiệm S1: kết nối SSH do `runtime-api` thực hiện, shell của terminal qua `script`, `tar --no-same-owner`, giới hạn lớp ghi |
 | 1.2 | 27/10/2026 | BR-M1.29 lớp bọc bộ mô tả tệp cho `setup`; BR-M1.30 mã thoát 126, 127 và dọn nhóm tiến trình của lệnh exec; ghi chú luồng exec ghép kênh |
 | 1.3 | 28/10/2026 | BR-M1.31 tiến trình khởi tạo của container do M1 đặt |
+| 1.4 | 12/11/2026 | BR-M1.32 đổi khung giờ của đặt trước (runtime-api 1.2.0) |
