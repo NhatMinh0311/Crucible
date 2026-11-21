@@ -4,5 +4,81 @@
   },
   "pages": {
     "notifications": "Thông báo"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "studentId": "Mã số",
+    "fullName": "Họ và tên",
+    "email": "Email",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "actions": "Thao tác",
+    "schoolEmail": "Email trường",
+    "linked": "Đã liên kết",
+    "pendingLogin": "Chờ đăng nhập"
+  },
+  "classes": {
+    "title": "Danh sách lớp học",
+    "create": "Tạo lớp học",
+    "createTitle": "Tạo lớp học mới",
+    "editQuota": "Cập nhật hạn mức",
+    "code": "Mã lớp",
+    "name": "Tên lớp",
+    "semester": "Học kỳ",
+    "quotaRef": "Tài khoản hạn mức",
+    "weeklyMinutes": "Phút máy / tuần",
+    "maxConcurrentSessions": "Phiên đồng thời tối đa",
+    "leadInstructor": "Phụ trách chính",
+    "setLeadInstructor": "Chuyển phụ trách chính",
+    "removeMember": "Xóa",
+    "empty": "Chưa có lớp học nào",
+    "members": "Thành viên",
+    "membersList": "Danh sách thành viên lớp",
+    "noMembers": "Chưa có thành viên nào trong lớp.",
+    "students": "Sinh viên",
+    "instructors": "Giảng viên",
+    "assistants": "Trợ giảng",
+    "student": "Sinh viên",
+    "instructor": "Giảng viên",
+    "assistant": "Trợ giảng",
+    "roleAssistant": "Trợ giảng (TEACHING_ASSISTANT)",
+    "roleInstructor": "Giảng viên (INSTRUCTOR)",
+    "roadmap": "Lộ trình",
+    "roadmapPlaceholder": "Lộ trình luyện tập của lớp học sẽ được triển khai trong Issue #41.",
+    "importCsv": "Nhập danh sách CSV",
+    "addInstructor": "Thêm giảng viên / Trợ giảng",
+    "detail": "Chi tiết lớp học",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "status": {
+      "active": "Đang hoạt động",
+      "archived": "Đã lưu trữ"
+    },
+    "placeholders": {
+      "code": "IT4060-20261",
+      "name": "Hệ điều hành Linux",
+      "semester": "2026.1",
+      "schoolEmail": "name@sis.hust.edu.vn",
+      "instructorName": "Thầy Nguyễn Văn A"
+    }
+  },
+  "csv": {
+    "title": "Nhập sinh viên từ tệp CSV",
+    "dragDrop": "Kéo thả tệp CSV vào đây hoặc bấm để chọn tệp",
+    "preview": "Xem trước",
+    "commit": "Xác nhận nhập",
+    "total": "Tổng số dòng",
+    "valid": "Hợp lệ",
+    "errors": "Dòng lỗi",
+    "line": "Dòng",
+    "field": "Trường",
+    "message": "Chi tiết lỗi",
+    "success": "Đã nhập thành công {{count}} sinh viên vào lớp"
+  },
+  "errors": {
+    "QUOTA_CEILING_EXCEEDED": "Tổng hạn mức chia cho các lớp vượt trần của giảng viên.",
+    "CLASS_CODE_ALREADY_EXISTS": "Mã lớp học đã tồn tại. Vui lòng chọn mã lớp khác.",
+    "MEMBER_ALREADY_EXISTS": "Thành viên đã tồn tại trong lớp học này.",
+    "RESERVATION_STARTED": "Không thể đổi giờ thi vì hệ thống đã bắt đầu giữ chỗ cho kỳ thi."
   }
 }

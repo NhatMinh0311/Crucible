@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-MOD-M3 |
-| Phiên bản | 1.1 |
-| Ngày ban hành | 04/11/2026 |
+| Phiên bản | 1.3 |
+| Ngày ban hành | 18/11/2026 |
 | Người phụ trách | `quanpva62` |
 | Tài liệu liên quan | CR-DOC-01 mục 5.3, 5.6, 7.3, 7.4; CR-DOC-02; CR-DOC-03; CR-DOC-04; CR-DOC-10; CR-DOC-11; ADR-0001, ADR-0004, ADR-0005, ADR-0010, ADR-0012, ADR-0013 |
 
@@ -423,7 +423,7 @@ stateDiagram-v2
 
 * Khi lên lịch kỳ thi, nếu M1 từ chối đặt trước (`409 CAPACITY_UNAVAILABLE` hoặc `402 RESERVATION_BUDGET_EXHAUSTED`), transaction
   bị hủy, kỳ thi chưa được tạo và M3 trả về thông tin số chỗ thiếu kèm khung giờ gợi ý từ `findCapacityWindows` (`AC-L2.1`).
-* Khi đổi giờ kỳ thi (`PATCH /v1/exams/{examId}`), M3 gọi `resizeReservation` (`PATCH /v1/reservations/{reservationId}`) bên M1 truyền thời gian `startsAt`, `endsAt` mới (thao tác này chờ pull request mở rộng `contracts/runtime-api.yaml` của M1 merge). M1 đổi giờ trong một thao tác, kiểm tra sức chứa khả dụng mà không tính chính đặt trước đó và tính lại ngân sách chỗ × giờ. Nếu M1 trả `409 CAPACITY_UNAVAILABLE` hoặc `402 RESERVATION_BUDGET_EXHAUSTED`, kỳ thi giữ nguyên giờ cũ và M3 trả khung giờ gợi ý như khi lên lịch (`BR-M3.07`).
+* Khi đổi giờ kỳ thi (`PATCH /v1/exams/{examId}`), M3 gọi `resizeReservation` (`PATCH /v1/reservations/{reservationId}`) bên M1 truyền thời gian `startsAt`, `endsAt` mới. M1 đổi giờ trong một thao tác, kiểm tra sức chứa khả dụng mà không tính chính đặt trước đó và tính lại ngân sách chỗ × giờ. Nếu M1 trả `409 CAPACITY_UNAVAILABLE` hoặc `402 RESERVATION_BUDGET_EXHAUSTED`, kỳ thi giữ nguyên giờ cũ và M3 trả khung giờ gợi ý như khi lên lịch (`BR-M3.07`); nếu M1 trả `409 RESERVATION_STARTED` (do `waiting_room_minutes` nhỏ hơn `reservation.leadMinutes` và M1 đã bắt đầu giữ chỗ), kỳ thi giữ nguyên giờ cũ và M3 chuyển tiếp nguyên mã lỗi `RESERVATION_STARTED` về cho giao diện.
 * Khi hủy kỳ thi trước `start_time`, M3 gọi `cancelReservation` (`DELETE /v1/reservations/{reservationId}`) bên M1 để giải phóng
   chỗ và hoàn lại ngân sách chỗ × giờ cho giảng viên (`AC-R2.7`).
 * Khi kỳ thi chuyển sang `ENDED` (toàn bộ lượt thi đã được nộp/chấm cuối VÀ thời điểm hiện tại `now >= end_time`), M3 ghi sự kiện
@@ -770,3 +770,5 @@ Năm tham số nghiệp vụ dưới đây được lưu trong bảng `settings`
 |---|---|---|
 | 1.0 | 04/11/2026 | Ban hành bản thiết kế chi tiết đầu tiên của module M3 (Issue #39) |
 | 1.1 | 11/11/2026 | Đồng bộ hợp đồng sự kiện AsyncAPI, operation của M1/M2, biến môi trường `application.yaml`, bổ sung bảng `learning_attempts`, cột chốt tham số kỳ thi, trạng thái đề xuất cộng giờ, tài khoản hạn mức lớp, mã màn hình theo CR-DOC-11 và bảng truy vết kiểm thử |
+| 1.2 | 12/11/2026 | Hiệu đính cơ chế đổi giờ kỳ thi qua `resizeReservation`, tiền tố ngữ cảnh phòng chờ `lobby:<examId>`, điều kiện chuyển trạng thái `ENDED` (VÀ), mốc thời gian `event.time` khi tính bù giờ, xử lý các trường hợp giảm sĩ số đặt trước và cập nhật ngày ban hành |
+| 1.3 | 18/11/2026 | Mục 4.1 bổ sung xử lý mã `409 RESERVATION_STARTED` khi đổi giờ kỳ thi (`runtime-api` 1.2.0) |

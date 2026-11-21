@@ -1,0 +1,547 @@
+openapi: 3.1.0
+info:
+  title: Crucible Learning API (M3)
+  version: 0.1.0
+  description: |
+    API nội bộ của module M3 (lớp học, lộ trình, bài tập, kỳ thi và thông báo) phục vụ giao diện người dùng.
+    Thiết kế chi tiết tại docs/modules/m3-learning.md; quy ước chung tại CR-DOC-03.
+  license:
+    name: AGPL-3.0-only
+    identifier: AGPL-3.0-only
+servers:
+  - url: https://crucible.local/api/learning
+    description: Môi trường chuẩn
+security:
+  - oidc: []
+tags:
+  - name: classes
+    description: Quản lý lớp học, hạn mức lớp, thành viên và nhập danh sách sinh viên CSV
+
+paths:
+  /v1/classes:
+    get:
+      tags: [classes]
+      operationId: listClasses
+      summary: Danh sách lớp học mà người dùng hiện tại là thành viên
+      responses:
+        '200':
+          description: Danh sách lớp học
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassItem'
+        '401':
+          $ref: '#/components/responses/Problem'
+    post:
+      tags: [classes]
+      operationId: createClass
+      summary: Tạo lớp học mới và khởi tạo tài khoản hạn mức bên M1
+      description: Quyền `INSTRUCTOR`, `ADMIN` (BR-M3.26).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClassRequest'
+      responses:
+        '201':
+          description: Lớp học vừa tạo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassItem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/classes/{classId}:
+    parameters:
+      - $ref: '#/components/parameters/ClassId'
+    get:
+      tags: [classes]
+      operationId: getClass
+      summary: Chi tiết lớp học và thông tin hạn mức lớp
+      responses:
+        '200':
+          description: Chi tiết lớp học
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassItem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+    patch:
+      tags: [classes]
+      operationId: updateClass
+      summary: Cập nhật thông tin lớp, đổi giảng viên phụ trách chính hoặc cập nhật hạn mức lớp
+      description: Quyền giảng viên phụ trách của lớp hoặc `ADMIN` (BR-M3.26).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClassRequest'
+      responses:
+        '200':
+          description: Lớp học sau khi cập nhật
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassItem'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/classes/{classId}/members:
+    parameters:
+      - $ref: '#/components/parameters/ClassId'
+    get:
+      tags: [classes]
+      operationId: listClassMembers
+      summary: Danh sách giảng viên, trợ giảng và sinh viên của lớp
+      parameters:
+        - name: role
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ClassRole'
+      responses:
+        '200':
+          description: Danh sách thành viên
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassMember'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/classes/{classId}/members/csv-preview:
+    parameters:
+      - $ref: '#/components/parameters/ClassId'
+    post:
+      tags: [classes]
+      operationId: previewCsvMembers
+      summary: Kiểm tra tệp CSV danh sách sinh viên, trả kết quả hợp lệ và lỗi theo dòng
+      description: Quyền giảng viên phụ trách của lớp hoặc `ADMIN` (BR-M3.05).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Kết quả xem trước CSV
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsvImportPreviewResponse'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+
+  /v1/classes/{classId}/members/csv-import:
+    parameters:
+      - $ref: '#/components/parameters/ClassId'
+    post:
+      tags: [classes]
+      operationId: importCsvMembers
+      summary: Xác nhận nhập danh sách sinh viên từ CSV vào lớp học
+      description: Quyền giảng viên phụ trách của lớp hoặc `ADMIN` (BR-M3.05, BR-M3.18).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Kết quả nhập danh sách CSV
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsvImportCommitResponse'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+
+  /v1/classes/{classId}/staff:
+    parameters:
+      - $ref: '#/components/parameters/ClassId'
+    post:
+      tags: [classes]
+      operationId: addClassStaff
+      summary: Thêm giảng viên phụ trách hoặc trợ giảng vào lớp
+      description: Quyền giảng viên phụ trách của lớp hoặc `ADMIN` (L01).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddClassStaffRequest'
+      responses:
+        '201':
+          description: Thành viên vừa thêm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassMember'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+  /v1/classes/{classId}/members/{memberId}:
+    parameters:
+      - $ref: '#/components/parameters/ClassId'
+      - $ref: '#/components/parameters/MemberId'
+    delete:
+      tags: [classes]
+      operationId: removeClassMember
+      summary: Xóa thành viên khỏi lớp học
+      description: Quyền giảng viên phụ trách của lớp hoặc `ADMIN`. Không được xóa giảng viên phụ trách chính.
+      responses:
+        '204':
+          description: Đã xóa thành viên
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://crucible.local/auth/realms/crucible/.well-known/openid-configuration
+
+  parameters:
+    ClassId:
+      name: classId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    MemberId:
+      name: memberId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    Problem:
+      description: Lỗi theo RFC 9457; mã lỗi trong trường `code` (CR-DOC-03 mục 3.4)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    ClassStatus:
+      type: string
+      enum: [ACTIVE, ARCHIVED]
+
+    ClassRole:
+      type: string
+      enum: [INSTRUCTOR, TEACHING_ASSISTANT, STUDENT]
+
+    ClassItem:
+      type: object
+      required:
+        - id
+        - code
+        - name
+        - semester
+        - leadInstructorId
+        - quotaAccountRef
+        - weeklyMinutes
+        - maxConcurrentSessions
+        - status
+        - memberCount
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+          maxLength: 32
+        name:
+          type: string
+          maxLength: 255
+        semester:
+          type: string
+          maxLength: 32
+        leadInstructorId:
+          type: string
+          format: uuid
+        quotaAccountRef:
+          type: string
+          pattern: '^[a-z]+:[A-Za-z0-9-]{1,64}$'
+        weeklyMinutes:
+          type: integer
+          minimum: 0
+          maximum: 100000
+        maxConcurrentSessions:
+          type: integer
+          minimum: 0
+          maximum: 500
+        status:
+          $ref: '#/components/schemas/ClassStatus'
+        memberCount:
+          type: integer
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateClassRequest:
+      type: object
+      additionalProperties: false
+      required: [code, name, semester]
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        semester:
+          type: string
+          minLength: 1
+          maxLength: 32
+        weeklyMinutes:
+          type: integer
+          minimum: 0
+          maximum: 100000
+          default: 1200
+        maxConcurrentSessions:
+          type: integer
+          minimum: 0
+          maximum: 500
+          default: 30
+
+    UpdateClassRequest:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        semester:
+          type: string
+          minLength: 1
+          maxLength: 32
+        leadInstructorId:
+          type: string
+          format: uuid
+        weeklyMinutes:
+          type: integer
+          minimum: 0
+          maximum: 100000
+        maxConcurrentSessions:
+          type: integer
+          minimum: 0
+          maximum: 500
+        status:
+          $ref: '#/components/schemas/ClassStatus'
+
+    ClassMember:
+      type: object
+      required:
+        - id
+        - classId
+        - role
+        - fullName
+        - email
+        - locale
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        classId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        role:
+          $ref: '#/components/schemas/ClassRole'
+        studentIdNumber:
+          type: string
+          maxLength: 32
+        fullName:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        locale:
+          type: string
+          enum: [vi, en]
+        joinedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    AddClassStaffRequest:
+      type: object
+      additionalProperties: false
+      required: [email, fullName, role]
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 255
+        fullName:
+          type: string
+          minLength: 1
+          maxLength: 255
+        role:
+          $ref: '#/components/schemas/ClassRole'
+
+    CsvStudentRow:
+      type: object
+      required: [line, studentId, fullName, email]
+      properties:
+        line:
+          type: integer
+        studentId:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+
+    CsvRowError:
+      type: object
+      required: [line, field, message]
+      properties:
+        line:
+          type: integer
+        field:
+          type: string
+        message:
+          type: string
+
+    CsvImportPreviewResponse:
+      type: object
+      required: [totalRows, validRows, errorRows, validStudents, errors]
+      properties:
+        totalRows:
+          type: integer
+        validRows:
+          type: integer
+        errorRows:
+          type: integer
+        validStudents:
+          type: array
+          items:
+            $ref: '#/components/schemas/CsvStudentRow'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CsvRowError'
+
+    CsvImportCommitResponse:
+      type: object
+      required: [importedCount]
+      properties:
+        importedCount:
+          type: integer
+          minimum: 0
+
+    Problem:
+      type: object
+      required: [type, title, status, code]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+        traceId:
+          type: string

@@ -3,8 +3,8 @@
 | Thuộc tính | Giá trị |
 |---|---|
 | Mã tài liệu | CR-DOC-03 |
-| Phiên bản | 1.3 |
-| Ngày ban hành | 12/11/2026 |
+| Phiên bản | 1.4 |
+| Ngày ban hành | 18/11/2026 |
 | Tài liệu liên quan | CR-DOC-02 Kiến trúc hệ thống, `contracts/`, ADR-0001, ADR-0005, ADR-0006, ADR-0010, ADR-0011, ADR-0016 |
 
 ## 1. Phạm vi
@@ -115,6 +115,8 @@ Lỗi trả về theo RFC 9457 (`application/problem+json`) với trường `cod
 | `CHECK_DISABLED` | 409 | M2 | Ngữ cảnh của lượt làm bài không cho học viên kiểm tra |
 | `ANSWER_TRIES_EXHAUSTED` | 409 | M2 | Bước trả lời đã dùng hết số lần trả lời |
 | `CHECK_LOCKED` | 409 | M2 | Bài lab yêu cầu trả lời bước chẩn đoán trước khi kiểm tra |
+| `CLASS_CODE_ALREADY_EXISTS` | 409 | M3 | Mã lớp học đã tồn tại |
+| `MEMBER_ALREADY_EXISTS` | 409 | M3 | Thành viên với email hoặc mã số sinh viên đã có trong lớp |
 | `PREREQUISITE_NOT_MET` | 403 | M3 | Chưa đạt bài tiên quyết |
 | `ATTEMPT_LIMIT` | 409 | M3 | Hết số lượt làm bài của bài tập |
 | `ASSIGNMENT_CLOSED` | 409 | M3 | Bài tập đã quá hạn |
@@ -348,3 +350,4 @@ phiên với lượt làm bài mà M1 không cần biết khái niệm này.
 | 1.1 | 27/10/2026 | Mục 4.7 môi trường khi script bài lab chạy; mục 7 bổ sung mã 126, 127, phạm vi thu nhận đầu ra, dọn nhóm tiến trình |
 | 1.2 | 28/10/2026 | Mục 4.7 nêu rõ tiến trình `init` do M1 đặt, không phụ thuộc image bài lab |
 | 1.3 | 12/11/2026 | Mục 3.4 bổ sung mã `RESERVATION_STARTED`; scope `runtime.reservations.write` gồm đổi khung giờ của đặt trước |
+| 1.4 | 18/11/2026 | Mục 3.4 bổ sung mã `CLASS_CODE_ALREADY_EXISTS` và `MEMBER_ALREADY_EXISTS` của M3 |
