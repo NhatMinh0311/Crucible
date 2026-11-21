@@ -360,6 +360,35 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | Điều kiện chuyển kỳ thi sang `ENDED` ghi là "hoặc" giữa hết giờ và nộp bài | Đổi thành "VÀ" (`now >= end_time` VÀ mọi lượt thi đã nộp) để không đóng đặt trước sớm khi còn thí sinh được bù giờ |
 | Dùng `now - lost_at` hoặc `resumedAt` khi tính thời gian gián đoạn bù giờ | Dùng thuộc tính `time` của CloudEvent `content.attempt.resumed` (`event.time - lost_at`) để không phụ thuộc độ trễ xử lý |
 
+## 7. Giai đoạn 5 — Hiện thực các module
+
+Giai đoạn hiện thực các tính năng của từng module theo đặc tả Spec Kit đã duyệt.
+
+### 7.1. Bối cảnh và mục tiêu
+
+- **Mã tính năng:** M3-01 (Issue #40 — Quản lý lớp học, hạn mức lớp và nhập danh sách sinh viên CSV).
+- **Yêu cầu:** `specs/003-m3-lop-hoc/spec.md`, `plan.md`, `tasks.md`, CR-MOD-M3 mục 3, 4, 5.
+- **Phạm vi mã:** `services/learning`, `web/src/modules/learning`.
+
+### 7.2. Phần việc của công cụ
+
+| Hạng mục | Nội dung | Loại |
+|---|---|---|
+| Đặc tả & Sinh mã | Viết `services/learning/api/openapi.yaml` và cấu hình sinh interface controller (`ClassesApi`) cùng kiểu dữ liệu frontend (`learning.ts`, `learningApi`) | AI-TH |
+| CSDL Flyway | Viết migration `V2__classes_and_members.sql` tạo bảng `classes` (`lead_instructor_id`, `quota_account_ref`, `weekly_minutes`, `max_concurrent_sessions`) và `class_members` (`locale`, `joined_at`, chỉ mục `LOWER(email)`) | AI-TH |
+| Miền & Ứng dụng | Hiện thực `ClassEntity`, `ClassMemberEntity`, `ClassService` (tích hợp `putQuotaAccount` bên M1 theo `BR-M3.26`), `CsvImportService` (hỗ trợ `BOMInputStream` cho CSV UTF-8 từ Excel), `UserAutoEnrollFilter` & `UserAutoEnrollService` | AI-TH |
+| REST API | Hiện thực `ClassController` theo `ClassesApi`, kiểm tra quyền trên mọi endpoint, trả lỗi RFC 9457 kèm `traceId`, bắt `DataIntegrityViolationException` trả 409 | AI-TH |
+| Kiểm thử Backend | Viết kiểm thử `ClassControllerTest` (đầy đủ ca 2xx và 401/403/409/422), `ClassServiceTest` (HTTP stub server cho `putQuotaAccount`), `CsvImportServiceTest` (gồm ca UTF-8 BOM), `UserAutoEnrollServiceTest` | AI-TH |
+| Giao diện Web | Xây dựng `ClassListPage`, `ClassDetailPage`, `CsvImportModal` thuộc `SCR-21` (giảng viên) và `SCR-11` (sinh viên) theo `DESIGN.md`, dùng `learningApi` và `ProblemAlert` | AI-TH |
+| Bản địa hóa | Chuẩn hóa toàn bộ nhãn, thông báo và mã lỗi sang `web/src/locales/{vi,en}/learning.json`, vượt qua kiểm tra AST tĩnh của `locales.test.ts` | AI-TH |
+
+### 7.3. Quá trình làm việc
+
+| Vòng | Thành viên đặt ra | Công cụ thực hiện | Kết quả đánh giá của thành viên |
+|---|---|---|---|
+| 44 | Hiện thực Issue #40 trên nhánh `feat/m3-lop-hoc-csv` theo danh sách việc `specs/003-m3-lop-hoc/tasks.md` | Viết mã backend và frontend bản đầu, kiểm thử đơn vị, sửa đường dẫn `/v1/classes`, sửa vi phạm văn bản thô theo AST của Vitest `locales.test.ts` | Trưởng nhóm review PR yêu cầu bổ sung `putQuotaAccount`, `openapi.yaml`, phân quyền tạo lớp/xem trước CSV, xử lý BOM UTF-8, `UserAutoEnrollFilter`, `traceId` và `learningApi` |
+| 45 | Gửi nhận xét review PR của trưởng nhóm (6 mục: phân quyền, `putQuotaAccount` & `lead_instructor_id`, khớp thiết kế CR-MOD-M3 & `openapi.yaml`, xử lý BOM UTF-8 / filter tự gắn lớp / `traceId` / 409 khi trùng đồng thời, dùng `learningApi` & sửa mã màn hình `SCR-21`/`SCR-11`, đổi tên Giai đoạn 5) | Viết `services/learning/api/openapi.yaml`, sinh `ClassesApi` và `learningApi`; cập nhật `V2__classes_and_members.sql`; tích hợp `QuotaApi.putQuotaAccount`; bọc `BOMInputStream`; thêm `UserAutoEnrollFilter`; bổ sung `traceId` và các ca kiểm thử 403/422/BOM; cập nhật giao diện và tài liệu | Đạt toàn bộ nhận xét, toàn bộ test suite cục bộ xanh |
+
 ## Lịch sử thay đổi
 
 | Phiên bản | Ngày | Nội dung |
@@ -384,3 +413,4 @@ Bản thiết kế dùng Kubernetes (operator, nhóm môi trường ấm, GitOps
 | 1.17 | 04/11/2026 | Giai đoạn 4, vòng 40: Thiết kế chi tiết module M3 (Issue #39) |
 | 1.18 | 12/11/2026 | Vòng 41, 42: Hiệu đính thiết kế module M3 theo nhận xét PR, đổi tên Giai đoạn 4 |
 | 1.19 | 12/11/2026 | Vòng 43: duyệt thiết kế M3, đổi khung giờ của đặt trước |
+| 1.20 | 18/11/2026 | Giai đoạn 5, vòng 44, 45: Hiện thực và hiệu đính Quản lý lớp học, hạn mức lớp, nhập CSV theo nhận xét PR (Issue #40) |

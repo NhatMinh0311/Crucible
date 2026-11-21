@@ -22,6 +22,8 @@ repositories {
 
 dependencies {
     implementation("dev.crucible:crucible-platform:0.1.0")
+    implementation("org.apache.commons:commons-csv:1.12.0")
+    implementation("commons-io:commons-io:2.18.0")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -49,6 +51,24 @@ dependencies {
 // Dạng URI để đường dẫn có dấu cách (ví dụ "Project 1") vẫn đọc được.
 fun contract(name: String): String = rootDir.resolve("../../contracts/$name").canonicalFile.toURI().toString()
 val generatedDir = layout.buildDirectory.get().asFile.resolve("generated/openapi")
+
+// Interface controller sinh từ đặc tả nội bộ của module (services/learning/api/openapi.yaml).
+val generateServerApi = tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("generateServerApi") {
+    generatorName.set("spring")
+    inputSpec.set(rootDir.resolve("api/openapi.yaml").canonicalFile.toURI().toString())
+    outputDir.set(generatedDir.resolve("server").path)
+    apiPackage.set("dev.crucible.learning.api.generated")
+    modelPackage.set("dev.crucible.learning.api.generated.model")
+    configOptions.set(mapOf(
+        "interfaceOnly" to "true",
+        "useSpringBoot4" to "true",
+        "useJackson3" to "true",
+        "useTags" to "true",
+        "openApiNullable" to "false",
+        "documentationProvider" to "none",
+        "annotationLibrary" to "none",
+    ))
+}
 
 // Client gọi content-api.yaml bằng Spring HTTP Interface, token client credentials của registration "content-service".
 val generateContentClient = tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("generateContentClient") {
@@ -93,13 +113,17 @@ val generateRuntimeClient = tasks.register<org.openapitools.generator.gradle.plu
 sourceSets {
     main {
         java {
-            srcDirs(generatedDir.resolve("content-client/src/main/java"), generatedDir.resolve("runtime-client/src/main/java"))
+            srcDirs(
+                generatedDir.resolve("server/src/main/java"),
+                generatedDir.resolve("content-client/src/main/java"),
+                generatedDir.resolve("runtime-client/src/main/java"),
+            )
         }
     }
 }
 
 tasks.compileJava {
-    dependsOn(generateContentClient, generateRuntimeClient)
+    dependsOn(generateServerApi, generateContentClient, generateRuntimeClient)
 }
 
 tasks.withType<Test> {

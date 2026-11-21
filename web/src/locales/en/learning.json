@@ -4,5 +4,81 @@
   },
   "pages": {
     "notifications": "Notifications"
+  },
+  "common": {
+    "loading": "Loading...",
+    "studentId": "Student ID",
+    "fullName": "Full name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions",
+    "schoolEmail": "School email",
+    "linked": "Linked",
+    "pendingLogin": "Pending login"
+  },
+  "classes": {
+    "title": "Classes",
+    "create": "Create class",
+    "createTitle": "Create new class",
+    "editQuota": "Update quota",
+    "code": "Class code",
+    "name": "Class name",
+    "semester": "Semester",
+    "quotaRef": "Quota account",
+    "weeklyMinutes": "Weekly minutes",
+    "maxConcurrentSessions": "Max concurrent sessions",
+    "leadInstructor": "Lead instructor",
+    "setLeadInstructor": "Set as lead",
+    "removeMember": "Remove",
+    "empty": "No classes available",
+    "members": "Members",
+    "membersList": "Class members",
+    "noMembers": "No members in this class.",
+    "students": "Students",
+    "instructors": "Instructors",
+    "assistants": "Teaching assistants",
+    "student": "Student",
+    "instructor": "Instructor",
+    "assistant": "Teaching assistant",
+    "roleAssistant": "Teaching assistant (TEACHING_ASSISTANT)",
+    "roleInstructor": "Instructor (INSTRUCTOR)",
+    "roadmap": "Learning path",
+    "roadmapPlaceholder": "The class learning path will be implemented in Issue #41.",
+    "importCsv": "Import CSV",
+    "addInstructor": "Add instructor / assistant",
+    "detail": "Class details",
+    "cancel": "Cancel",
+    "save": "Save",
+    "status": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "placeholders": {
+      "code": "IT4060-20261",
+      "name": "Linux Operating System",
+      "semester": "2026.1",
+      "schoolEmail": "name@sis.hust.edu.vn",
+      "instructorName": "Dr. John Doe"
+    }
+  },
+  "csv": {
+    "title": "Import students from CSV",
+    "dragDrop": "Drag and drop CSV file here or click to select",
+    "preview": "Preview",
+    "commit": "Confirm import",
+    "total": "Total rows",
+    "valid": "Valid rows",
+    "errors": "Error rows",
+    "line": "Line",
+    "field": "Field",
+    "message": "Error details",
+    "success": "Successfully imported {{count}} students to class"
+  },
+  "errors": {
+    "QUOTA_CEILING_EXCEEDED": "Total quota allocated to classes exceeds instructor ceiling.",
+    "CLASS_CODE_ALREADY_EXISTS": "Class code already exists. Please choose another code.",
+    "MEMBER_ALREADY_EXISTS": "Member already exists in this class.",
+    "RESERVATION_STARTED": "Cannot reschedule exam because resource reservation has already started."
   }
 }

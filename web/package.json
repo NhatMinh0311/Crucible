@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "gen:api": "openapi-typescript ../contracts/runtime-api.yaml -o src/shell/api/generated/runtime.ts && openapi-typescript ../contracts/content-api.yaml -o src/shell/api/generated/content.ts",
+    "gen:api": "openapi-typescript ../contracts/runtime-api.yaml -o src/shell/api/generated/runtime.ts && openapi-typescript ../contracts/content-api.yaml -o src/shell/api/generated/content.ts && openapi-typescript ../services/learning/api/openapi.yaml -o src/shell/api/generated/learning.ts",
     "predev": "npm run gen:api",
     "dev": "vite",
     "prebuild": "npm run gen:api",
